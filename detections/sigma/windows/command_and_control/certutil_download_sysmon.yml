@@ -1,0 +1,27 @@
+title: Certutil Used To Download Remote Content (Sysmon)
+id: 4a1e2c3d-5b6a-7c8d-9e0f-1a2b3c4d5e6a
+status: experimental
+description: Detects certutil.exe used to fetch remote content, often for ingress tool transfer.
+author: Khaireddine
+date: 2025/08/21
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  sel_img:
+    Image|endswith: '\certutil.exe'
+  sel_cmd:
+    CommandLine|contains:
+      - ' -urlcache '
+      - ' -split '
+      - ' http://'
+      - ' https://'
+  condition: sel_img and sel_cmd
+fields: [UtcTime, Image, CommandLine, ParentImage, User]
+falsepositives:
+  - Admin troubleshooting using certutil
+level: medium
+tags:
+  - attack.command_and_control
+  - attack.t1105

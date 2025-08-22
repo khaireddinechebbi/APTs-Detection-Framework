@@ -1,0 +1,27 @@
+title: Scheduled Task Created via schtasks.exe (Sysmon)
+id: 4b0a1f8b-9a71-401c-8d06-2f66de9b79d9
+status: stable
+description: Detects creation of scheduled tasks using schtasks.exe /create.
+author: Khaireddine
+date: 2025/08/22
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  sel_img:
+    Image|endswith: '\schtasks.exe'
+  sel_cmd:
+    CommandLine|contains:
+      - ' /create '
+      - ' /sc '
+      - ' /tn '
+      - ' /tr '
+  condition: sel_img and sel_cmd
+fields: [ UtcTime, Image, CommandLine, ParentImage, User ]
+falsepositives:
+  - Admin automation and legitimate software updaters
+level: medium
+tags:
+  - attack.persistence
+  - attack.t1053.005

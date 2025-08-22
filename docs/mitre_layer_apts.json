@@ -1,0 +1,88 @@
+{
+  "version": "4.3",
+  "name": "APTs Project – APT29 & Lazarus (Windows lab)",
+  "description": "Detection-focused subset for a Windows+Sysmon lab. Score 3 = done, 2 = planned, 1 = stretch.",
+  "domain": "enterprise-attack",
+  "filters": { "platforms": ["Windows"] },
+  "sorting": 0,
+  "viewMode": 0,
+  "hideDisabled": false,
+  "selectTechniquesAcrossTactics": true,
+  "gradient": { "colors": ["#d0d7de", "#60a5fa", "#0ea5e9"], "minValue": 0, "maxValue": 3 },
+  "legendItems": [
+    { "label": "Done (rule validated)", "color": "#0ea5e9" },
+    { "label": "Planned (to build next)", "color": "#60a5fa" },
+    { "label": "Stretch (needs infra)", "color": "#d0d7de" }
+  ],
+  "techniques": [
+    {
+      "techniqueID": "T1059.001",
+      "score": 3,
+      "comment": "PowerShell EncodedCommand. KQL rule live (Sysmon EID 1).",
+      "metadata": [
+        {"name":"Groups","value":"APT29, Lazarus"},
+        {"name":"Rule","value":"ps_encodedcommand_sysmon.yml"}
+      ],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1105",
+      "score": 2,
+      "comment": "Ingress Tool Transfer via certutil. Build KQL; optional ES|QL trending.",
+      "metadata": [{"name":"Groups","value":"APT29, Lazarus"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1547.001",
+      "score": 2,
+      "comment": "Run/RunOnce persistence. KQL on Sysmon EID 13 + reg.exe creates.",
+      "metadata": [{"name":"Groups","value":"Lazarus, APT29"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1053.005",
+      "score": 2,
+      "comment": "Scheduled Task creation. KQL for schtasks.exe; EQL if parent/child.",
+      "metadata": [{"name":"Groups","value":"Lazarus, APT29"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1047",
+      "score": 2,
+      "comment": "WMI execution (wmic.exe / WMI-PS). KQL now; EQL chain later.",
+      "metadata": [{"name":"Groups","value":"Lazarus, APT29"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1021.002",
+      "score": 2,
+      "comment": "PsExec lateral movement. EQL sequence: 7045 -> psexesvc -> remote proc.",
+      "metadata": [{"name":"Groups","value":"Lazarus, APT29"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003.002",
+      "score": 2,
+      "comment": "Dump SAM via 'reg save'. KQL on ProcessCreate.",
+      "metadata": [{"name":"Groups","value":"APT29"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003.004",
+      "score": 2,
+      "comment": "Dump LSA Secrets (SECURITY/SYSTEM hives). KQL on ProcessCreate.",
+      "metadata": [{"name":"Groups","value":"APT29"}],
+      "enabled": true
+    },
+    {
+      "techniqueID": "T1003.006",
+      "score": 1,
+      "comment": "DCSync (needs DC audit). Marked stretch for now.",
+      "metadata": [{"name":"Groups","value":"APT29"}],
+      "enabled": true
+    }
+  ],
+  "showTacticRowBackground": false,
+  "tacticRowBackground": "#dddddd",
+  "selectSubtechniquesWithParent": false
+}

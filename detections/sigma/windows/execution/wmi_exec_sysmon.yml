@@ -1,0 +1,26 @@
+title: WMI Process Execution via wmic.exe (Sysmon)
+id: 9c7d2a34-2d5e-4dd7-9a92-0d6d2c9c9f1a
+status: stable
+description: Detects wmic launching processes (process call create).
+author: Khaireddine
+date: 2025/08/22
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  sel_img:
+    Image|endswith: '\wmic.exe'
+  sel_cmd:
+    CommandLine|contains|all:
+      - ' process '
+      - ' call '
+      - ' create '
+  condition: sel_img and sel_cmd
+fields: [ UtcTime, Image, CommandLine, ParentImage, User ]
+falsepositives:
+  - Admin scripts and inventory tools
+level: medium
+tags:
+  - attack.execution
+  - attack.t1047

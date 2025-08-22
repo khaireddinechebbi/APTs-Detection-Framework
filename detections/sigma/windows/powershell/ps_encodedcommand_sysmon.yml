@@ -1,0 +1,23 @@
+title: PowerShell EncodedCommand (Sysmon)
+id: 4ed9a2e1-5bc5-40fc-abed-4d40de186991
+status: experimental
+description: Detects PowerShell/pwsh launched with EncodedCommand switches.
+author: Khaireddine
+date: 2025/08/18
+logsource: { product: windows, category: process_creation, service: sysmon }
+detection:
+  sel_img:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  sel_cmd:
+    CommandLine|contains:
+      - ' -enc '
+      - ' -encodedcommand '
+      - ' /enc '
+      - ' /encodedcommand '
+  condition: sel_img and sel_cmd
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
+falsepositives: [ Admin scripts using EncodedCommand ]
+level: medium
+tags: [ attack.execution, attack.t1059, attack.t1059.001 ]

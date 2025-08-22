@@ -1,0 +1,24 @@
+title: Run/RunOnce Persistence Creation (Sysmon EID 13)
+id: 7e6b9f1c-3b1f-4b7d-9c9f-1d2e3f4a5b6c
+status: experimental
+description: Detects registry value writes to Run or RunOnce keys for persistence.
+author: Khaireddine
+date: 2025/08/21
+logsource:
+  product: windows
+  service: sysmon
+detection:
+  sel_reg:
+    EventID: 13
+    TargetObject|contains:
+      - '\Software\Microsoft\Windows\CurrentVersion\Run'
+      - '\Software\Microsoft\Windows\CurrentVersion\RunOnce'
+  condition: sel_reg
+fields: [UtcTime, Image, TargetObject, Details, User]
+falsepositives:
+  - Legitimate software adding autostart entries
+level: medium
+tags:
+  - attack.persistence
+  - attack.t1547
+  - attack.t1547.001
