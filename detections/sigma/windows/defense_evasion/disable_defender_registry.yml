@@ -1,0 +1,16 @@
+title: Disable or Weaken Microsoft Defender via Registry
+id: 4b8e0c7a-2f18-4b9c-8c7d-2f0f6f3e9a66
+status: experimental
+description: Detects policy registry changes that weaken or disable Microsoft Defender.
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: registry_event }
+detection:
+  sel: { EventID: 13, TargetObject|contains: ['\Windows Defender\DisableAntiSpyware','\Windows Defender\DisableAntiVirus','\Windows Defender\Real-Time Protection\DisableRealtimeMonitoring'] }
+  condition: sel
+fields: [TargetObject, Details, Image]
+falsepositives: [Security baselines/MDM]
+level: high
+tags:
+  - attack.defense-evasion
+  - attack.t1562.001

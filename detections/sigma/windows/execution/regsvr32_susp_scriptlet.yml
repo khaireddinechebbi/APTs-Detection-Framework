@@ -1,0 +1,20 @@
+title: Suspicious Regsvr32 Scriptlet Execution (Squiblydoo)
+id: 0bcb7d4f-0a3a-4a54-9a7a-77f28b0d7f1c
+status: experimental
+description: Detects regsvr32 executing remote/local scriptlets or scrobj.dll.
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: process_creation }
+detection:
+  sel_img: { Image|endswith: \regsvr32.exe }
+  sel_ind:
+    CommandLine|contains: [scrobj.dll, .sct, http, https]
+  sel_switch: { CommandLine|contains: [' /s ',' /u ',' /i '] }
+  condition: sel_img and (sel_ind or sel_switch)
+fields: [CommandLine, ParentImage, User]
+falsepositives: [Rare admin use of regsvr32]
+level: high
+tags:
+  - attack.execution
+  - attack.defense-evasion
+  - attack.t1218.010

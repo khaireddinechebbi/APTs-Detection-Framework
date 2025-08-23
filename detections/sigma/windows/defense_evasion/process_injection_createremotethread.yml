@@ -1,0 +1,21 @@
+title: Process Injection via CreateRemoteThread (Sysmon EID 8)
+id: d6d9d2a0-5c3a-4f6f-8a1c-9b1f2e3d4c5a
+status: experimental
+description: Detects CreateRemoteThread-based injection from one process into another.
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: process_access }
+detection:
+  sel: { EventID: 8 }
+  fp_sys:
+    TargetImage|endswith:
+      - \svchost.exe
+      - \dllhost.exe
+  condition: sel and not fp_sys
+fields: [SourceImage, TargetImage, StartAddress, CallTrace]
+falsepositives: [EDR/AV cross-process activity]
+level: critical
+tags:
+  - attack.defense-evasion
+  - attack.privilege-escalation
+  - attack.t1055

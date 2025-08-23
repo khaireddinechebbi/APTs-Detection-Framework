@@ -1,0 +1,26 @@
+title: Suspicious Rundll32 Parameters
+id: 5e3a3f2c-2b9c-4f1a-8b6d-9e3a2d5a0f44
+status: experimental
+description: Detects rundll32 with suspicious parameters (JS/HTMLApp/CPL/URLs).
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: process_creation }
+detection:
+  img: { Image|endswith: \rundll32.exe }
+  p1:
+    CommandLine|contains:
+      - 'javascript:'
+      - 'mshtml,RunHTMLApplication'
+      - '.cpl,'
+      - http
+      - https
+  p2:
+    CommandLine|contains: [DllRegisterServer, ShellExecute, '#1']
+  condition: img and (p1 or p2)
+fields: [CommandLine, ParentImage, User]
+falsepositives: [Legacy admin scripts]
+level: high
+tags:
+  - attack.execution
+  - attack.defense-evasion
+  - attack.t1218.011

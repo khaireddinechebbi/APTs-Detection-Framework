@@ -1,0 +1,19 @@
+title: Mshta Execution of Remote or Scripted Content
+id: 2a6b0c12-9f21-4a16-8a6b-1a4f7c3c0a55
+status: experimental
+description: Detects mshta launching remote URLs or inline script (JS/VBS/about:blank).
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: process_creation }
+detection:
+  img: { Image|endswith: \mshta.exe }
+  cmd:
+    CommandLine|contains: [http, https, 'file://', 'javascript:', 'vbscript:', 'about:blank']
+  condition: img and cmd
+fields: [CommandLine, ParentImage, User]
+falsepositives: [Legacy intranet HTA apps]
+level: high
+tags:
+  - attack.execution
+  - attack.defense-evasion
+  - attack.t1218.005

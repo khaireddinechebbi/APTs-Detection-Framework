@@ -1,0 +1,22 @@
+title: Persistence via Startup Folder File Drop (Sysmon EID 11)
+id: 9d7a0a51-9cb6-4b2d-9d3b-1b7f0f0f9d22
+status: experimental
+description: Detects file creation in user or programdata Startup folders for persistence.
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: file_event }
+detection:
+  sel:
+    EventID: 11
+    TargetFilename|contains:
+      - \AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\
+      - \ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\
+  fp_onedrive:
+    TargetFilename|endswith: \OneDrive.lnk
+  condition: sel and not fp_onedrive
+fields: [TargetFilename, Image]
+falsepositives: [Legit software placing shortcuts in Startup]
+level: high
+tags:
+  - attack.persistence
+  - attack.t1547.001

@@ -1,0 +1,28 @@
+title: Suspicious TLS Client Connections (Non-Browser, Low Egress)
+id: 3f0f7f2e-2fb9-43d7-9a20-0f3a7b2d9c88
+status: experimental
+description: Hunts for outbound TLS from non-browsers with small steady egress typical of beacons.
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: network_connection }
+detection:
+  sel:
+    EventID: 3
+    DestinationPort:
+      - 443
+      - 8443
+      - 9443
+  fp:
+    Image|endswith:
+      - \chrome.exe
+      - \firefox.exe
+      - \msedge.exe
+      - \svchost.exe
+      - \lsass.exe
+  condition: sel and not fp
+fields: [Image, DestinationIp, DestinationPort, Initiated]
+falsepositives: [Updaters/telemetry using TLS]
+level: medium
+tags:
+  - attack.command-and-control
+  - attack.t1573

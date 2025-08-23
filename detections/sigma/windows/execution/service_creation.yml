@@ -1,0 +1,18 @@
+title: Service Creation or Reconfiguration for Execution
+id: 7a0d1c3e-f709-4a9e-96a0-1a3e4f9d5b80
+status: experimental
+description: Detects new service creation or reconfiguration via sc.exe or PowerShell.
+author: Khaireddine
+date: 2025/08/23
+logsource: { product: windows, category: process_creation }
+detection:
+  sc: { Image|endswith: \sc.exe, CommandLine|contains: [' create ', ' config '] }
+  ps: { Image|endswith: [\powershell.exe, \pwsh.exe], CommandLine|contains: [New-Service, Set-Service] }
+  condition: sc or ps
+fields: [CommandLine, ParentImage, User]
+falsepositives: [Installers/IT tasks]
+level: high
+tags:
+  - attack.execution
+  - attack.privilege-escalation
+  - attack.t1569.002
