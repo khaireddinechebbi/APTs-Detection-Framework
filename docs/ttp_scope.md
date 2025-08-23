@@ -32,3 +32,20 @@
 | **T1003.002** | SAM Dump                                         | Sysmon **EID 1**, **EID 11**                                                   | **KQL**   | `reg save hklm\sam sam.hiv`                                             | Credential access                        | APT29              |      |
 | **T1003.004** | LSA Secrets Dump                                 | Sysmon **EID 1**                                                               | **KQL**   | `reg query HKLM\SECURITY\Policy\Secrets`                                | Credential access                        | APT29              |      |
 | **T1003.006** | DCSync                                           | Security **4662**                                                              | **KQL**   | Mimikatz `lsadump::dcsync`                                              | Credential access via replication rights | APT29              |      |
+
+---
+
+## Status
+
+* ✅ Multiple rules built, YAML + KQL/EQL/ES|QL written and tested in Elastic (Atomic Red Team used where possible).
+* 🔜 Systematic testing of each rule → capture alerts + refine false positives.
+* 📝 Next: finalize **ATT\&CK Navigator JSON** (mapping to APT29/Lazarus), plus detection report.
+
+---
+
+## Out of Scope (for this iteration)
+
+* T1027 Obfuscated/Compressed Files & Information (content-level; high FP)
+* Broader Impair Defenses (T1562 variants needing EDR policy signals beyond Defender registry/CLI)
+
+---
