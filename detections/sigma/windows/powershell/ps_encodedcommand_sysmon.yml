@@ -1,10 +1,13 @@
 title: PowerShell EncodedCommand (Sysmon)
 id: 4ed9a2e1-5bc5-40fc-abed-4d40de186991
 status: experimental
-description: Detects PowerShell/pwsh launched with EncodedCommand switches.
+description: Detects PowerShell/pwsh launched with EncodedCommand switches, excluding common management parent processes.
 author: Khaireddine
 date: 2025/08/18
-logsource: { product: windows, category: process_creation, service: sysmon }
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
 detection:
   sel_img:
     Image|endswith:
@@ -16,7 +19,12 @@ detection:
       - ' -encodedcommand '
       - ' /enc '
       - ' /encodedcommand '
-  condition: sel_img and sel_cmd
+  exclude_parents:
+    ParentImage|endswith:
+      - '\ccmexec.exe'
+      - '\SCClient.exe'
+      - '\IntuneManagementExtension.exe'
+  condition: sel_img and sel_cmd and not exclude_parents
 fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
 falsepositives: [ Admin scripts using EncodedCommand ]
 level: medium

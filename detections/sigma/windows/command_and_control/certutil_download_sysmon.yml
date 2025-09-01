@@ -1,27 +1,25 @@
-title: Certutil Used To Download Remote Content (Sysmon)
-id: 4a1e2c3d-5b6a-7c8d-9e0f-1a2b3c4d5e6a
+title: CertUtil File Download or Split (Sysmon)
+id: 7c1d5f2e-1a3b-4d9f-b6e8-2f7a9c5e4b3d
 status: experimental
-description: Detects certutil.exe used to fetch remote content, often for ingress tool transfer.
+description: Detects certutil.exe usage for downloading files, splitting files, or accessing URLs.
 author: Khaireddine
-date: 2025/08/21
+date: 2025/08/18
 logsource:
   product: windows
   category: process_creation
   service: sysmon
 detection:
   sel_img:
-    Image|endswith: '\certutil.exe'
+    Image|endswith: 
+      - '\certutil.exe'
   sel_cmd:
-    CommandLine|contains:
+    CommandLine|contains_any:
       - ' -urlcache '
       - ' -split '
       - ' http://'
       - ' https://'
   condition: sel_img and sel_cmd
-fields: [UtcTime, Image, CommandLine, ParentImage, User]
-falsepositives:
-  - Admin troubleshooting using certutil
-level: medium
-tags:
-  - attack.command_and_control
-  - attack.t1105
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
+falsepositives: [ Admin usage of certutil for legitimate file operations ]
+level: high
+tags: [ attack.command_and_control, attack.t1105 ]

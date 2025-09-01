@@ -1,0 +1,29 @@
+title: Process Injection via mavinject/UsoClient (Sysmon)
+id: 2e8c5f4a-9b1d-4f2a-b7e3-6d5f8c1a2b3c
+status: experimental
+description: Detects process injection attempts using mavinject.exe or UsoClient.exe via CreateRemoteThread or DLL loading.
+author: Khaireddine
+date: 2025/08/18
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  remote_thread_inject:
+    Image|endswith: '\mavinject.exe'
+    EventCode: 8
+    StartFunction|in:
+      - LoadLibraryA
+      - LoadLibraryW
+    EventAction: CreateRemoteThread
+  dll_inject:
+    Image|endswith_any:
+      - '\mavinject.exe'
+      - '\UsoClient.exe'
+    EventCode: 7
+    TargetFileExtension: 'dll'
+  condition: remote_thread_inject or dll_inject
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User, TargetImage, TargetFileName ]
+falsepositives: [ Legitimate DLL injection/testing tools ]
+level: high
+tags: [ attack.defense_evasion, attack.t1055, attack.t1055.001 ]

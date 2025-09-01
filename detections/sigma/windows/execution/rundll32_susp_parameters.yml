@@ -1,26 +1,44 @@
-title: Suspicious Rundll32 Parameters
-id: 5e3a3f2c-2b9c-4f1a-8b6d-9e3a2d5a0f44
+title: rundll32 Suspicious Execution Patterns (Sysmon)
+id: d4f6b2c1-7e8a-4d9f-b3c1-9a2e5f7c6b4d
 status: experimental
-description: Detects rundll32 with suspicious parameters (JS/HTMLApp/CPL/URLs).
+description: Detects suspicious rundll32.exe usage including execution via pcwutl.dll, shell32.dll, desk.cpl, url.dll, or StartW patterns.
 author: Khaireddine
-date: 2025/08/23
-logsource: { product: windows, category: process_creation }
+date: 2025/08/18
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
 detection:
-  img: { Image|endswith: \rundll32.exe }
-  p1:
-    CommandLine|contains:
-      - 'javascript:'
-      - 'mshtml,RunHTMLApplication'
-      - '.cpl,'
-      - http
-      - https
-  p2:
-    CommandLine|contains: [DllRegisterServer, ShellExecute, '#1']
-  condition: img and (p1 or p2)
-fields: [CommandLine, ParentImage, User]
-falsepositives: [Legacy admin scripts]
+  pcwutl_launch:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains_all:
+      - 'pcwutl.dll'
+      - 'LaunchApplication'
+      - '.exe'
+  shell32_control:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains_all:
+      - 'shell32.dll'
+      - 'Control_RunDLL'
+      - '.dll'
+  desk_screensaver:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains_all:
+      - 'desk.cpl'
+      - 'InstallScreenSaver'
+      - '.scr'
+  url_fileprotocol:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains_all:
+      - 'url.dll'
+      - 'FileProtocolHandler'
+      - '.exe'
+  startw_no_dll:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains: 'StartW'
+    CommandLine|not_contains: '.dll'
+  condition: pcwutl_launch or shell32_control or desk_screensaver or url_fileprotocol or startw_no_dll
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
+falsepositives: [ Legitimate system utility usage ]
 level: high
-tags:
-  - attack.execution
-  - attack.defense-evasion
-  - attack.t1218.011
+tags: [ attack.execution, attack.t1218, attack.t1218.011 ]

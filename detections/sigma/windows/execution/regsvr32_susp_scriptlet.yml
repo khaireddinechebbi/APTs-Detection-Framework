@@ -1,20 +1,28 @@
-title: Suspicious Regsvr32 Scriptlet Execution (Squiblydoo)
-id: 0bcb7d4f-0a3a-4a54-9a7a-77f28b0d7f1c
+title: regsvr32/SCROBJ Remote Script Execution (Sysmon)
+id: c1d7e8f2-6b4a-4f9c-a2d1-5e7f8c3a2b4d
 status: experimental
-description: Detects regsvr32 executing remote/local scriptlets or scrobj.dll.
+description: Detects execution of regsvr32.exe with scrobj.dll and remote .sct scripts, including cmd.exe launching regsvr32 with the same parameters.
 author: Khaireddine
-date: 2025/08/23
-logsource: { product: windows, category: process_creation }
+date: 2025/08/18
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
 detection:
-  sel_img: { Image|endswith: \regsvr32.exe }
-  sel_ind:
-    CommandLine|contains: [scrobj.dll, .sct, http, https]
-  sel_switch: { CommandLine|contains: [' /s ',' /u ',' /i '] }
-  condition: sel_img and (sel_ind or sel_switch)
-fields: [CommandLine, ParentImage, User]
-falsepositives: [Rare admin use of regsvr32]
+  regsvr32_scrobj:
+    Image|endswith: '\regsvr32.exe'
+    CommandLine|contains_all:
+      - 'scrobj.dll'
+      - '/i'
+      - '.sct'
+  cmd_regsvr32_scrobj:
+    Image|endswith: '\cmd.exe'
+    CommandLine|contains_all:
+      - 'regsvr32.exe'
+      - 'scrobj.dll'
+      - '.sct'
+  condition: regsvr32_scrobj or cmd_regsvr32_scrobj
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
+falsepositives: [ Legitimate regsvr32 usage in automation or software deployment ]
 level: high
-tags:
-  - attack.execution
-  - attack.defense-evasion
-  - attack.t1218.010
+tags: [ attack.execution, attack.t1218, attack.t1218.010 ]

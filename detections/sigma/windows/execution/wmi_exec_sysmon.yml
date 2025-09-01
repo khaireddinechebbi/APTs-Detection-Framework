@@ -17,10 +17,7 @@ detection:
       - ' call '
       - ' create '
   condition: sel_img and sel_cmd
-fields: [ UtcTime, Image, CommandLine, ParentImage, User ]
-falsepositives:
-  - Admin scripts and inventory tools
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
+falsepositives: [ Legitimate administrative WMIC usage ]
 level: medium
-tags:
-  - attack.execution
-  - attack.t1047
+tags: [ attack.execution, attack.t1047 ]
