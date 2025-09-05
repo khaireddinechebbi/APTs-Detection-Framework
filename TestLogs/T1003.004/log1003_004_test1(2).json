@@ -1,0 +1,289 @@
+{
+  "@timestamp": [
+    "2025-09-05T12:40:39.012Z"
+  ],
+  "agent.ephemeral_id": [
+    "124c139e-813a-4f02-be7c-7d2290d0284b"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-05T12:40:40.180Z"
+  ],
+  "event.ingested": [
+    "2025-09-05T12:41:29.746Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:6050:34be:69f0:a022:eac3:a2a",
+    "2c0f:4280:6050:34be:d4bf:1db8:4ab3:1c2d",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-05 12:40:39.012\nProcessGuid: {9602231E-DA47-68BA-8601-000000002C00}\nProcessId: 4508\nImage: C:\\Windows\\System32\\reg.exe\nFileVersion: 10.0.19041.1 (WinBuild.160101.0800)\nDescription: Registry Console Tool\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: reg.exe\nCommandLine: \"reg\" save HKLM\\security\\policy\\secrets C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\secrets /y\nCurrentDirectory: C:\\Windows\\system32\\\nUser: NT AUTHORITY\\SYSTEM\nLogonGuid: {9602231E-CDE3-68BA-E703-000000000000}\nLogonId: 0x3e7\nTerminalSessionId: 0\nIntegrityLevel: System\nHashes: SHA256=C0E25B1F9B22DE445298C1E96DDFCEAD265CA030FA6626F61A4A4786CC4A3B7D,IMPHASH=BE482BE427FE212CFEF2CDA0E61F19AC\nParentProcessGuid: {9602231E-DA45-68BA-8501-000000002C00}\nParentProcessId: 6644\nParentImage: C:\\Windows\\PSEXESVC.exe\nParentCommandLine: C:\\Windows\\PSEXESVC.exe\nParentUser: NT AUTHORITY\\SYSTEM"
+  ],
+  "process.args": [
+    "reg",
+    "save",
+    "HKLM\\security\\policy\\secrets",
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\secrets",
+    "/y"
+  ],
+  "process.args_count": [
+    5
+  ],
+  "process.command_line": [
+    "\"reg\" save HKLM\\security\\policy\\secrets C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\secrets /y"
+  ],
+  "process.command_line.text": [
+    "\"reg\" save HKLM\\security\\policy\\secrets C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\secrets /y"
+  ],
+  "process.entity_id": [
+    "{9602231E-DA47-68BA-8601-000000002C00}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\reg.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\reg.exe"
+  ],
+  "process.hash.sha256": [
+    "c0e25b1f9b22de445298c1e96ddfcead265ca030fa6626f61a4a4786cc4a3b7d"
+  ],
+  "process.name": [
+    "reg.exe"
+  ],
+  "process.name.text": [
+    "reg.exe"
+  ],
+  "process.parent.args": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.parent.args_count": [
+    1
+  ],
+  "process.parent.command_line": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.parent.command_line.text": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-DA45-68BA-8501-000000002C00}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.parent.name": [
+    "PSEXESVC.exe"
+  ],
+  "process.parent.name.text": [
+    "PSEXESVC.exe"
+  ],
+  "process.parent.pid": [
+    6644
+  ],
+  "process.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "process.pe.description": [
+    "Registry Console Tool"
+  ],
+  "process.pe.file_version": [
+    "10.0.19041.1 (WinBuild.160101.0800)"
+  ],
+  "process.pe.imphash": [
+    "be482be427fe212cfef2cda0e61f19ac"
+  ],
+  "process.pe.original_file_name": [
+    "reg.exe"
+  ],
+  "process.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "process.pid": [
+    4508
+  ],
+  "process.working_directory": [
+    "C:\\Windows\\system32\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Windows\\system32\\"
+  ],
+  "related.hash": [
+    "c0e25b1f9b22de445298c1e96ddfcead265ca030fa6626f61a4a4786cc4a3b7d",
+    "be482be427fe212cfef2cda0e61f19ac"
+  ],
+  "related.user": [
+    "SYSTEM"
+  ],
+  "user.domain": [
+    "NT AUTHORITY"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "SYSTEM"
+  ],
+  "user.name.text": [
+    "SYSTEM"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "Registry Console Tool"
+  ],
+  "winlog.event_data.FileVersion": [
+    "10.0.19041.1 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "System"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-CDE3-68BA-E703-000000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x3e7"
+  ],
+  "winlog.event_data.ParentUser": [
+    "NT AUTHORITY\\SYSTEM"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "0"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    1744
+  ],
+  "winlog.process.thread.id": [
+    3884
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "265641"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "DlTlGZkBWp5KBFoYa_yv",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}

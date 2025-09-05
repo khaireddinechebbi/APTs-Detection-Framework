@@ -1,0 +1,285 @@
+{
+  "@timestamp": [
+    "2025-09-05T12:40:37.592Z"
+  ],
+  "agent.ephemeral_id": [
+    "124c139e-813a-4f02-be7c-7d2290d0284b"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-05T12:40:38.845Z"
+  ],
+  "event.ingested": [
+    "2025-09-05T12:41:29.735Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:6050:34be:69f0:a022:eac3:a2a",
+    "2c0f:4280:6050:34be:d4bf:1db8:4ab3:1c2d",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-05 12:40:37.592\nProcessGuid: {9602231E-DA45-68BA-8501-000000002C00}\nProcessId: 6644\nImage: C:\\Windows\\PSEXESVC.exe\nFileVersion: 2.43\nDescription: PsExec Service\nProduct: Sysinternals PsExec\nCompany: Sysinternals\nOriginalFileName: psexesvc.exe\nCommandLine: C:\\Windows\\PSEXESVC.exe\nCurrentDirectory: C:\\Windows\\system32\\\nUser: NT AUTHORITY\\SYSTEM\nLogonGuid: {9602231E-CDE3-68BA-E703-000000000000}\nLogonId: 0x3e7\nTerminalSessionId: 0\nIntegrityLevel: System\nHashes: SHA256=CC14DF781475EF0F3F2C441D03A622EA67CD86967526F8758EAD6F45174DB78E,IMPHASH=89372DA3565367C6EEFA3917639E884F\nParentProcessGuid: {9602231E-CDE2-68BA-0B00-000000002C00}\nParentProcessId: 660\nParentImage: C:\\Windows\\System32\\services.exe\nParentCommandLine: C:\\Windows\\system32\\services.exe\nParentUser: NT AUTHORITY\\SYSTEM"
+  ],
+  "process.args": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.args_count": [
+    1
+  ],
+  "process.command_line": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.command_line.text": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.entity_id": [
+    "{9602231E-DA45-68BA-8501-000000002C00}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\PSEXESVC.exe"
+  ],
+  "process.hash.sha256": [
+    "cc14df781475ef0f3f2c441d03a622ea67cd86967526f8758ead6f45174db78e"
+  ],
+  "process.name": [
+    "PSEXESVC.exe"
+  ],
+  "process.name.text": [
+    "PSEXESVC.exe"
+  ],
+  "process.parent.args": [
+    "C:\\Windows\\system32\\services.exe"
+  ],
+  "process.parent.args_count": [
+    1
+  ],
+  "process.parent.command_line": [
+    "C:\\Windows\\system32\\services.exe"
+  ],
+  "process.parent.command_line.text": [
+    "C:\\Windows\\system32\\services.exe"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-CDE2-68BA-0B00-000000002C00}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\services.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\services.exe"
+  ],
+  "process.parent.name": [
+    "services.exe"
+  ],
+  "process.parent.name.text": [
+    "services.exe"
+  ],
+  "process.parent.pid": [
+    660
+  ],
+  "process.pe.company": [
+    "Sysinternals"
+  ],
+  "process.pe.description": [
+    "PsExec Service"
+  ],
+  "process.pe.file_version": [
+    "2.43"
+  ],
+  "process.pe.imphash": [
+    "89372da3565367c6eefa3917639e884f"
+  ],
+  "process.pe.original_file_name": [
+    "psexesvc.exe"
+  ],
+  "process.pe.product": [
+    "Sysinternals PsExec"
+  ],
+  "process.pid": [
+    6644
+  ],
+  "process.working_directory": [
+    "C:\\Windows\\system32\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Windows\\system32\\"
+  ],
+  "related.hash": [
+    "cc14df781475ef0f3f2c441d03a622ea67cd86967526f8758ead6f45174db78e",
+    "89372da3565367c6eefa3917639e884f"
+  ],
+  "related.user": [
+    "SYSTEM"
+  ],
+  "user.domain": [
+    "NT AUTHORITY"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "SYSTEM"
+  ],
+  "user.name.text": [
+    "SYSTEM"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Sysinternals"
+  ],
+  "winlog.event_data.Description": [
+    "PsExec Service"
+  ],
+  "winlog.event_data.FileVersion": [
+    "2.43"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "System"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-CDE3-68BA-E703-000000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x3e7"
+  ],
+  "winlog.event_data.ParentUser": [
+    "NT AUTHORITY\\SYSTEM"
+  ],
+  "winlog.event_data.Product": [
+    "Sysinternals PsExec"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "0"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    1744
+  ],
+  "winlog.process.thread.id": [
+    3884
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "265629"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "AlTlGZkBWp5KBFoYa_yv",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}
