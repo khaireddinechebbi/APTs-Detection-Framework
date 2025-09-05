@@ -1,0 +1,251 @@
+{
+  "@timestamp": [
+    "2025-09-05T15:35:57.116Z"
+  ],
+  "agent.ephemeral_id": [
+    "124c139e-813a-4f02-be7c-7d2290d0284b"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Image loaded"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "7"
+  ],
+  "event.created": [
+    "2025-09-05T15:35:58.715Z"
+  ],
+  "event.ingested": [
+    "2025-09-05T15:35:55.187Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "change"
+  ],
+  "file.code_signature.status": [
+    "Valid"
+  ],
+  "file.code_signature.subject_name": [
+    "Microsoft Windows"
+  ],
+  "file.code_signature.valid": [
+    true
+  ],
+  "file.directory": [
+    "C:\\Windows\\System32"
+  ],
+  "file.extension": [
+    "dll"
+  ],
+  "file.hash.sha256": [
+    "bfca37dd18b7321ea2267f554760ff4b1bbc1fe864d2e170880a529188858dcb"
+  ],
+  "file.name": [
+    "ntdll.dll"
+  ],
+  "file.path": [
+    "C:\\Windows\\System32\\ntdll.dll"
+  ],
+  "file.path.text": [
+    "C:\\Windows\\System32\\ntdll.dll"
+  ],
+  "file.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "file.pe.description": [
+    "NT Layer DLL"
+  ],
+  "file.pe.file_version": [
+    "10.0.19041.6093 (WinBuild.160101.0800)"
+  ],
+  "file.pe.original_file_name": [
+    "ntdll.dll"
+  ],
+  "file.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:6050:34be:69f0:a022:eac3:a2a",
+    "2c0f:4280:6050:34be:d4bf:1db8:4ab3:1c2d",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Image loaded:\nRuleName: -\nUtcTime: 2025-09-05 15:35:57.116\nProcessGuid: {9602231E-035D-68BB-B602-000000002C00}\nProcessId: 5060\nImage: C:\\Windows\\System32\\mavinject.exe\nImageLoaded: C:\\Windows\\System32\\ntdll.dll\nFileVersion: 10.0.19041.6093 (WinBuild.160101.0800)\nDescription: NT Layer DLL\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: ntdll.dll\nHashes: SHA256=BFCA37DD18B7321EA2267F554760FF4B1BBC1FE864D2E170880A529188858DCB,IMPHASH=00000000000000000000000000000000\nSigned: true\nSignature: Microsoft Windows\nSignatureStatus: Valid\nUser: WINDOWS10\\khaireddine"
+  ],
+  "process.entity_id": [
+    "{9602231E-035D-68BB-B602-000000002C00}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\mavinject.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\mavinject.exe"
+  ],
+  "process.name": [
+    "mavinject.exe"
+  ],
+  "process.name.text": [
+    "mavinject.exe"
+  ],
+  "process.pid": [
+    5060
+  ],
+  "related.hash": [
+    "bfca37dd18b7321ea2267f554760ff4b1bbc1fe864d2e170880a529188858dcb"
+  ],
+  "related.user": [
+    "khaireddine"
+  ],
+  "user.domain": [
+    "WINDOWS10"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "khaireddine"
+  ],
+  "user.name.text": [
+    "khaireddine"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "NT Layer DLL"
+  ],
+  "winlog.event_data.FileVersion": [
+    "10.0.19041.6093 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.Signature": [
+    "Microsoft Windows"
+  ],
+  "winlog.event_data.SignatureStatus": [
+    "Valid"
+  ],
+  "winlog.event_data.Signed": [
+    "true"
+  ],
+  "winlog.event_id": [
+    "7"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    1744
+  ],
+  "winlog.process.thread.id": [
+    3884
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "285642"
+  ],
+  "winlog.task": [
+    "Image loaded (rule: ImageLoad)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    3
+  ],
+  "_id": "fFWFGpkBWp5KBFoYHWE4",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}
