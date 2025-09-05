@@ -10,7 +10,7 @@ T1218.011:
     winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and process.name:"rundll32.exe" and ((process.args:*pcwutl.dll* and process.args:*LaunchApplication* and process.args:*.exe) or (process.args:*shell32.dll* and process.args:*Control_RunDLL* and process.args:*.dll) or (process.args:*desk.cpl* and process.args:*InstallScreenSaver* and process.args:*.scr) or (process.args:*url.dll* and process.args:*FileProtocolHandler* and process.args:*.exe) or (process.args:*StartW* and not process.args:*.dll*))
 
 T1047:
-    winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and (process.name:"WMIC.exe" or process.executable:*\\WMIC.exe or winlog.event_data.Image:*\\WMIC.exe) and (process.command_line:"* process call create *" or message:"* process call create *")
+    winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and process.name:"WMIC.exe" and (process.args:("process" and "call" and "create") or process.args:("process" and "where" and "delete")) and process.parent.name : ("cmd.exe" or "powershell.exe")
 
 T1059.001:
     winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and ( process.name: ("powershell.exe" or "pwsh.exe") or winlog.event_data.Image: "*\\powershell.exe" ) and ( process.command_line: ("* -enc *" or "* -encodedcommand *" or "* /enc *" or "* /encodedcommand *") or process.args: ("-enc" or "-encodedcommand" or "/enc" or "/encodedcommand") or message: ("* -enc *" or "* -encodedcommand *" or "* /enc *" or "* /encodedcommand *") ) and not (process.parent.name:"ccmexec.exe" or process.parent.name:"SCClient.exe" or process.parent.name:"IntuneManagementExtension.exe")
