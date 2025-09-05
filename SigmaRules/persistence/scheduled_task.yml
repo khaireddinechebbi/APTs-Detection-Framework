@@ -1,9 +1,9 @@
-title: Scheduled Task Creation via schtasks.exe (Sysmon)
+title: Suspicious Scheduled Task Creation via schtasks.exe
 id: f7a9d3b1-6c4e-4f2a-b8e3-9c2d5f7a4b3e
-status: experimental
-description: Detects creation of scheduled tasks using schtasks.exe with the /create parameter.
+status: stable
+description: Detects creation of scheduled tasks using schtasks.exe with /create parameter, considering case variations, and suspicious parent processes.
 author: Khaireddine
-date: 2025/08/18
+date: 2025/09/05
 logsource:
   product: windows
   category: process_creation
@@ -11,10 +11,35 @@ logsource:
 detection:
   sel_img:
     Image|endswith: '\schtasks.exe'
-  sel_cmd:
-    CommandLine|contains: ' /create '
-  condition: sel_img and sel_cmd
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
-falsepositives: [ Legitimate administrative scheduled task creation ]
+  sel_create:
+    CommandLine|contains:
+      - '/create'
+      - '/Create'
+  sel_tn:
+    CommandLine|contains:
+      - '/tn'
+      - '/TN'
+  sel_tr:
+    CommandLine|contains:
+      - '/tr'
+      - '/TR'
+  sel_parent:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+  condition: sel_img and sel_create and sel_tn and sel_tr and sel_parent
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate administrative task creation
+  - Enterprise management or installer tools
 level: high
-tags: [ attack.persistence, attack.t1053, attack.t1053.005 ]
+tags:
+  - attack.persistence
+  - attack.t1053
+  - attack.t1053.005
