@@ -1,31 +1,115 @@
-title: PowerShell EncodedCommand (Sysmon)
+title: PowerShell EncodedCommand and Suspicious Patterns (Sysmon)
 id: 4ed9a2e1-5bc5-40fc-abed-4d40de186991
 status: experimental
-description: Detects PowerShell/pwsh launched with EncodedCommand switches, excluding common management parent processes.
+description: Detects PowerShell/pwsh with encoded commands and various suspicious execution patterns, excluding common management parent processes.
 author: Khaireddine
 date: 2025/08/18
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
 logsource:
   product: windows
   category: process_creation
   service: sysmon
 detection:
-  sel_img:
-    Image|endswith:
-      - '\powershell.exe'
-      - '\pwsh.exe'
-  sel_cmd:
-    CommandLine|contains:
-      - ' -enc '
-      - ' -encodedcommand '
-      - ' /enc '
-      - ' /encodedcommand '
+  suspicious_patterns:
+    - Image|endswith: '\powershell.exe'
+      ParentImage|endswith: 
+        - '\cmd.exe'
+        - '\powershell.exe'
+      CommandLine|contains:
+        - ' -noprofile'
+        - ' -nop'
+        - '$comMsXml=New-Object'
+        - 'MsXml2.ServerXmlHttp'
+        - '$comMsXml.Open'
+        - '$comMsXml.Send()'
+        - '$comMsXml.ResponseText'
+    - Image|endswith: '\powershell.exe'
+      ParentImage|endswith: 
+        - '\cmd.exe'
+        - '\powershell.exe'
+      CommandLine|contains:
+        - '{New-PSSession'
+        - '-ComputerName'
+        - '$env:COMPUTERNAME'
+        - 'Test-Connection'
+        - 'Set-Content'
+        - '$env:TEMP'
+        - 'Get-Content'
+        - 'Remove-Item -Force'
+    - Image|endswith: '\powershell.exe'
+      ParentImage|endswith: 
+        - '\cmd.exe'
+        - '\powershell.exe'
+      CommandLine|contains:
+        - '{$malcmdlets'
+        - '$cmdlets}}'
+        - 'Add-Persistence'
+        - 'Find-AVSignature'
+        - 'Get-GPPAutologon'
+        - 'Get-GPPPassword'
+        - 'Get-HttpStatus'
+        - 'Get-Keystrokes'
+        - 'Get-SecurityPackages'
+        - 'Get-TimedScreenshot'
+        - 'Get-VaultCredential'
+        - 'Get-VolumeShadowCopy'
+        - 'Install-SSP'
+        - 'Invoke-CredentialInjection'
+        - 'Invoke-DllInjection'
+        - 'Invoke-Mimikatz'
+        - 'Invoke-NinjaCopy'
+        - 'Invoke-Portscan'
+        - 'Invoke-ReflectivePEInjection'
+        - 'Invoke-ReverseDnsLookup'
+        - 'Invoke-Shellcode'
+        - 'Invoke-TokenManipulation'
+        - 'Invoke-WmiCommand'
+        - 'Mount-VolumeShadowCopy'
+        - 'New-ElevatedPersistenceOption'
+        - 'New-UserPersistenceOption'
+        - 'New-VolumeShadowCopy'
+        - 'Out-CompressedDll'
+        - 'Out-EncodedCommand'
+        - 'Out-EncryptedScript'
+        - 'Out-Minidump'
+        - 'PowerUp'
+        - 'PowerView'
+        - 'Remove-Comments'
+        - 'Remove-VolumeShadowCopy'
+        - 'Set-CriticalProcess'
+        - 'Set-MasterBootRecord'
+    - Image|endswith: '\reg.exe'
+      ParentImage|endswith: 
+        - '\cmd.exe'
+        - '\powershell.exe'
+      CommandLine|contains:
+        - ' add '
+        - ' /d '
+        - 'reg.exe add'
+        - 'Set-Content'
+        - 'HKCU:\\Software\\Classes'
+    - Image|endswith: '\powershell.exe'
+      ParentImage|endswith: '\WmiPrvSE.exe'
+      ParentCommandLine|contains: ' -Embedding'
+      CommandLine|contains:
+        - ' -NoProfile'
+        - ' -E '
+        - ' -EA '
+        - ' -EncodedArguments'
   exclude_parents:
     ParentImage|endswith:
       - '\ccmexec.exe'
       - '\SCClient.exe'
       - '\IntuneManagementExtension.exe'
-  condition: sel_img and sel_cmd and not exclude_parents
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
-falsepositives: [ Admin scripts using EncodedCommand ]
-level: medium
-tags: [ attack.execution, attack.t1059, attack.t1059.001 ]
+  condition: (selection or 1 of suspicious_patterns) and not exclude_parents
+fields: [UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User]
+falsepositives: 
+  - Admin scripts using EncodedCommand
+  - Legitimate automation tools
+  - System management processes
+level: high
+tags:
+  - attack.execution
+  - attack.t1059
+  - attack.t1059.001

@@ -13,4 +13,28 @@ T1047:
     winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and process.name:"WMIC.exe" and (process.args:("process" and "call" and "create") or process.args:("process" and "where" and "delete")) and process.parent.name : ("cmd.exe" or "powershell.exe")
 
 T1059.001:
-    winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and ( process.name: ("powershell.exe" or "pwsh.exe") or winlog.event_data.Image: "*\\powershell.exe" ) and ( process.command_line: ("* -enc *" or "* -encodedcommand *" or "* /enc *" or "* /encodedcommand *") or process.args: ("-enc" or "-encodedcommand" or "/enc" or "/encodedcommand") or message: ("* -enc *" or "* -encodedcommand *" or "* /enc *" or "* /encodedcommand *") ) and not (process.parent.name:"ccmexec.exe" or process.parent.name:"SCClient.exe" or process.parent.name:"IntuneManagementExtension.exe")
+    winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and (
+        (process.name: "powershell.exe"
+        and process.parent.name: ("cmd.exe" or "powershell.exe")
+        and (
+            (process.args: ("-noprofile" or "-nop")
+            and process.command_line.text: ("$comMsXml=New-Object" and "MsXml2.ServerXmlHttp" and "$comMsXml.Open" and "$comMsXml.Send()" and "$comMsXml.ResponseText"))
+            or
+            (process.args: ("-e" or "-enc" or "-encodedcommand" or "/enc" or "/encodedcommand"))
+            or
+            (process.args: ("{New-PSSession" and "-ComputerName")
+            and process.command_line.text:("$env:COMPUTERNAME" and "Test-Connection" and "Set-Content" and "$env:TEMP" and "Get-Content" and "Remove-Item -Force"))
+            or
+            (process.args: ("{$malcmdlets" and "$cmdlets}}")
+            and process.command_line.text:("Add-Persistence" or "Find-AVSignature" or "Get-GPPAutologon" or "Get-GPPPassword" or "Get-HttpStatus" or "Get-Keystrokes" or "Get-SecurityPackages" or "Get-TimedScreenshot" or "Get-VaultCredential" or "Get-VolumeShadowCopy" or "Install-SSP" or "Invoke-CredentialInjection" or "Invoke-DllInjection" or "Invoke-Mimikatz" or "Invoke-NinjaCopy" or "Invoke-Portscan" or "Invoke-ReflectivePEInjection" or "Invoke-ReverseDnsLookup" or "Invoke-Shellcode" or "Invoke-TokenManipulation" or "Invoke-WmiCommand" or "Mount-VolumeShadowCopy" or "New-ElevatedPersistenceOption" or "New-UserPersistenceOption" or "New-VolumeShadowCopy" or "Out-CompressedDll" or "Out-EncodedCommand" or "Out-EncryptedScript" or "Out-Minidump" or "PowerUp" or "PowerView" or "Remove-Comments" or "Remove-VolumeShadowCopy" or "Set-CriticalProcess" or "Set-MasterBootRecord"))
+        ))
+        or
+        (process.name:"reg.exe"
+        and process.parent.name: ("cmd.exe" or "powershell.exe")
+        and process.args:("add" and "/d") and process.parent.command_line.text:("reg.exe add" and "Set-Content" and "HKCU:\\Software\\Classes"))
+        or
+        (process.name: "powershell.exe"
+        and process.parent.name: "WmiPrvSE.exe"
+        and process.parent.args: "-Embedding" 
+        and process.args: ("-NoProfile" and ("-E" or "-EA" or "-EncodedArguments")))
+    )
