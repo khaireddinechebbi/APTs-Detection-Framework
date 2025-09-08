@@ -1,0 +1,299 @@
+{
+  "@timestamp": [
+    "2025-09-08T12:53:56.831Z"
+  ],
+  "agent.ephemeral_id": [
+    "c80f7487-964b-47a2-805c-2c8f2ca7b6c8"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-08T12:53:57.744Z"
+  ],
+  "event.ingested": [
+    "2025-09-08T12:54:34.101Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:6040:1cf:401d:7860:8b6:8fc1",
+    "2c0f:4280:6040:1cf:5ea0:9e86:494e:6e7e",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-08 12:53:56.831\nProcessGuid: {9602231E-D1E4-68BE-DF02-000000002F00}\nProcessId: 6820\nImage: C:\\Windows\\System32\\bitsadmin.exe\nFileVersion: 7.8.19041.1 (WinBuild.160101.0800)\nDescription: BITS administration utility\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: bitsadmin.exe\nCommandLine: C:\\Windows\\System32\\bitsadmin.exe  /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\Atomic-license.txt\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-B737-68BE-C846-020000000000}\nLogonId: 0x246c8\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=739B2DD012EA183895CC01116906F339C9AA1C0BAABF6F22C8E59E25A0C12917,IMPHASH=774033454EB79213B09F788FC004A02D\nParentProcessGuid: {9602231E-D1E4-68BE-DD02-000000002F00}\nParentProcessId: 9104\nParentImage: C:\\Windows\\System32\\cmd.exe\nParentCommandLine: \"cmd.exe\" /c C:\\Windows\\System32\\bitsadmin.exe /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt %temp%\\Atomic-license.txt\nParentUser: WINDOWS10\\khaireddine"
+  ],
+  "process.args": [
+    "C:\\Windows\\System32\\bitsadmin.exe",
+    "/transfer",
+    "qcxjb7",
+    "/Priority",
+    "HIGH",
+    "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt",
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\Atomic-license.txt"
+  ],
+  "process.args_count": [
+    7
+  ],
+  "process.command_line": [
+    "C:\\Windows\\System32\\bitsadmin.exe  /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\Atomic-license.txt"
+  ],
+  "process.command_line.text": [
+    "C:\\Windows\\System32\\bitsadmin.exe  /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\Atomic-license.txt"
+  ],
+  "process.entity_id": [
+    "{9602231E-D1E4-68BE-DF02-000000002F00}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\bitsadmin.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\bitsadmin.exe"
+  ],
+  "process.hash.sha256": [
+    "739b2dd012ea183895cc01116906f339c9aa1c0baabf6f22c8e59e25a0c12917"
+  ],
+  "process.name": [
+    "bitsadmin.exe"
+  ],
+  "process.name.text": [
+    "bitsadmin.exe"
+  ],
+  "process.parent.args": [
+    "cmd.exe",
+    "/c",
+    "C:\\Windows\\System32\\bitsadmin.exe",
+    "/transfer",
+    "qcxjb7",
+    "/Priority",
+    "HIGH",
+    "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt",
+    "%temp%\\Atomic-license.txt"
+  ],
+  "process.parent.args_count": [
+    9
+  ],
+  "process.parent.command_line": [
+    "\"cmd.exe\" /c C:\\Windows\\System32\\bitsadmin.exe /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt %temp%\\Atomic-license.txt"
+  ],
+  "process.parent.command_line.text": [
+    "\"cmd.exe\" /c C:\\Windows\\System32\\bitsadmin.exe /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt %temp%\\Atomic-license.txt"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-D1E4-68BE-DD02-000000002F00}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.name": [
+    "cmd.exe"
+  ],
+  "process.parent.name.text": [
+    "cmd.exe"
+  ],
+  "process.parent.pid": [
+    9104
+  ],
+  "process.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "process.pe.description": [
+    "BITS administration utility"
+  ],
+  "process.pe.file_version": [
+    "7.8.19041.1 (WinBuild.160101.0800)"
+  ],
+  "process.pe.imphash": [
+    "774033454eb79213b09f788fc004a02d"
+  ],
+  "process.pe.original_file_name": [
+    "bitsadmin.exe"
+  ],
+  "process.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "process.pid": [
+    6820
+  ],
+  "process.working_directory": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "related.hash": [
+    "739b2dd012ea183895cc01116906f339c9aa1c0baabf6f22c8e59e25a0c12917",
+    "774033454eb79213b09f788fc004a02d"
+  ],
+  "related.user": [
+    "khaireddine"
+  ],
+  "user.domain": [
+    "WINDOWS10"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "khaireddine"
+  ],
+  "user.name.text": [
+    "khaireddine"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "BITS administration utility"
+  ],
+  "winlog.event_data.FileVersion": [
+    "7.8.19041.1 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "High"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-B737-68BE-C846-020000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x246c8"
+  ],
+  "winlog.event_data.ParentUser": [
+    "WINDOWS10\\khaireddine"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "1"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    3128
+  ],
+  "winlog.process.thread.id": [
+    4032
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "392679"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "rBhkKZkBBIzTpjLGeOZL",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}

@@ -1,25 +1,114 @@
-title: CertUtil File Download or Split (Sysmon)
+title: Suspicious File Download Utilities in Temp (Sysmon)
 id: 7c1d5f2e-1a3b-4d9f-b6e8-2f7a9c5e4b3d
 status: experimental
-description: Detects certutil.exe usage for downloading files, splitting files, or accessing URLs.
+description: Detects suspicious file download or staging activity using built-in utilities like certutil, bitsadmin, PowerShell, curl, or sqlcmd, often abused for T1105 (Ingress Tool Transfer).
 author: Khaireddine
-date: 2025/08/18
+date: 2025/09/08
 logsource:
   product: windows
   category: process_creation
   service: sysmon
 detection:
-  sel_img:
-    Image|endswith: 
-      - '\certutil.exe'
-  sel_cmd:
+  certutil:
+    Image|endswith: '\certutil.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - '-urlcache'
+      - '-split'
+      - '-f'
     CommandLine|contains_any:
-      - ' -urlcache '
-      - ' -split '
-      - ' http://'
-      - ' https://'
-  condition: sel_img and sel_cmd
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
-falsepositives: [ Admin usage of certutil for legitimate file operations ]
+      - 'http://'
+      - 'https://'
+    CurrentDirectory|contains: '\Temp\'
+
+  bitsadmin:
+    Image|endswith: '\bitsadmin.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - '/transfer'
+      - '/priority'
+      - 'high'
+    CommandLine|contains_any:
+      - 'http://'
+      - 'https://'
+    CurrentDirectory|contains: '\Temp\'
+
+  powershell_webclient:
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_any:
+      - 'DownloadFile'
+      - 'DownloadString'
+      - 'WebClient'
+      - 'Out-File'
+      - 'Invoke-Item'
+      - 'Invoke-Expression'
+    CommandLine|contains_any:
+      - 'http://'
+      - 'https://'
+    CurrentDirectory|contains: '\Temp\'
+
+  cmd_curl:
+    Image|endswith: '\cmd.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - 'curl.exe'
+      - '-k'
+    CommandLine|contains_any:
+      - 'http://'
+      - 'https://'
+      - '\users\'
+      - 'Temp'
+      - '\programdata\'
+    CurrentDirectory|contains: '\Temp\'
+
+  powershell_iwr:
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_any:
+      - 'iwr'
+      - 'Invoke-WebRequest'
+    CommandLine|contains_any:
+      - 'http://'
+      - 'https://'
+    CurrentDirectory|contains: '\Temp\'
+
+  powershell_sqlcmd_zip:
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - '&'
+      - '{sqlcmd'
+    CommandLine|contains_any:
+      - 'http://'
+      - 'https://'
+      - '.zip'
+    CurrentDirectory|contains: '\Temp\'
+
+  condition: certutil or bitsadmin or powershell_webclient or cmd_curl or powershell_iwr or powershell_sqlcmd_zip
+
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate admin usage of certutil, bitsadmin, curl, or PowerShell web requests
 level: high
-tags: [ attack.command_and_control, attack.t1105 ]
+tags:
+  - attack.command_and_control
+  - attack.t1105

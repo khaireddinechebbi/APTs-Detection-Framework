@@ -1,0 +1,293 @@
+{
+  "@timestamp": [
+    "2025-09-08T14:27:26.719Z"
+  ],
+  "agent.ephemeral_id": [
+    "c80f7487-964b-47a2-805c-2c8f2ca7b6c8"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-08T14:27:29.558Z"
+  ],
+  "event.ingested": [
+    "2025-09-08T14:28:09.650Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:6040:1cf:401d:7860:8b6:8fc1",
+    "2c0f:4280:6040:1cf:5ea0:9e86:494e:6e7e",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-08 14:27:26.719\nProcessGuid: {9602231E-E7CE-68BE-C403-000000002F00}\nProcessId: 2108\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/redcanaryco/atomic-red-team/4042cb3433bce024e304500dcfe3c5590571573a/LICENSE.txt') | Out-File LICENSE.txt; Invoke-Item LICENSE.txt}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-B737-68BE-C846-020000000000}\nLogonId: 0x246c8\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-D3D0-68BE-0403-000000002F00}\nParentProcessId: 6284\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \nParentUser: WINDOWS10\\khaireddine"
+  ],
+  "process.args": [
+    "powershell.exe",
+    "&",
+    "{(New-Object",
+    "Net.WebClient).DownloadString('https://raw.githubusercontent.com/redcanaryco/atomic-red-team/4042cb3433bce024e304500dcfe3c5590571573a/LICENSE.txt')",
+    "|",
+    "Out-File",
+    "LICENSE.txt;",
+    "Invoke-Item",
+    "LICENSE.txt}"
+  ],
+  "process.args_count": [
+    9
+  ],
+  "process.command_line": [
+    "\"powershell.exe\" & {(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/redcanaryco/atomic-red-team/4042cb3433bce024e304500dcfe3c5590571573a/LICENSE.txt') | Out-File LICENSE.txt; Invoke-Item LICENSE.txt}"
+  ],
+  "process.command_line.text": [
+    "\"powershell.exe\" & {(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/redcanaryco/atomic-red-team/4042cb3433bce024e304500dcfe3c5590571573a/LICENSE.txt') | Out-File LICENSE.txt; Invoke-Item LICENSE.txt}"
+  ],
+  "process.entity_id": [
+    "{9602231E-E7CE-68BE-C403-000000002F00}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.hash.sha256": [
+    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3"
+  ],
+  "process.name": [
+    "powershell.exe"
+  ],
+  "process.name.text": [
+    "powershell.exe"
+  ],
+  "process.parent.args": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.parent.args_count": [
+    1
+  ],
+  "process.parent.command_line": [
+    "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" "
+  ],
+  "process.parent.command_line.text": [
+    "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" "
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-D3D0-68BE-0403-000000002F00}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.parent.name": [
+    "powershell.exe"
+  ],
+  "process.parent.name.text": [
+    "powershell.exe"
+  ],
+  "process.parent.pid": [
+    6284
+  ],
+  "process.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "process.pe.description": [
+    "Windows PowerShell"
+  ],
+  "process.pe.file_version": [
+    "10.0.19041.3996 (WinBuild.160101.0800)"
+  ],
+  "process.pe.imphash": [
+    "3d08f4848535206d772de145804ff4b6"
+  ],
+  "process.pe.original_file_name": [
+    "PowerShell.EXE"
+  ],
+  "process.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "process.pid": [
+    2108
+  ],
+  "process.working_directory": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "related.hash": [
+    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3",
+    "3d08f4848535206d772de145804ff4b6"
+  ],
+  "related.user": [
+    "khaireddine"
+  ],
+  "user.domain": [
+    "WINDOWS10"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "khaireddine"
+  ],
+  "user.name.text": [
+    "khaireddine"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "Windows PowerShell"
+  ],
+  "winlog.event_data.FileVersion": [
+    "10.0.19041.3996 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "High"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-B737-68BE-C846-020000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x246c8"
+  ],
+  "winlog.event_data.ParentUser": [
+    "WINDOWS10\\khaireddine"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "1"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    3128
+  ],
+  "winlog.process.thread.id": [
+    4032
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "402993"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "8Bm6KZkBBIzTpjLGJxy8",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}

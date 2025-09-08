@@ -1,0 +1,297 @@
+{
+  "@timestamp": [
+    "2025-09-08T12:52:16.379Z"
+  ],
+  "agent.ephemeral_id": [
+    "c80f7487-964b-47a2-805c-2c8f2ca7b6c8"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-08T12:52:17.658Z"
+  ],
+  "event.ingested": [
+    "2025-09-08T12:52:37.786Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:6040:1cf:401d:7860:8b6:8fc1",
+    "2c0f:4280:6040:1cf:5ea0:9e86:494e:6e7e",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-08 12:52:16.379\nProcessGuid: {9602231E-D180-68BE-D902-000000002F00}\nProcessId: 9200\nImage: C:\\Windows\\System32\\certutil.exe\nFileVersion: 10.0.19041.5794 (WinBuild.160101.0800)\nDescription: CertUtil.exe\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: CertUtil.exe\nCommandLine: certutil  -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-B737-68BE-C846-020000000000}\nLogonId: 0x246c8\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2,IMPHASH=5AFC8346D5AFF4A4862E8A7C91042465\nParentProcessGuid: {9602231E-D17F-68BE-D802-000000002F00}\nParentProcessId: 2268\nParentImage: C:\\Windows\\System32\\cmd.exe\nParentCommandLine: cmd  /c certutil -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt\nParentUser: WINDOWS10\\khaireddine"
+  ],
+  "process.args": [
+    "certutil",
+    "-urlcache",
+    "-split",
+    "-f",
+    "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt",
+    "Atomic-license.txt"
+  ],
+  "process.args_count": [
+    6
+  ],
+  "process.command_line": [
+    "certutil  -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt"
+  ],
+  "process.command_line.text": [
+    "certutil  -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt"
+  ],
+  "process.entity_id": [
+    "{9602231E-D180-68BE-D902-000000002F00}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\certutil.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\certutil.exe"
+  ],
+  "process.hash.sha256": [
+    "fd1670b43e2d9188b12b233780bf043c5a90a67a2c6e3fcdc564a5c246531bc2"
+  ],
+  "process.name": [
+    "certutil.exe"
+  ],
+  "process.name.text": [
+    "certutil.exe"
+  ],
+  "process.parent.args": [
+    "cmd",
+    "/c",
+    "certutil",
+    "-urlcache",
+    "-split",
+    "-f",
+    "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt",
+    "Atomic-license.txt"
+  ],
+  "process.parent.args_count": [
+    8
+  ],
+  "process.parent.command_line": [
+    "cmd  /c certutil -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt"
+  ],
+  "process.parent.command_line.text": [
+    "cmd  /c certutil -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-D17F-68BE-D802-000000002F00}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.name": [
+    "cmd.exe"
+  ],
+  "process.parent.name.text": [
+    "cmd.exe"
+  ],
+  "process.parent.pid": [
+    2268
+  ],
+  "process.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "process.pe.description": [
+    "CertUtil.exe"
+  ],
+  "process.pe.file_version": [
+    "10.0.19041.5794 (WinBuild.160101.0800)"
+  ],
+  "process.pe.imphash": [
+    "5afc8346d5aff4a4862e8a7c91042465"
+  ],
+  "process.pe.original_file_name": [
+    "CertUtil.exe"
+  ],
+  "process.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "process.pid": [
+    9200
+  ],
+  "process.working_directory": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "related.hash": [
+    "fd1670b43e2d9188b12b233780bf043c5a90a67a2c6e3fcdc564a5c246531bc2",
+    "5afc8346d5aff4a4862e8a7c91042465"
+  ],
+  "related.user": [
+    "khaireddine"
+  ],
+  "user.domain": [
+    "WINDOWS10"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "khaireddine"
+  ],
+  "user.name.text": [
+    "khaireddine"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "CertUtil.exe"
+  ],
+  "winlog.event_data.FileVersion": [
+    "10.0.19041.5794 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "High"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-B737-68BE-C846-020000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x246c8"
+  ],
+  "winlog.event_data.ParentUser": [
+    "WINDOWS10\\khaireddine"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "1"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    3128
+  ],
+  "winlog.process.thread.id": [
+    4032
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "392487"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "qxhiKZkBBIzTpjLGseUc",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}
