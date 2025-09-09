@@ -1,424 +1,137 @@
-# T1047 - Windows Management Instrumentation
-## [Description from ATT&CK](https://attack.mitre.org/techniques/T1047)
-<blockquote>
+# Atomic Red Team Tests for APT29 & Lazarus Group - T1047 Windows Management Instrumentation
 
-Adversaries may abuse Windows Management Instrumentation (WMI) to execute malicious commands and payloads. WMI is designed for programmers and is the infrastructure for management data and operations on Windows systems.(Citation: WMI 1-3) WMI is an administration feature that provides a uniform environment to access Windows system components.
+This repository documents **Atomic Red Team tests for T1047 (Windows Management Instrumentation)** that closely emulate the tradecraft of both **APT29** (a.k.a. Cozy Bear, Midnight Blizzard) and **Lazarus Group**.
 
-The WMI service enables both local and remote access, though the latter is facilitated by [Remote Services](https://attack.mitre.org/techniques/T1021) such as [Distributed Component Object Model](https://attack.mitre.org/techniques/T1021/003) and [Windows Remote Management](https://attack.mitre.org/techniques/T1021/006).(Citation: WMI 1-3) Remote WMI over DCOM operates using port 135, whereas WMI over WinRM operates over port 5985 when using HTTP and 5986 for HTTPS.(Citation: WMI 1-3) (Citation: Mandiant WMI)
+The goal is to:
+* Provide defenders with relevant tests for detecting WMI abuse activities
+* Map the tests to known APT29 and Lazarus Group behaviors and campaigns
+* Highlight specific techniques used by these threat groups for execution and lateral movement
 
-An adversary can use WMI to interact with local and remote systems and use it as a means to execute various behaviors, such as gathering information for [Discovery](https://attack.mitre.org/tactics/TA0007) as well as [Execution](https://attack.mitre.org/tactics/TA0002) of commands and payloads.(Citation: Mandiant WMI) For example, `wmic.exe` can be abused by an adversary to delete shadow copies with the command `wmic.exe Shadowcopy Delete` (i.e., [Inhibit System Recovery](https://attack.mitre.org/techniques/T1490)).(Citation: WMI 6)
+---
 
-**Note:** `wmic.exe` is deprecated as of January of 2024, with the WMIC feature being “disabled by default” on Windows 11+. WMIC will be removed from subsequent Windows releases and replaced by [PowerShell](https://attack.mitre.org/techniques/T1059/001) as the primary WMI interface.(Citation: WMI 7,8) In addition to PowerShell and tools like `wbemtool.exe`, COM APIs can also be used to programmatically interact with WMI via C++, .NET, VBScript, etc.(Citation: WMI 7,8)
+## Background
 
-</blockquote>
+* **APT29** (Cozy Bear, Midnight Blizzard) is a Russian state-sponsored threat group
+  * Known for sophisticated cyber espionage and the **SolarWinds compromise**
+  * Highly skilled in living-off-the-land techniques and lateral movement
+  * Uses **WMI abuse** for remote execution and lateral movement
 
-## Atomic Tests
+* **Lazarus Group** is a North Korean state-sponsored threat group
+  * Known for **financial theft campaigns** and destructive attacks
+  * Uses **WMI** alongside other living-off-the-land techniques for execution and propagation
+  * Leverages multiple execution methods to evade detection
 
-- [Atomic Test #1 - WMI Reconnaissance Users](#atomic-test-1---wmi-reconnaissance-users)
+Both groups leverage T1047 (Windows Management Instrumentation) because it allows them to:
+* Execute malicious code through a trusted Windows management infrastructure
+* Perform lateral movement using built-in system utilities
+* Bypass application control solutions that don't monitor WMI activities
+* Blend with legitimate administrative operations
 
-- [Atomic Test #2 - WMI Reconnaissance Processes](#atomic-test-2---wmi-reconnaissance-processes)
+---
 
-- [Atomic Test #3 - WMI Reconnaissance Software](#atomic-test-3---wmi-reconnaissance-software)
+## Atomic Test Analysis
 
-- [Atomic Test #4 - WMI Reconnaissance List Remote Services](#atomic-test-4---wmi-reconnaissance-list-remote-services)
-
-- [Atomic Test #5 - WMI Execute Local Process](#atomic-test-5---wmi-execute-local-process)
-
-- [Atomic Test #6 - WMI Execute Remote Process](#atomic-test-6---wmi-execute-remote-process)
-
-- [Atomic Test #7 - Create a Process using WMI Query and an Encoded Command](#atomic-test-7---create-a-process-using-wmi-query-and-an-encoded-command)
-
-- [Atomic Test #8 - Create a Process using obfuscated Win32_Process](#atomic-test-8---create-a-process-using-obfuscated-win32_process)
-
-- [Atomic Test #9 - WMI Execute rundll32](#atomic-test-9---wmi-execute-rundll32)
-
-- [Atomic Test #10 - Application uninstall using WMIC](#atomic-test-10---application-uninstall-using-wmic)
-
-
-<br/>
-
-## Atomic Test #1 - WMI Reconnaissance Users
-An adversary might use WMI to list all local User Accounts. 
-When the test completes , there should be local user accounts information displayed on the command line.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** c107778c-dcf5-47c5-af2e-1d058a3df3ea
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #5 - WMI Execute Local Process
+**Technique:** Local Process Execution via WMI  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
 ```cmd
-wmic useraccount get /ALL /format:csv
+wmic process call create notepad.exe
 ```
+**Explanation:** Both APT29 and Lazarus Group use WMI for local process execution as part of their living-off-the-land methodology. This technique allows them to execute processes while blending with legitimate administrative activity and avoiding detection by security tools focused on traditional process creation.
 
+**APT29 Correlation:** APT29 has used WMI for various system manipulation tasks during their espionage operations.
+**Lazarus Correlation:** Lazarus Group employs WMI as one of multiple execution vectors in their attacks.
 
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #2 - WMI Reconnaissance Processes
-An adversary might use WMI to list Processes running on the compromised host.
-When the test completes , there should be running processes listed on the command line.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 5750aa16-0e59-4410-8b9a-8a47ca2788e2
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #6 - WMI Execute Remote Process
+**Technique:** Remote Process Execution via WMI  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
 ```cmd
-wmic process get caption,executablepath,commandline /format:csv
+wmic /user:DOMAIN\Administrator /password:P@ssw0rd1 /node:"192.168.1.100" process call create cmd.exe
 ```
+**Explanation:** Both groups use WMI for lateral movement within compromised networks. APT29 has famously used this technique for spreading through victim environments, while Lazarus Group employs it for rapid network propagation in financial and destructive attacks.
 
+**APT29 Correlation:** Extensively used in SolarWinds campaign for lateral movement.
+**Lazarus Correlation:** Employed in financial institution attacks and Operation Dream Job.
 
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #3 - WMI Reconnaissance Software
-An adversary might use WMI to list installed Software hotfix and patches.
-When the test completes, there should be a list of installed patches and when they were installed.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 718aebaa-d0e0-471a-8241-c5afa69c7414
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #9 - WMI Execute rundll32
+**Technique:** DLL Execution via WMI and Rundll32  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
 ```cmd
-wmic qfe get description,installedOn /format:csv
+wmic /node:127.0.0.1 process call create "rundll32.exe \"PathToAtomicsFolder\..\ExternalPayloads\calc.dll\" StartW"
 ```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #4 - WMI Reconnaissance List Remote Services
-An adversary might use WMI to check if a certain Remote Service is running on a remote device. 
-When the test completes, a service information will be displayed on the screen if it exists.
-A common feedback message is that "No instance(s) Available" if the service queried is not running.
-A common error message is "Node - (provided IP or default)  ERROR Description =The RPC server is unavailable" 
-if the provided remote host is unreachable
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 0fd48ef7-d890-4e93-a533-f7dedd5191d3
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| node | Ip Address | string | 127.0.0.1|
-| service_search_string | Name Of Service | string | Spooler|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-wmic /node:"#{node}" service where (caption like "%#{service_search_string}%")
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #5 - WMI Execute Local Process
-This test uses wmic.exe to execute a process on the local host.
-When the test completes , a new process will be started locally .A notepad application will be started when input is left on default.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** b3bdfc91-b33e-4c6d-a5c8-d64bee0276b3
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| process_to_execute | Name or path of process to execute. | string | notepad.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-wmic process call create #{process_to_execute}
-```
-
-#### Cleanup Commands:
-```cmd
-wmic process where name='#{process_to_execute}' delete >nul 2>&1
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #6 - WMI Execute Remote Process
-This test uses wmic.exe to execute a process on a remote host. Specify a valid value for remote IP using the node parameter.
-To clean up, provide the same node input as the one provided to run the test
-A common error message is "Node - (provided IP or default)  ERROR Description =The RPC server is unavailable" if the default or provided IP is unreachable
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 9c8ef159-c666-472f-9874-90c8d60d136b
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| node | Ip Address | string | 127.0.0.1|
-| user_name | Username | string | DOMAIN&#92;Administrator|
-| password | Password | string | P@ssw0rd1|
-| process_to_execute | Name or path of process to execute. | string | notepad.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-wmic /user:#{user_name} /password:#{password} /node:"#{node}" process call create #{process_to_execute}
-```
-
-#### Cleanup Commands:
-```cmd
-wmic /user:#{user_name} /password:#{password} /node:"#{node}" process where name='#{process_to_execute}' delete >nul 2>&1
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #7 - Create a Process using WMI Query and an Encoded Command
-Solarigate persistence is achieved via backdoors deployed via various techniques including using PowerShell with an EncodedCommand
- Powershell -nop -exec bypass -EncodedCommand <encoded command>
-Where the –EncodedCommand, once decoded, would resemble:
-  Invoke-WMIMethod win32_process -name create -argumentlist ‘rundll32 c:\windows\idmu\common\ypprop.dll _XInitImageFuncPtrs’ -ComputerName WORKSTATION
-The EncodedCommand in this atomic is the following: Invoke-WmiMethod -Path win32_process -Name create -ArgumentList notepad.exe
-You should expect to see notepad.exe running after execution of this test.
-[Solarigate Analysis from Microsoft](https://www.microsoft.com/security/blog/2020/12/18/analyzing-solorigate-the-compromised-dll-file-that-started-a-sophisticated-cyberattack-and-how-microsoft-defender-helps-protect/)
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 7db7a7f9-9531-4840-9b30-46220135441c
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-powershell -exec bypass -e SQBuAHYAbwBrAGUALQBXAG0AaQBNAGUAdABoAG8AZAAgAC0AUABhAHQAaAAgAHcAaQBuADMAMgBfAHAAcgBvAGMAZQBzAHMAIAAtAE4AYQBtAGUAIABjAHIAZQBhAHQAZQAgAC0AQQByAGcAdQBtAGUAbgB0AEwAaQBzAHQAIABuAG8AdABlAHAAYQBkAC4AZQB4AGUA
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #8 - Create a Process using obfuscated Win32_Process
-This test tries to mask process creation by creating a new class that inherits from Win32_Process. Indirect call of suspicious method such as Win32_Process::Create can break detection logic.
-[Cybereason blog post No Win32_ProcessNeeded](https://www.cybereason.com/blog/wmi-lateral-movement-win32)
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 10447c83-fc38-462a-a936-5102363b1c43
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| new_class | Derived class name | string | Win32_Atomic|
-| process_to_execute | Name or path of process to execute. | string | notepad.exe|
-
-
-#### Attack Commands: Run with `powershell`!  Elevation Required (e.g. root or admin) 
-
-
-```powershell
-$Class = New-Object Management.ManagementClass(New-Object Management.ManagementPath("Win32_Process"))
-$NewClass = $Class.Derive("#{new_class}")
-$NewClass.Put()
-Invoke-WmiMethod -Path #{new_class} -Name create -ArgumentList #{process_to_execute}
-```
-
-#### Cleanup Commands:
-```powershell
-$CleanupClass = New-Object Management.ManagementClass(New-Object Management.ManagementPath("#{new_class}"))
-try { $CleanupClass.Delete() } catch {}
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #9 - WMI Execute rundll32
-This test uses wmic.exe to execute a DLL function using rundll32. Specify a valid value for remote IP using the node parameter.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 00738d2a-4651-4d76-adf2-c43a41dfb243
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| node | Ip Address | string | 127.0.0.1|
-| dll_to_execute | Path to DLL. | string | PathToAtomicsFolder&#92;..&#92;ExternalPayloads&#92;calc.dll|
-| function_to_execute | Name of DLL function to call | string | StartW|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-wmic /node:#{node} process call create "rundll32.exe \"#{dll_to_execute}\" #{function_to_execute}"
-```
-
-#### Cleanup Commands:
-```cmd
-taskkill /f /im calculator.exe
-```
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: DLL with function to execute must exist on disk at specified location (#{dll_to_execute})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{dll_to_execute}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory "PathToAtomicsFolder\..\ExternalPayloads\" -ErrorAction Ignore -Force | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/bin/calc.dll?raw=true" -OutFile "#{dll_to_execute}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #10 - Application uninstall using WMIC
-Emulates uninstalling  applications using WMIC.  This method only works if the product was installed with an msi file.  APTs have been seen using this to uninstall security products.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** c510d25b-1667-467d-8331-a56d3e9bc4ff
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| node | Computer the action is being executed against but defaults to the localhost. | string | 127.0.0.1|
-| product | Enter the product name being uninstalled.  This will default to TightVNC. | string | Tightvnc|
-
-
-#### Attack Commands: Run with `command_prompt`!  Elevation Required (e.g. root or admin) 
-
-
-```cmd
-wmic /node:"#{node}" product where "name like '#{product}%%'" call uninstall
-```
-
-#### Cleanup Commands:
-```cmd
-msiexec /i "PathToAtomicsFolder\..\ExternalPayloads\tightvncinstaller.msi" /qn /norestart
-```
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: TightVNC must be installed.
-##### Check Prereq Commands:
-```powershell
-if ((Test-Path "C:\Program Files\TightVNC\tvnviewer.exe")-Or (Test-Path "C:\Program Files (x86)\TightVNC\tvnviewer.exe")) {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-Invoke-WebRequest 'https://www.tightvnc.com/download/2.8.63/tightvnc-2.8.63-gpl-setup-64bit.msi' -OutFile "PathToAtomicsFolder\..\ExternalPayloads\tightvncinstaller.msi"
-start-sleep -s 10
-msiexec /i "PathToAtomicsFolder\..\ExternalPayloads\tightvncinstaller.msi" /qn /norestart
-start-sleep -s 15
-```
-
-
-
-
-<br/>
+**Explanation:** Both groups use technique chaining to evade detection. APT29 combines WMI with rundll32 for sophisticated execution chains, while Lazarus Group frequently uses rundll32 in various attack phases and combines it with WMI for additional obfuscation.
+
+**APT29 Correlation:** Used in advanced execution chains for payload delivery.
+**Lazarus Correlation:** Common in financial malware and ransomware operations.
+
+---
+
+## Correlation with APT29 & Lazarus Tradecraft
+
+### APT29 Focus:
+* **Stealthy Lateral Movement (#6)**: APT29 uses WMI for careful, targeted lateral movement
+* **Living-off-the-Land (#5, #9)**: Heavy reliance on built-in Windows utilities
+* **Long-term Operations**: WMI used for persistent access maintenance
+
+### Lazarus Group Focus:
+* **Rapid Propagation (#6)**: Lazarus uses WMI for aggressive network spreading
+* **Multiple Techniques (#9)**: Combines WMI with other execution methods
+* **Financial Objectives**: WMI used in bank network penetration
+
+### Common Tactical Objectives:
+1. **Execution**: Run malicious code through trusted Windows components
+2. **Lateral Movement**: Move through networks using stolen credentials
+3. **Defense Evasion**: Avoid detection by using legitimate administrative tools
+4. **Persistence**: Maintain access through various execution mechanisms
+
+---
+
+## Defender Notes
+
+* These tests are high-value because they **closely emulate real-world tradecraft** from both threat groups
+* Detection should focus on:
+  * `wmic process call create` commands, especially with remote nodes
+  * WMI network traffic over ports 135 (DCOM) or 5985/5986 (WinRM)
+  * Authentication events followed by WMI execution
+  * Unusual process chains involving wmic.exe and rundll32.exe
+
+* Critical detection opportunities:
+  * **Process creation**: wmic.exe creating child processes
+  * **Network connections**: WMI traffic to multiple systems
+  * **Command line**: Complex WMI commands with credentials and remote nodes
+  * **Authentication**: Remote logins followed by WMI activity
+
+### Mitigation Strategies:
+* Implement application control to restrict wmic.exe if not required
+* Monitor WMI activity through enhanced logging and auditing
+* Use network segmentation to limit WMI traffic between segments
+* Regularly review and remove unnecessary administrative privileges
+* Implement credential management to detect stolen credential usage
+
+## Campaign References
+
+1. **APT29 SolarWinds Campaign** (2020): Used WMI for lateral movement through victim networks
+2. **APT29 COVID-19 Vaccine Targeting** (2020): Employed WMI for spreading through research environments
+3. **Lazarus Operation Dream Job**: Used WMI alongside other execution techniques
+4. **Lazarus Financial Attacks**: Employed WMI for bank network penetration
+
+## Academic References
+
+1. MITRE ATT&CK Technique T1047 - Windows Management Instrumentation
+2. Microsoft: "NOBELIUM targeting IT supply chain" (2021)
+3. US-CERT: "Hidden Cobra - North Korean Malicious Cyber Activity" (Lazarus Group)
+4. CrowdStrike: "APT29 Targets COVID-19 Vaccine Development" (2020)
+5. FireEye: "APT29 Domain Fronting With TOR" (2017)
+
+## Detection Recommendations
+
+* **SIEM Rules**: Alert on wmic.exe with process creation commands
+* **EDR Monitoring**: Track WMI process creation and remote execution
+* **Network Monitoring**: Detect WMI traffic patterns and unusual connections
+* **Authentication Monitoring**: Watch for credential use with WMI operations
+* **Behavioral Analysis**: Identify unusual wmic.exe activity patterns
+
+This test provides defenders with critical capabilities to detect and respond to WMI abuse techniques used by both APT29 and Lazarus Group, which are fundamental to their operational success in targeted environments.

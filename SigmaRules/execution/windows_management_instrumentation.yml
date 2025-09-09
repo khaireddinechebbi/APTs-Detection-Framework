@@ -1,7 +1,7 @@
-title: WMI Process Execution via wmic.exe (Sysmon)
+title: WMI Process Execution and Termination via wmic.exe (Sysmon)
 id: 9c7d2a34-2d5e-4dd7-9a92-0d6d2c9c9f1a
 status: stable
-description: Detects wmic launching processes (process call create).
+description: Detects suspicious use of wmic.exe to create or terminate processes, commonly abused for execution and defense evasion.
 author: Khaireddine
 date: 2025/08/22
 logsource:
@@ -11,13 +11,32 @@ logsource:
 detection:
   sel_img:
     Image|endswith: '\wmic.exe'
-  sel_cmd:
+  sel_parent:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+  sel_create:
     CommandLine|contains|all:
       - ' process '
       - ' call '
       - ' create '
-  condition: sel_img and sel_cmd
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
-falsepositives: [ Legitimate administrative WMIC usage ]
+  sel_delete:
+    CommandLine|contains|all:
+      - ' process '
+      - ' where '
+      - ' delete '
+  condition: sel_img and sel_parent and (sel_create or sel_delete)
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate administrative WMIC process management
 level: medium
-tags: [ attack.execution, attack.t1047 ]
+tags:
+  - attack.execution
+  - attack.defense_evasion
+  - attack.t1047

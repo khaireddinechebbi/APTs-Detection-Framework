@@ -1,9 +1,9 @@
 {
   "@timestamp": [
-    "2025-09-05T12:40:37.592Z"
+    "2025-09-09T15:40:04.267Z"
   ],
   "agent.ephemeral_id": [
-    "124c139e-813a-4f02-be7c-7d2290d0284b"
+    "4aef2c92-921b-4e2e-93d9-8202e873e700"
   ],
   "agent.hostname": [
     "windows10"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-05T12:40:38.845Z"
+    "2025-09-09T15:40:06.004Z"
   ],
   "event.ingested": [
-    "2025-09-05T12:41:29.735Z"
+    "2025-09-09T15:40:16.120Z"
   ],
   "event.kind": [
     "event"
@@ -60,8 +60,8 @@
     "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
   ],
   "host.ip": [
-    "2c0f:4280:6050:34be:69f0:a022:eac3:a2a",
-    "2c0f:4280:6050:34be:d4bf:1db8:4ab3:1c2d",
+    "2c0f:4280:3030:16df:5fdc:19cc:e39d:7abb",
+    "2c0f:4280:3030:16df:c485:2101:8565:e0ba",
     "fe80::5588:11c4:b507:8fc7",
     "192.168.100.161"
   ],
@@ -99,113 +99,104 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-05 12:40:37.592\nProcessGuid: {9602231E-DA45-68BA-8501-000000002C00}\nProcessId: 6644\nImage: C:\\Windows\\PSEXESVC.exe\nFileVersion: 2.43\nDescription: PsExec Service\nProduct: Sysinternals PsExec\nCompany: Sysinternals\nOriginalFileName: psexesvc.exe\nCommandLine: C:\\Windows\\PSEXESVC.exe\nCurrentDirectory: C:\\Windows\\system32\\\nUser: NT AUTHORITY\\SYSTEM\nLogonGuid: {9602231E-CDE3-68BA-E703-000000000000}\nLogonId: 0x3e7\nTerminalSessionId: 0\nIntegrityLevel: System\nHashes: SHA256=CC14DF781475EF0F3F2C441D03A622EA67CD86967526F8758EAD6F45174DB78E,IMPHASH=89372DA3565367C6EEFA3917639E884F\nParentProcessGuid: {9602231E-CDE2-68BA-0B00-000000002C00}\nParentProcessId: 660\nParentImage: C:\\Windows\\System32\\services.exe\nParentCommandLine: C:\\Windows\\system32\\services.exe\nParentUser: NT AUTHORITY\\SYSTEM"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-09 15:40:04.267\nProcessGuid: {9602231E-4A54-68C0-3B02-000000003300}\nProcessId: 8712\nImage: C:\\Windows\\System32\\cmd.exe\nFileVersion: 10.0.19041.4355 (WinBuild.160101.0800)\nDescription: Windows Command Processor\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: Cmd.Exe\nCommandLine: \"cmd.exe\" /c del %%temp%%\\sam >nul 2> nul & del %%temp%%\\system >nul 2> nul & del %%temp%%\\security >nul 2> nul\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-2FD1-68C0-642E-020000000000}\nLogonId: 0x22e64\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=BADF4752413CB0CBDC03FB95820CA167F0CDC63B597CCDB5EF43111180E088B0,IMPHASH=272245E2988E1E430500B852C4FB5E18\nParentProcessGuid: {00000000-0000-0000-0000-000000000000}\nParentProcessId: 5872\nParentImage: -\nParentCommandLine: -\nParentUser: -"
   ],
   "process.args": [
-    "C:\\Windows\\PSEXESVC.exe"
+    "cmd.exe",
+    "/c",
+    "del",
+    "%%temp%%\\sam",
+    ">nul",
+    "2>",
+    "nul",
+    "&",
+    "del",
+    "%%temp%%\\system",
+    ">nul",
+    "2>",
+    "nul",
+    "&",
+    "del",
+    "%%temp%%\\security",
+    ">nul",
+    "2>",
+    "nul"
   ],
   "process.args_count": [
-    1
+    19
   ],
   "process.command_line": [
-    "C:\\Windows\\PSEXESVC.exe"
+    "\"cmd.exe\" /c del %%temp%%\\sam >nul 2> nul & del %%temp%%\\system >nul 2> nul & del %%temp%%\\security >nul 2> nul"
   ],
   "process.command_line.text": [
-    "C:\\Windows\\PSEXESVC.exe"
+    "\"cmd.exe\" /c del %%temp%%\\sam >nul 2> nul & del %%temp%%\\system >nul 2> nul & del %%temp%%\\security >nul 2> nul"
   ],
   "process.entity_id": [
-    "{9602231E-DA45-68BA-8501-000000002C00}"
+    "{9602231E-4A54-68C0-3B02-000000003300}"
   ],
   "process.executable": [
-    "C:\\Windows\\PSEXESVC.exe"
+    "C:\\Windows\\System32\\cmd.exe"
   ],
   "process.executable.text": [
-    "C:\\Windows\\PSEXESVC.exe"
+    "C:\\Windows\\System32\\cmd.exe"
   ],
   "process.hash.sha256": [
-    "cc14df781475ef0f3f2c441d03a622ea67cd86967526f8758ead6f45174db78e"
+    "badf4752413cb0cbdc03fb95820ca167f0cdc63b597ccdb5ef43111180e088b0"
   ],
   "process.name": [
-    "PSEXESVC.exe"
+    "cmd.exe"
   ],
   "process.name.text": [
-    "PSEXESVC.exe"
-  ],
-  "process.parent.args": [
-    "C:\\Windows\\system32\\services.exe"
-  ],
-  "process.parent.args_count": [
-    1
-  ],
-  "process.parent.command_line": [
-    "C:\\Windows\\system32\\services.exe"
-  ],
-  "process.parent.command_line.text": [
-    "C:\\Windows\\system32\\services.exe"
-  ],
-  "process.parent.entity_id": [
-    "{9602231E-CDE2-68BA-0B00-000000002C00}"
-  ],
-  "process.parent.executable": [
-    "C:\\Windows\\System32\\services.exe"
-  ],
-  "process.parent.executable.text": [
-    "C:\\Windows\\System32\\services.exe"
-  ],
-  "process.parent.name": [
-    "services.exe"
-  ],
-  "process.parent.name.text": [
-    "services.exe"
+    "cmd.exe"
   ],
   "process.parent.pid": [
-    660
+    5872
   ],
   "process.pe.company": [
-    "Sysinternals"
+    "Microsoft Corporation"
   ],
   "process.pe.description": [
-    "PsExec Service"
+    "Windows Command Processor"
   ],
   "process.pe.file_version": [
-    "2.43"
+    "10.0.19041.4355 (WinBuild.160101.0800)"
   ],
   "process.pe.imphash": [
-    "89372da3565367c6eefa3917639e884f"
+    "272245e2988e1e430500b852c4fb5e18"
   ],
   "process.pe.original_file_name": [
-    "psexesvc.exe"
+    "Cmd.Exe"
   ],
   "process.pe.product": [
-    "Sysinternals PsExec"
+    "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    6644
+    8712
   ],
   "process.working_directory": [
-    "C:\\Windows\\system32\\"
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
   ],
   "process.working_directory.text": [
-    "C:\\Windows\\system32\\"
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
   ],
   "related.hash": [
-    "cc14df781475ef0f3f2c441d03a622ea67cd86967526f8758ead6f45174db78e",
-    "89372da3565367c6eefa3917639e884f"
+    "badf4752413cb0cbdc03fb95820ca167f0cdc63b597ccdb5ef43111180e088b0",
+    "272245e2988e1e430500b852c4fb5e18"
   ],
   "related.user": [
-    "SYSTEM"
+    "khaireddine"
   ],
   "user.domain": [
-    "NT AUTHORITY"
+    "WINDOWS10"
   ],
   "user.id": [
     "S-1-5-18"
   ],
   "user.name": [
-    "SYSTEM"
+    "khaireddine"
   ],
   "user.name.text": [
-    "SYSTEM"
+    "khaireddine"
   ],
   "winlog.channel": [
     "Microsoft-Windows-Sysmon/Operational"
@@ -214,31 +205,28 @@
     "windows10"
   ],
   "winlog.event_data.Company": [
-    "Sysinternals"
+    "Microsoft Corporation"
   ],
   "winlog.event_data.Description": [
-    "PsExec Service"
+    "Windows Command Processor"
   ],
   "winlog.event_data.FileVersion": [
-    "2.43"
+    "10.0.19041.4355 (WinBuild.160101.0800)"
   ],
   "winlog.event_data.IntegrityLevel": [
-    "System"
+    "High"
   ],
   "winlog.event_data.LogonGuid": [
-    "{9602231E-CDE3-68BA-E703-000000000000}"
+    "{9602231E-2FD1-68C0-642E-020000000000}"
   ],
   "winlog.event_data.LogonId": [
-    "0x3e7"
-  ],
-  "winlog.event_data.ParentUser": [
-    "NT AUTHORITY\\SYSTEM"
+    "0x22e64"
   ],
   "winlog.event_data.Product": [
-    "Sysinternals PsExec"
+    "Microsoft® Windows® Operating System"
   ],
   "winlog.event_data.TerminalSessionId": [
-    "0"
+    "1"
   ],
   "winlog.event_id": [
     "1"
@@ -247,10 +235,10 @@
     "Info"
   ],
   "winlog.process.pid": [
-    1744
+    3112
   ],
   "winlog.process.thread.id": [
-    3884
+    4292
   ],
   "winlog.provider_guid": [
     "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
@@ -259,7 +247,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "265629"
+    "471187"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -279,7 +267,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "AlTlGZkBWp5KBFoYa_yv",
+  "_id": "6sQiL5kBoSoxSr8zh2SX",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }

