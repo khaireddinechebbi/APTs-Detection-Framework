@@ -21,7 +21,18 @@ T1218.010:
     )
 
 T1218.011:
-    winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and process.name:"rundll32.exe" and ((process.args:*pcwutl.dll* and process.args:*LaunchApplication* and process.args:*.exe) or (process.args:*shell32.dll* and process.args:*Control_RunDLL* and process.args:*.dll) or (process.args:*desk.cpl* and process.args:*InstallScreenSaver* and process.args:*.scr) or (process.args:*url.dll* and process.args:*FileProtocolHandler* and process.args:*.exe) or (process.args:*StartW* and not process.args:*.dll*))
+    winlog.channel:"Microsoft-Windows-Sysmon/Operational"
+    and event.code:1
+    and process.name: "rundll32.exe"
+    and (
+        process.parent.name: ("cmd.exe" or "powershell.exe")
+        and process.command_line: (
+            (*.dll* and *,#*)
+            or not (*.dll* or *.cpl*)
+            or (*shell32.dll,Control_RunDLL* and not *.cpl*)
+        )
+        or process.parent.name: "rundll32.exe"
+    )
 
 T1047:
     winlog.channel:"Microsoft-Windows-Sysmon/Operational"

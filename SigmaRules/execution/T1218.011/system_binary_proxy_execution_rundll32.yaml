@@ -1,43 +1,24 @@
-title: rundll32 Suspicious Execution Patterns (Sysmon)
+title: Suspicious rundll32.exe Execution Patterns (Sysmon)
 id: d4f6b2c1-7e8a-4d9f-b3c1-9a2e5f7c6b4d
 status: experimental
-description: Detects suspicious rundll32.exe usage including execution via pcwutl.dll, shell32.dll, desk.cpl, url.dll, or StartW patterns.
+description: Detects suspicious rundll32.exe usage, including DLL execution outside normal CPLs or misuse of shell32.dll, and rundll32.exe spawned by cmd/powershell or other rundll32.exe instances.
 author: Khaireddine
-date: 2025/08/18
+date: 2025/09/11
 logsource:
   product: windows
   category: process_creation
   service: sysmon
 detection:
-  pcwutl_launch:
+  suspicious_rundll32:
     Image|endswith: '\rundll32.exe'
-    CommandLine|contains_all:
-      - 'pcwutl.dll'
-      - 'LaunchApplication'
-      - '.exe'
-  shell32_control:
-    Image|endswith: '\rundll32.exe'
-    CommandLine|contains_all:
-      - 'shell32.dll'
-      - 'Control_RunDLL'
-      - '.dll'
-  desk_screensaver:
-    Image|endswith: '\rundll32.exe'
-    CommandLine|contains_all:
-      - 'desk.cpl'
-      - 'InstallScreenSaver'
-      - '.scr'
-  url_fileprotocol:
-    Image|endswith: '\rundll32.exe'
-    CommandLine|contains_all:
-      - 'url.dll'
-      - 'FileProtocolHandler'
-      - '.exe'
-  startw_no_dll:
-    Image|endswith: '\rundll32.exe'
-    CommandLine|contains: 'StartW'
-    CommandLine|not_contains: '.dll'
-  condition: pcwutl_launch or shell32_control or desk_screensaver or url_fileprotocol or startw_no_dll
+    ParentImage|endswith: '\cmd.exe' 
+    or ParentImage|endswith: '\powershell.exe'
+    or ParentImage|endswith: '\rundll32.exe'
+    CommandLine|matches:
+      - '.*\.dll.*,.*'           # DLL with export function
+      - '.*shell32\.dll,Control_RunDLL.*' 
+      - '^(?!.*\.dll|.*\.cpl).*' # no DLL or CPL, suspicious
+  condition: suspicious_rundll32
 fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
 falsepositives: [ Legitimate system utility usage ]
 level: high

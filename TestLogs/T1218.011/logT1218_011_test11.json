@@ -1,0 +1,289 @@
+{
+  "@timestamp": [
+    "2025-09-11T19:59:07.027Z"
+  ],
+  "agent.ephemeral_id": [
+    "77c1f2ec-49aa-4cfb-852b-484eed7a75e9"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-11T19:59:07.929Z"
+  ],
+  "event.ingested": [
+    "2025-09-11T19:59:35.791Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "2c0f:4280:3060:4a8f:5f7b:886c:8bc4:e8d9",
+    "2c0f:4280:3060:4a8f:38b3:2484:f5a1:fc2d",
+    "fe80::5588:11c4:b507:8fc7",
+    "192.168.100.161"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6216"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6216 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-11 19:59:07.027\nProcessGuid: {9602231E-2A0B-68C3-D804-000000003400}\nProcessId: 1644\nImage: C:\\Windows\\System32\\rundll32.exe\nFileVersion: 10.0.19041.5794 (WinBuild.160101.0800)\nDescription: Windows host process (Rundll32)\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: RUNDLL32.EXE\nCommandLine: rundll32.exe  \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll\",#2\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-C00C-68C2-509E-020000000000}\nLogonId: 0x29e50\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=076592CA1957F8F357CC201F0015072C612F5770AD7DE85F87F254253C754DD7,IMPHASH=F207A867D6098266EE63A3CA677EB0FF\nParentProcessGuid: {9602231E-2A0A-68C3-D604-000000003400}\nParentProcessId: 12264\nParentImage: C:\\Windows\\System32\\cmd.exe\nParentCommandLine: \"cmd.exe\" /c rundll32.exe \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll\",#2\nParentUser: WINDOWS10\\khaireddine"
+  ],
+  "process.args": [
+    "rundll32.exe",
+    "C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll,#2"
+  ],
+  "process.args_count": [
+    2
+  ],
+  "process.command_line": [
+    "rundll32.exe  \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll\",#2"
+  ],
+  "process.command_line.text": [
+    "rundll32.exe  \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll\",#2"
+  ],
+  "process.entity_id": [
+    "{9602231E-2A0B-68C3-D804-000000003400}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\rundll32.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\rundll32.exe"
+  ],
+  "process.hash.sha256": [
+    "076592ca1957f8f357cc201f0015072c612f5770ad7de85f87f254253c754dd7"
+  ],
+  "process.name": [
+    "rundll32.exe"
+  ],
+  "process.name.text": [
+    "rundll32.exe"
+  ],
+  "process.parent.args": [
+    "cmd.exe",
+    "/c",
+    "rundll32.exe",
+    "C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll,#2"
+  ],
+  "process.parent.args_count": [
+    4
+  ],
+  "process.parent.command_line": [
+    "\"cmd.exe\" /c rundll32.exe \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll\",#2"
+  ],
+  "process.parent.command_line.text": [
+    "\"cmd.exe\" /c rundll32.exe \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx64.dll\",#2"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-2A0A-68C3-D604-000000003400}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\cmd.exe"
+  ],
+  "process.parent.name": [
+    "cmd.exe"
+  ],
+  "process.parent.name.text": [
+    "cmd.exe"
+  ],
+  "process.parent.pid": [
+    12264
+  ],
+  "process.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "process.pe.description": [
+    "Windows host process (Rundll32)"
+  ],
+  "process.pe.file_version": [
+    "10.0.19041.5794 (WinBuild.160101.0800)"
+  ],
+  "process.pe.imphash": [
+    "f207a867d6098266ee63a3ca677eb0ff"
+  ],
+  "process.pe.original_file_name": [
+    "RUNDLL32.EXE"
+  ],
+  "process.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "process.pid": [
+    1644
+  ],
+  "process.working_directory": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "related.hash": [
+    "076592ca1957f8f357cc201f0015072c612f5770ad7de85f87f254253c754dd7",
+    "f207a867d6098266ee63a3ca677eb0ff"
+  ],
+  "related.user": [
+    "khaireddine"
+  ],
+  "user.domain": [
+    "WINDOWS10"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "khaireddine"
+  ],
+  "user.name.text": [
+    "khaireddine"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "Windows host process (Rundll32)"
+  ],
+  "winlog.event_data.FileVersion": [
+    "10.0.19041.5794 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "High"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-C00C-68C2-509E-020000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x29e50"
+  ],
+  "winlog.event_data.ParentUser": [
+    "WINDOWS10\\khaireddine"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "1"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    2664
+  ],
+  "winlog.process.thread.id": [
+    4032
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "548366"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "lmFcOpkBSf0Qy359rHSH",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}
