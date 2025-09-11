@@ -1,45 +1,44 @@
-title: MSHTA and PowerShell Suspicious Execution (Sysmon)
+title: MSHTA Suspicious Execution with PowerShell or Persistence (Sysmon)
 id: b7e5d3c9-4f6a-4f1b-9d3e-8c2f5a6b7d4e
-status: experimental
-description: Detects suspicious execution via mshta.exe or PowerShell invoking HTA/remote content, including high-risk child processes.
+status: stable
+description: Detects suspicious mshta.exe execution via cmd.exe or powershell.exe using inline VBScript with PowerShell, or HTA persistence in Startup folder.
 author: Khaireddine
-date: 2025/08/18
+date: 2025/09/11
 logsource:
   product: windows
   category: process_creation
   service: sysmon
 detection:
-  parent_mshta_children:
-    ParentImage|endswith: '\mshta.exe'
-    Image|endswith_any:
+  sel_img:
+    Image|endswith: '\mshta.exe'
+  sel_parent:
+    ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-      - '\rundll32.exe'
-      - '\regsvr32.exe'
-      - '\wscript.exe'
-      - '\cscript.exe'
-      - '\msiexec.exe'
-      - '\schtasks.exe'
-      - '\bitsadmin.exe'
-      - '\certutil.exe'
-  mshta_direct:
-    Image|endswith: '\mshta.exe'
-    CommandLine|contains_any:
-      - 'hta'
-      - 'http'
-      - 'https'
-  powershell_mshta:
-    Image|endswith:
-      - '\powershell.exe'
-      - '\pwsh.exe'
-    CommandLine|contains_any:
-      - 'Invoke-WebRequest'
-      - 'Invoke-ATHHTMLApplication'
-    CommandLine|contains_any:
-      - 'mshta'
-      - '-HTAUri'
-  condition: parent_mshta_children or mshta_direct or powershell_mshta
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
-falsepositives: [ Legitimate HTA/PowerShell automation scripts ]
+  sel_vbscript:
+    CommandLine|contains|all:
+      - 'vbscript'
+      - 'VBScript'
+      - 'Execute'
+      - 'Wscript.Shell'
+      - 'powershell'
+  sel_startup:
+    CommandLine|contains|all:
+      - '\Microsoft\Windows\Start'
+      - 'Menu\Programs\Startup'
+      - '.hta'
+  condition: sel_img and sel_parent and (sel_vbscript or sel_startup)
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Rare legitimate HTA usage by administrators
 level: high
-tags: [ attack.execution, attack.t1218, attack.t1218.005 ]
+tags:
+  - attack.execution
+  - attack.t1218
+  - attack.t1218.005

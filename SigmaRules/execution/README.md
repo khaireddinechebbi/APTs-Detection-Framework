@@ -1,7 +1,11 @@
 KQL code
 
 T1218.005:
-    winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and ((process.parent.name:"mshta.exe" and (process.name:"cmd.exe" or process.name:"powershell.exe" or process.name:"rundll32.exe" or process.name:"regsvr32.exe" or process.name:"wscript.exe" or process.name:"cscript.exe" or process.name:"msiexec.exe" or process.name:"schtasks.exe" or process.name:"bitsadmin.exe" or process.name:"certutil.exe")) or (process.name:"mshta.exe" and (process.args:*hta* or process.args:*http* or process.args:*https*))or (process.name:"powershell.exe" and ((process.args:*Invoke-WebRequest* and process.args:*mshta*) or (process.args:*Invoke-ATHHTMLApplication* and process.args:*-HTAUri*))))
+    winlog.channel:"Microsoft-Windows-Sysmon/Operational"
+    and event.code:1
+    and process.name:"mshta.exe"
+    and process.parent.name: ("powershell.exe" or "cmd.exe")
+    and process.command_line: (((*vbscript* or *VBScript*) and *Execute* and *Wscript.Shell* and *powershell*) or (*\\Microsoft\\Windows\\Start* and *Menu\\Programs\\Startup* and *.hta*))
 
 T1218.010:
     winlog.channel:"Microsoft-Windows-Sysmon/Operational"

