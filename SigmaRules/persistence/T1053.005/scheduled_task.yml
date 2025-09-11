@@ -1,0 +1,63 @@
+title: Suspicious Scheduled Task Activity
+id: f7a9d3b1-6c4e-4f2a-b8e3-9c2d5f7a4b3e
+status: stable
+description: Detects suspicious creation, modification, or deletion of scheduled tasks using schtasks.exe or PowerShell ScheduledTask cmdlets, considering stealthy flags and high privileges.
+author: Khaireddine
+date: 2025/09/11
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection_schtasks:
+    Image|endswith: '\schtasks.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_any:
+      - '/create'
+      - '/Create'
+      - '/delete'
+      - '/Delete'
+      - '/tn'
+      - '/TN'
+      - '/tr'
+      - '/TR'
+      - '/f'
+      - '/F'
+  selection_powershell:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_any:
+      - 'Register-ScheduledTask'
+      - 'Set-ScheduledTask'
+      - 'New-ScheduledTaskAction'
+      - 'New-ScheduledTaskTrigger'
+      - 'New-ScheduledTaskPrincipal'
+      - 'Unregister-ScheduledTask'
+    CommandLine|contains_any:
+      - '-AtLogon'
+      - '-AtStartup'
+      - '-RunLevel Highest'
+      - '-GroupId'
+      - 'Administrators'
+      - '-Execute'
+      - '-TaskName'
+      - '-confirm:$false'
+      - '>$null'
+      - '2>&1'
+  condition: selection_schtasks or selection_powershell
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate administrative task creation
+  - Enterprise management or installer tools
+level: high
+tags:
+  - attack.persistence
+  - attack.t1053
+  - attack.t1053.005
