@@ -1,32 +1,27 @@
-title: Suspicious HTTPS Network Connections (Sysmon)
+title: Suspicious PowerShell HTTPS Network Connections (Sysmon)
 id: 5b9f7d3a-2c8e-4a7c-a8f1-6d7e5f4c3b2a
 status: experimental
-description: Detects network connections over common HTTPS ports excluding known benign executables.
+description: Detects suspicious PowerShell processes establishing HTTPS-like connections over common SSL ports using .NET TcpClient and SslStream, including command execution via Invoke-Expression or iex.
 author: Khaireddine
-date: 2025/08/18
+date: 2025/09/11
 logsource:
   product: windows
-  category: network_connection
+  category: process_creation
   service: sysmon
 detection:
-  sel_port:
-    DestinationPort|in:
-      - 443
-      - 8443
-      - 9443
-  exclude_processes:
-    Image|endswith_any:
-      - '\chrome.exe'
-      - '\firefox.exe'
-      - '\msedge.exe'
-      - '\svchost.exe'
-      - '\lsass.exe'
-      - '\msiexec.exe'
-      - '\OneDrive.exe'
-      - '\Teams.exe'
-      - '\outlook.exe'
-  condition: sel_port and not exclude_processes
-fields: [ UtcTime, SourceIp, SourcePort, DestinationIp, DestinationPort, Image, CommandLine, User ]
-falsepositives: [ Legitimate software connecting over HTTPS on non-standard ports ]
-level: medium
-tags: [ attack.command_and_control, attack.t1573 ]
+  suspicious_powershell_ssl:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Net.Sockets.TcpClient'
+      - 'System.Net.Security.SslStream'
+      - '$sslStream.AuthenticateAsClient'
+      - '$sslStream.Write'
+      - '$sslStream.Read'
+    CommandLine|contains_any:
+      - 'iex'
+      - 'Invoke-Expression'
+  condition: suspicious_powershell_ssl
+fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User, Hostname ]
+falsepositives: [ Legitimate scripts establishing SSL/TCP connections, internal pen-testing tools ]
+level: high
+tags: [ attack.command_and_control, attack.t1573, attack.t1218 ]

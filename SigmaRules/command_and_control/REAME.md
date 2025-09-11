@@ -1,7 +1,10 @@
 KQL code
 
 T1573:
-    winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:3 and destination.port:(443 or 8443 or 9443) and not process.executable.keyword:(*\\chrome.exe *\\firefox.exe *\\msedge.exe *\\svchost.exe *\\lsass.exe *\\msiexec.exe *\\OneDrive.exe *\\Teams.exe *\\outlook.exe)
+    winlog.channel:"Microsoft-Windows-Sysmon/Operational"
+    and event.code: 1
+    and process.name: "powershell.exe"
+    and process.command_line: (*Net.Sockets.TcpClient* and *System.Net.Security.SslStream* and *$sslStream.AuthenticateAsClient* and *$sslStream.Write* and *$sslStream.Read* and (*iex* or *Invoke-Expression*))
 
 T1105:
     winlog.channel:"Microsoft-Windows-Sysmon/Operational" and event.code:1 and (
