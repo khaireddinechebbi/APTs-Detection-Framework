@@ -13,8 +13,11 @@ T1218.010:
     and process.name:"regsvr32.exe"
     and process.parent.name: ("cmd.exe" or "powershell.exe")
     and (
-        process.args: (scrobj.dll and */i* and *.sct)
-        or process.parent.args: (("IF" and "ELSE") or *%temp%*)
+        process.command_line: */s*
+        and (
+            process.command_line: (*/i* and *.dll*)
+            or process.parent.command_line: ((* IF * and * ELSE *) or *%temp%*)
+        )
     )
 
 T1218.011:

@@ -1,7 +1,7 @@
-title: regsvr32/SCROBJ Remote Script Execution (Sysmon)
+title: regsvr32 Suspicious Execution with /s and /i Options (Sysmon)
 id: c1d7e8f2-6b4a-4f9c-a2d1-5e7f8c3a2b4d
 status: experimental
-description: Detects regsvr32.exe execution of scrobj.dll with remote .sct scripts, including suspicious parent execution from cmd.exe or powershell.exe with IF/ELSE or temp path usage.
+description: Detects regsvr32.exe execution using /s and /i options with suspicious DLL or scriptlet loading, including suspicious parent execution from cmd.exe or powershell.exe that contain IF/ELSE logic or temp path usage. This is often associated with T1218.010 regsvr32 LOLBAS abuse.
 author: Khaireddine
 date: 2025/08/18
 logsource:
@@ -9,12 +9,13 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  sel_regsvr32:
+  sel_regsvr32_susp:
     Image|endswith: '\regsvr32.exe'
-    CommandLine|contains_all:
-      - 'scrobj.dll'
+    CommandLine|contains:
+      - '/s'
+    CommandLine|contains_any:
       - '/i'
-      - '.sct'
+      - '.dll'
   sel_parent_susp:
     ParentImage|endswith:
       - '\cmd.exe'
@@ -23,7 +24,7 @@ detection:
       - 'IF'
       - 'ELSE'
       - '%temp%'
-  condition: sel_regsvr32 or (sel_regsvr32 and sel_parent_susp)
+  condition: sel_regsvr32_susp or (sel_regsvr32_susp and sel_parent_susp)
 fields:
   - UtcTime
   - Image
@@ -32,7 +33,8 @@ fields:
   - ParentCommandLine
   - User
 falsepositives:
-  - Rare legitimate automation scripts that use regsvr32 with scrobj.dll
+  - Legitimate software installers or uninstallers using regsvr32 with DLLs
+  - Rare automation scripts invoking regsvr32 with IF/ELSE or %temp% logic
 level: high
 tags:
   - attack.execution

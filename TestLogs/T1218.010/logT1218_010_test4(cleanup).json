@@ -1,6 +1,6 @@
 {
   "@timestamp": [
-    "2025-09-11T19:37:24.795Z"
+    "2025-09-11T19:38:40.565Z"
   ],
   "agent.ephemeral_id": [
     "77c1f2ec-49aa-4cfb-852b-484eed7a75e9"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-11T19:37:25.963Z"
+    "2025-09-11T19:38:41.816Z"
   ],
   "event.ingested": [
-    "2025-09-11T19:37:26.475Z"
+    "2025-09-11T19:38:47.984Z"
   ],
   "event.kind": [
     "event"
@@ -99,25 +99,25 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-11 19:37:24.795\nProcessGuid: {9602231E-24F4-68C3-9C04-000000003400}\nProcessId: 12236\nImage: C:\\Windows\\System32\\regsvr32.exe\nFileVersion: 10.0.19041.1 (WinBuild.160101.0800)\nDescription: Microsoft(C) Register Server\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: REGSVR32.EXE\nCommandLine: C:\\Windows\\system32\\regsvr32.exe  /s /i \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll\"\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-C00C-68C2-509E-020000000000}\nLogonId: 0x29e50\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=022CB167A29A32DAE848BE91AEF721C74F1975AF151807DAFCC5ED832DB246B7,IMPHASH=0235FF9A007804882636BCCCFB4D1A2F\nParentProcessGuid: {9602231E-24F4-68C3-9A04-000000003400}\nParentProcessId: 8024\nParentImage: C:\\Windows\\System32\\cmd.exe\nParentCommandLine: \"cmd.exe\" /c C:\\Windows\\system32\\regsvr32.exe /s /i \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll\"\nParentUser: WINDOWS10\\khaireddine"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-11 19:38:40.565\nProcessGuid: {9602231E-2540-68C3-A704-000000003400}\nProcessId: 7096\nImage: C:\\Windows\\System32\\regsvr32.exe\nFileVersion: 10.0.19041.1 (WinBuild.160101.0800)\nDescription: Microsoft(C) Register Server\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: REGSVR32.EXE\nCommandLine: C:\\Windows\\system32\\regsvr32.exe  /U /s C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\shell32.jpg\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-C00C-68C2-509E-020000000000}\nLogonId: 0x29e50\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=022CB167A29A32DAE848BE91AEF721C74F1975AF151807DAFCC5ED832DB246B7,IMPHASH=0235FF9A007804882636BCCCFB4D1A2F\nParentProcessGuid: {9602231E-2540-68C3-A504-000000003400}\nParentProcessId: 6076\nParentImage: C:\\Windows\\System32\\cmd.exe\nParentCommandLine: \"cmd.exe\" /c C:\\Windows\\system32\\regsvr32.exe /U /s %temp%\\shell32.jpg\nParentUser: WINDOWS10\\khaireddine"
   ],
   "process.args": [
     "C:\\Windows\\system32\\regsvr32.exe",
+    "/U",
     "/s",
-    "/i",
-    "C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll"
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\shell32.jpg"
   ],
   "process.args_count": [
     4
   ],
   "process.command_line": [
-    "C:\\Windows\\system32\\regsvr32.exe  /s /i \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll\""
+    "C:\\Windows\\system32\\regsvr32.exe  /U /s C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\shell32.jpg"
   ],
   "process.command_line.text": [
-    "C:\\Windows\\system32\\regsvr32.exe  /s /i \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll\""
+    "C:\\Windows\\system32\\regsvr32.exe  /U /s C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\shell32.jpg"
   ],
   "process.entity_id": [
-    "{9602231E-24F4-68C3-9C04-000000003400}"
+    "{9602231E-2540-68C3-A704-000000003400}"
   ],
   "process.executable": [
     "C:\\Windows\\System32\\regsvr32.exe"
@@ -138,21 +138,21 @@
     "cmd.exe",
     "/c",
     "C:\\Windows\\system32\\regsvr32.exe",
+    "/U",
     "/s",
-    "/i",
-    "C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll"
+    "%temp%\\shell32.jpg"
   ],
   "process.parent.args_count": [
     6
   ],
   "process.parent.command_line": [
-    "\"cmd.exe\" /c C:\\Windows\\system32\\regsvr32.exe /s /i \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll\""
+    "\"cmd.exe\" /c C:\\Windows\\system32\\regsvr32.exe /U /s %temp%\\shell32.jpg"
   ],
   "process.parent.command_line.text": [
-    "\"cmd.exe\" /c C:\\Windows\\system32\\regsvr32.exe /s /i \"C:\\AtomicRedTeam\\atomics\\T1218.010\\bin\\AllTheThingsx86.dll\""
+    "\"cmd.exe\" /c C:\\Windows\\system32\\regsvr32.exe /U /s %temp%\\shell32.jpg"
   ],
   "process.parent.entity_id": [
-    "{9602231E-24F4-68C3-9A04-000000003400}"
+    "{9602231E-2540-68C3-A504-000000003400}"
   ],
   "process.parent.executable": [
     "C:\\Windows\\System32\\cmd.exe"
@@ -167,7 +167,7 @@
     "cmd.exe"
   ],
   "process.parent.pid": [
-    8024
+    6076
   ],
   "process.pe.company": [
     "Microsoft Corporation"
@@ -188,7 +188,7 @@
     "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    12236
+    7096
   ],
   "process.working_directory": [
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
@@ -267,7 +267,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "545639"
+    "545962"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -287,7 +287,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "6mFIOpkBSf0Qy359Ymbr",
+  "_id": "X2FJOpkBSf0Qy359oWiL",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }
