@@ -51,4 +51,7 @@ T1059.001:
         and process.parent.name: "WmiPrvSE.exe"
         and process.parent.args: *-Embedding* 
         and process.args: (*-NoProfile* and (*-E* or *-EA* or *-EncodedArguments*)))
+        or
+        (process.name: "powershell.exe"
+        and process.command_line: (*Remove-Item* *-Force* and *-ErrorAction Ignore*))
     )

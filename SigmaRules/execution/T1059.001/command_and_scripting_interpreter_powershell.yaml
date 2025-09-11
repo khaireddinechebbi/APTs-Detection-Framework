@@ -97,11 +97,11 @@ detection:
         - ' -E '
         - ' -EA '
         - ' -EncodedArguments'
-  exclude_parents:
-    ParentImage|endswith:
-      - '\ccmexec.exe'
-      - '\SCClient.exe'
-      - '\IntuneManagementExtension.exe'
+    - Image|endswith: '\powershell.exe'
+      CommandLine|contains:
+        - 'Remove-Item'
+        - '-Force'
+        - '-ErrorAction Ignore'
   condition: (selection or 1 of suspicious_patterns) and not exclude_parents
 fields: [UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User]
 falsepositives: 
