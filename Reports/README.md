@@ -16,7 +16,7 @@ Suggested additional techniques to improve your project (high ROI)
 
 Below are techniques I recommend adding to your detection matrix next — with why, tactic, severity and short detection hints.
 
-T1059.003 — Windows Command Shell
+### T1059.003 — Windows Command Shell
 
 Tactic: Execution
 
@@ -24,7 +24,7 @@ Severity: easy→medium
 
 Why: many simple payloads and command chains start with cmd.exe /c. Detect parent-child anomalies, cmd.exe launched from Office/IE/HTA or from user temp directories.
 
-T1546.003 — Event Triggered Execution: WMI Event Subscription
+### T1546.003 — Event Triggered Execution: WMI Event Subscription
 
 Tactic: Persistence
 
@@ -32,7 +32,7 @@ Severity: hard
 
 Why: stealthy persistence; detection: WMI permanent event consumers/subscriptions creation (__EventFilter, __EventConsumer).
 
-T1553.002 — Subvert Trust Controls: Code Signing
+### T1553.002 — Subvert Trust Controls: Code Signing
 
 Tactic: Defense Evasion
 
@@ -40,15 +40,8 @@ Severity: hard
 
 Why: signed malware bypasses controls. Detection: new unsigned binaries in system folders, mismatched signature issuer, or signed by unusual certs.
 
-T1210 — Exploit Public-Facing Applications (or T1190 if you like web)
 
-Tactic: Initial Access / Exploitation
-
-Severity: critical
-
-Why: adds detection for exploitation patterns and web shell uploads; detection: anomalous POST uploads, new web files, modified web configs.
-
-T1090.003 — Proxy: Multi-hop Proxy
+### T1090.003 — Proxy: Multi-hop Proxy
 
 Tactic: Command and Control / Evasion
 
@@ -56,15 +49,8 @@ Severity: medium
 
 Why: attackers use proxy chains; detection: unusual outbound connections that are internal internal->external patterns; pay attention to internal hops on odd ports.
 
-T1055.012 — Process Hollowing / Reflective Loading (if you want deeper memory forensics)
 
-Tactic: Defense Evasion
-
-Severity: critical
-
-Why: highly evasive; detection requires EDR hooks — look for CreateProcess+UnmapView / NtUnmapViewOfSection sequences.
-
-T1110.003 / T1110.001 — Password Spraying / Brute Force
+### T1110.003 / T1110.001 — Password Spraying / Brute Force
 
 Tactic: Credential Access
 
@@ -72,7 +58,7 @@ Severity: medium→high
 
 Why: common; detection: many failed auths across many accounts, repeated connection attempts from one source.
 
-T1204.001 & T1204.002 — User Execution (malicious link/file)
+### T1204.001 & T1204.002 — User Execution (malicious link/file)
 
 Tactic: Initial Access / User Interaction
 
@@ -80,7 +66,7 @@ Severity: easy→medium
 
 Why: practice in detecting user-triggered payload execution and delivering training / telemetry correlation.
 
-T1562.002 — Disable Windows Event Logging
+### T1562.002 — Disable Windows Event Logging
 
 Tactic: Defense Evasion
 
@@ -88,7 +74,7 @@ Severity: critical
 
 Why: attackers often try to reduce visibility; detection: changes to event log service config, suddenly missing events, or clearing of logs.
 
-T1497. — Virtualization/Sandbox Evasion*
+### T1497. — Virtualization/Sandbox Evasion*
 
 Tactic: Defense Evasion
 
