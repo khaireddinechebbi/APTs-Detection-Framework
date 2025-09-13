@@ -11,7 +11,7 @@ Credential Access consists of techniques for stealing credentials like account n
 Adversaries may attempt to extract credential material from the Security Account Manager (SAM) database either through in-memory techniques or through the Windows Registry where the SAM database is stored. The SAM is a database file that contains local accounts for the host, typically those found with the net user command. Enumerating the SAM database requires SYSTEM level access.
 
 #### Kibana Query Language Code (KQL):
-
+```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1
 and (
@@ -32,6 +32,7 @@ and (
         and process.command_line: (* esentutl.exe * and *%%SystemRoot%%/system32/config/SAM* and *%%temp%%/SAM*)
     )
 )
+```
 
 ### T1003.004 - OS Credential Dumping: LSA Secrets
 #### Description:
@@ -39,7 +40,7 @@ and (
 Adversaries with SYSTEM access to a host may attempt to access Local Security Authority (LSA) secrets, which can contain a variety of different credential materials, such as credentials for service accounts. LSA secrets are stored in the registry at HKEY_LOCAL_MACHINE\SECURITY\Policy\Secrets. LSA secrets can also be dumped from memory.
 
 #### Kibana Query Language Code (KQL):
-
+```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1
 and (
@@ -59,3 +60,4 @@ and (
         and process.command_line: (*del* and *\>nul* and *2\>* and *%%temp%%* and *\\secrets*)
     )
 )
+```

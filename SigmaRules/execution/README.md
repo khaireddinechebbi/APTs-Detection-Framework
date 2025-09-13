@@ -11,7 +11,7 @@ Execution consists of techniques that result in adversary-controlled code runnin
 Adversaries may abuse Windows Management Instrumentation (WMI) to execute malicious commands and payloads. WMI is designed for programmers and is the infrastructure for management data and operations on Windows systems. WMI is an administration feature that provides a uniform environment to access Windows system components.
 
 #### Kibana Query Language Code (KQL):
-
+```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1
 and process.name:"WMIC.exe"
@@ -20,6 +20,7 @@ and (
     or process.command_line:(* process * and * where * and  * delete *)
 )
 and process.parent.name : ("cmd.exe" or "powershell.exe")
+```
 
 ### T1059.001 - Command and Scripting Interpreter: PowerShell
 #### Description:
@@ -27,7 +28,7 @@ and process.parent.name : ("cmd.exe" or "powershell.exe")
 Adversaries may abuse PowerShell commands and scripts for execution. PowerShell is a powerful interactive command-line interface and scripting environment included in the Windows operating system. Adversaries can use PowerShell to perform a number of actions, including discovery of information and execution of code. Examples include the Start-Process cmdlet which can be used to run an executable and the Invoke-Command cmdlet which runs a command locally or on a remote computer (though administrator permissions are required to use PowerShell to connect to remote systems).
 
 #### Kibana Query Language Code (KQL):
-
+```
 winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and (
     (process.name: "powershell.exe"
     and process.parent.name: ("cmd.exe" or "powershell.exe")
@@ -54,3 +55,4 @@ winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and (
     (process.name: "powershell.exe"
     and process.command_line: (*Remove-Item* *-Force* and *-ErrorAction Ignore* and (*\\Windows\\Temp\\* or *HKCU\:*)))
 )
+```

@@ -61,8 +61,9 @@ and (
 Adversaries may employ an encryption algorithm to conceal command and control traffic rather than relying on any inherent protections provided by a communication protocol. Despite the use of a secure algorithm, these implementations may be vulnerable to reverse engineering if secret keys are encoded and/or generated within malware samples/configuration files.
 
 #### Kibana Query Language Code (KQL):
-
+```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code: 1
 and process.name: "powershell.exe"
 and process.command_line: (*Net.Sockets.TcpClient* and *System.Net.Security.SslStream* and *$sslStream.AuthenticateAsClient* and *$sslStream.Write* and *$sslStream.Read* and (*iex* or *Invoke-Expression*))
+```
