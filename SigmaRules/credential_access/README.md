@@ -5,12 +5,12 @@
 Credential Access consists of techniques for stealing credentials like account names and passwords. Techniques used to get credentials include keylogging or credential dumping. Using legitimate credentials can give adversaries access to systems, make them harder to detect, and provide the opportunity to create more accounts to help achieve their goals.
 
 ## Techniques:
-### T1003.002: OS Credential Dumping: Security Account Manager
+### T1003.002 - OS Credential Dumping: Security Account Manager
 #### Description:
 
 Adversaries may attempt to extract credential material from the Security Account Manager (SAM) database either through in-memory techniques or through the Windows Registry where the SAM database is stored. The SAM is a database file that contains local accounts for the host, typically those found with the net user command. Enumerating the SAM database requires SYSTEM level access.
 
-#### Kibana Query Language Code (KQL)
+#### Kibana Query Language Code (KQL):
 
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1
@@ -33,12 +33,12 @@ and (
     )
 )
 
-### T1003.004: OS Credential Dumping: LSA Secrets
+### T1003.004 - OS Credential Dumping: LSA Secrets
 #### Description:
 
 Adversaries with SYSTEM access to a host may attempt to access Local Security Authority (LSA) secrets, which can contain a variety of different credential materials, such as credentials for service accounts. LSA secrets are stored in the registry at HKEY_LOCAL_MACHINE\SECURITY\Policy\Secrets. LSA secrets can also be dumped from memory.
 
-#### Kibana Query Language Code (KQL)
+#### Kibana Query Language Code (KQL):
 
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1

