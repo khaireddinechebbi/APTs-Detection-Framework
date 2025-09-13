@@ -25,20 +25,21 @@ and (
     (process.command_line:(
         (
             (
-        *Register-ScheduledTask* or
-        *Set-ScheduledTask* or
-        *New-ScheduledTaskAction* or
-        *New-ScheduledTaskTrigger* or
-        *New-ScheduledTaskPrincipal*
-        )
-        and 
-        (
-        (*-AtLogon* or *-AtStartup* or *-RunLevel Highest*)
-        or (*-GroupId* and *Administrators*)
-        or (*-Execute* and (*cmd.exe* or *powershell.exe* or *notepad.exe*))
-        )
+                *Register-ScheduledTask* or
+                *Set-ScheduledTask* or
+                *New-ScheduledTaskAction* or
+                *New-ScheduledTaskTrigger* or
+                *New-ScheduledTaskPrincipal*
+            )
+            and 
+            (
+                (*-AtLogon* or *-AtStartup* or *-RunLevel Highest*)
+                or (*-GroupId* and *Administrators*)
+                or (*-Execute* and (*cmd.exe* or *powershell.exe* or *notepad.exe*))
+            )
         ) or (
-        (*Unregister-ScheduledTask* and *-TaskName*)
-        and (*-confirm\:$false* or *\>$null* or *2\>&1*))
+            (*Unregister-ScheduledTask* and *-TaskName*)
+            and (*-confirm\:$false* or *\>$null* or *2\>&1*)
+        )
     ))
 )
