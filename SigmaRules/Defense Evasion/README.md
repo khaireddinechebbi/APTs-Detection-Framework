@@ -21,7 +21,7 @@ and process.args:((*/INJECTRUNNING* and *-PassThru* and *mypid*) or (*iex* and *
 ### T1218.005 - System Binary Proxy Execution: Mshta
 #### Description:
 
-Adversaries may abuse mshta.exe to proxy execution of malicious .hta files and Javascript or VBScript through a trusted Windows utility. There are several examples of different types of threats leveraging mshta.exe during initial compromise and for execution of code
+Adversaries may abuse mshta.exe to proxy execution of malicious .hta files and Javascript or VBScript through a trusted Windows utility. There are several examples of different types of threats leveraging mshta.exe during initial compromise and for execution of code.
 
 #### Kibana Query Language Code (KQL):
 ```
