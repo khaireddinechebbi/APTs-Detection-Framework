@@ -1,83 +1,71 @@
-| Technique ID |                                Technique name (short) | Tactic (MITRE)                         | Severity (easy/medium/hard/critical) | Quick notes / why severity                                                                                                                                                                                                     |
-| ------------ | ----------------------------------------------------: | -------------------------------------- | -----------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| T1003.002    | OS Credential Dumping: Security Account Manager (SAM) | Credential Access                      |                         **critical** | SAM dumps grant direct access to local NTLM hashes — high value for lateral movement. Detection: suspicious `ntdsutil`, `lsass` read attempts, unusual access to `C:\Windows\System32\config\SAM` or `Procdump` to lsass.      |
-| T1003.004    |                    OS Credential Dumping: LSA Secrets | Credential Access                      |                         **critical** | LSA secrets reveal cached credentials/keys — high impact. Detection: registry reads of `HKLM\SECURITY\Policy\PolSecretEncryptionKey` and `secrets` access; `mimikatz` patterns.                                                |
-| T1047        |              Windows Management Instrumentation (WMI) | Lateral Movement / Execution           |                           **medium** | WMI is a common remote execution/persistence channel. Detection: `wmic.exe` or `wmiprvse` odd schedules, WMI event subscription creation.                                                                                      |
-| T1053.005    |                    Scheduled Task/Job: Scheduled Task | Persistence                            |                           **medium** | Scheduled tasks are a common persistence vector. Detection: creation/modification of scheduled tasks (`schtasks`, `Register-ScheduledTask`) from non-admin tools or user profiles.                                             |
-| T1055.001    |                      Process Injection: DLL Injection | Defense Evasion / Privilege Escalation |                         **critical** | DLL injection into high-privilege processes is powerful and stealthy. Detection: API call monitoring (CreateRemoteThread/WriteProcessMemory), anomalous DLL loads, mismatched signing.                                         |
-| T1059.001    |                       Command Interpreter: PowerShell | Execution                              |                      **easy→medium** | PowerShell is prolific; encoded/obfuscated usage or network streams raise severity. Detection: `-EncodedCommand`, `Invoke-Expression`, `Invoke-WebRequest` from unusual parents.                                               |
-| T1105        |                                 Ingress Tool Transfer | Impact / Collection                    |                           **medium** | Downloading tools/payloads into environment (certutil, bitsadmin, iwr). Detection: certutil /bitsadmin /curl/iwr to Temp, unusual outbound downloads, new files in startup/start menu.                                         |
-| T1218.005    |                 Mshta (System Binary Proxy Execution) | Defense Evasion / Execution            |                           **medium** | mshta can execute remote HTA and spawn PowerShell; often abused. Detection: mshta executed from cmd/powershell with remote URL or HTA in startup folders.                                                                      |
-| T1218.010    |                                     Regsvr32 (SCROBJ) | Defense Evasion / Execution            |                         **critical** | Regsvr32 with `/s /u /i:http... scrobj.dll` allows remote .sct script execution without disk write. Highly abused. Detection: regsvr32 with `/i:` remote URLs, execution from non-standard parents or temp.                    |
-| T1218.011    |                                              Rundll32 | Defense Evasion / Execution            |                      **medium→high** | Rundll32 used to invoke arbitrary DLL exports, often from user folders or temp. Detection: rundll32 running a DLL from `%TEMP%`, user downloads, or with odd export names (StartW, krnl).                                      |
-| T1573        |                      Encrypted Channel / Encrypted C2 | Command & Control                      |                         **critical** | Custom encrypted channels (SSL/TLS over custom ports or self-auth) hide C2. Detection: uncommon outbound SSL endpoints, non-browser processes making TLS handshakes to odd ports, embedded SSL streams in scripts (SslStream). |
+# APT29 vs. Lazarus Techniques Table
 
-Suggested additional techniques to improve your project (high ROI)
+**Severity Legend:**
+- 🔴 **Critical** (Immediate threat to core infrastructure)
+- 🟠 **High** (Significant impact on security posture)  
+- 🟡 **Medium** (Moderate risk, requires attention)
+- 🔵 **Low** (Basic techniques, still important)
 
-Below are techniques I recommend adding to your detection matrix next — with why, tactic, severity and short detection hints.
+| Technique ID | Technique Name | Used By | Severity | MITRE Tactics |
+|-------------|----------------|---------|----------|---------------|
+| T1003.002 | OS Credential Dumping: SAM | APT29 | 🔴 | Credential Access |
+| T1003.004 | OS Credential Dumping: LSA Secrets | APT29 | 🔴 | Credential Access |
+| T1047 | Windows Management Instrumentation | Both | 🟠 | Execution, Lateral Movement |
+| T1053.005 | Scheduled Task/Job: Scheduled Task | Both | 🟠 | Persistence, Execution |
+| T1055.001 | Process Injection: DLL Injection | Lazarus | 🟠 | Defense Evasion, Privilege Escalation |
+| T1059.001 | Command Interpreter: PowerShell | Both | 🟠 | Execution |
+| T1105 | Ingress Tool Transfer | Both | 🟡 | Command and Control |
+| T1218.005 | Mshta | Both | 🟠 | Defense Evasion, Execution |
+| T1218.010 | Regsvr32 | Lazarus | 🟠 | Defense Evasion, Execution |
+| T1218.011 | Rundll32 | Both | 🟠 | Defense Evasion, Execution |
+| T1573 | Encrypted Channel | APT29 | 🟠 | Command and Control |
+| **T1001.002** | **Data Obfuscation: Steganography** | **APT29** | **🟠** | **Defense Evasion** |
+| **T1027.003** | **Obfuscated Files: Steganography** | **APT29** | **🟠** | **Defense Evasion** |
+| **T1546.003** | **WMI Event Subscription** | **APT29** | **🔴** | **Persistence, Privilege Escalation** |
+| **T1558.003** | **Kerberoasting** | **APT29** | **🔴** | **Credential Access** |
+| **T1562.002** | **Disable Windows Event Logging** | **APT29** | **🟠** | **Defense Evasion** |
 
-### T1059.003 — Windows Command Shell
+## Recommended Techniques for Project Expansion
 
-Tactic: Execution
+Based on your current work and the threat landscape, here are the **top 5 techniques** I recommend adding to your project:
 
-Severity: easy→medium
+### 1. 🔴 **T1546.003 - WMI Event Subscription** (APT29)
+**Why:** This is a sophisticated persistence mechanism that APT29 heavily uses. It would complement your WMI (T1047) work perfectly.
+**Use Case:** Advanced persistence that's hard to detect
+**MITRE Tactics:** Persistence, Privilege Escalation
 
-Why: many simple payloads and command chains start with cmd.exe /c. Detect parent-child anomalies, cmd.exe launched from Office/IE/HTA or from user temp directories.
+### 2. 🔴 **T1558.003 - Kerberoasting** (APT29) 
+**Why:** Critical credential access technique that's fundamental to APT29's lateral movement
+**Use Case:** Domain privilege escalation and credential theft
+**MITRE Tactics:** Credential Access
 
-### T1546.003 — Event Triggered Execution: WMI Event Subscription
+### 3. 🟠 **T1001.002/T1027.003 - Steganography** (APT29)
+**Why:** Advanced data obfuscation that would enhance your defense evasion coverage
+**Use Case:** Data exfiltration and payload hiding
+**MITRE Tactics:** Defense Evasion
 
-Tactic: Persistence
+### 4. 🟠 **T1562.002 - Disable Windows Event Logging** (APT29)
+**Why:** Directly impacts detection capabilities - crucial for understanding attacker tradecraft
+**Use Case:** Defense evasion and operational security
+**MITRE Tactics:** Defense Evasion
 
-Severity: hard
+## Project Enhancement Strategy
 
-Why: stealthy persistence; detection: WMI permanent event consumers/subscriptions creation (__EventFilter, __EventConsumer).
+### Phase 1: Immediate Adds (1-2 weeks)
+- **T1546.003 - WMI Event Subscription** - Builds on your existing WMI expertise
+- **T1562.002 - Disable Event Logging** - Practical defense evasion technique
 
-### T1553.002 — Subvert Trust Controls: Code Signing
+### Phase 2: Advanced Techniques (2-3 weeks)  
+- **T1558.003 - Kerberoasting** - Critical credential access
+- **T1001.002 - Steganography** - Advanced obfuscation
 
-Tactic: Defense Evasion
+### Phase 3: Completion (1 week)
+- **T1055.001 - Process Injection** - Finalize Lazarus coverage
 
-Severity: hard
+## Why These Techniques?
 
-Why: signed malware bypasses controls. Detection: new unsigned binaries in system folders, mismatched signature issuer, or signed by unusual certs.
-
-
-### T1090.003 — Proxy: Multi-hop Proxy
-
-Tactic: Command and Control / Evasion
-
-Severity: medium
-
-Why: attackers use proxy chains; detection: unusual outbound connections that are internal internal->external patterns; pay attention to internal hops on odd ports.
-
-
-### T1110.003 / T1110.001 — Password Spraying / Brute Force
-
-Tactic: Credential Access
-
-Severity: medium→high
-
-Why: common; detection: many failed auths across many accounts, repeated connection attempts from one source.
-
-### T1204.001 & T1204.002 — User Execution (malicious link/file)
-
-Tactic: Initial Access / User Interaction
-
-Severity: easy→medium
-
-Why: practice in detecting user-triggered payload execution and delivering training / telemetry correlation.
-
-### T1562.002 — Disable Windows Event Logging
-
-Tactic: Defense Evasion
-
-Severity: critical
-
-Why: attackers often try to reduce visibility; detection: changes to event log service config, suddenly missing events, or clearing of logs.
-
-### T1497. — Virtualization/Sandbox Evasion*
-
-Tactic: Defense Evasion
-
-Severity: medium
-
-Why: detects adversary tests for sandbox/VM; detection: api checks or registry/BIOS strings used to detect VMs.
+1. **Strategic Coverage:** Covers both APT29 and Lazarus core techniques
+2. **Progressive Difficulty:** Builds from your current knowledge
+3. **High Impact:** Addresses critical attack vectors
+4. **Detection Value:** Provides significant defensive insights
+5. **Career Relevance:** These are in-demand skills for threat hunting.
