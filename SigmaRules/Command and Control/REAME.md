@@ -1,4 +1,4 @@
-# Command And Control
+# Command and Control
 
 ## Description
 
