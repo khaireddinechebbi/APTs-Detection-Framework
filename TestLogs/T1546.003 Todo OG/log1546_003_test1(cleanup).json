@@ -1,6 +1,6 @@
 {
   "@timestamp": [
-    "2025-09-14T15:08:04.122Z"
+    "2025-09-14T15:43:51.057Z"
   ],
   "agent.ephemeral_id": [
     "7c172546-10fd-4dc9-91be-9ea6570ddc7c"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-14T15:08:06.474Z"
+    "2025-09-14T15:43:54.677Z"
   ],
   "event.ingested": [
-    "2025-09-14T15:08:30.514Z"
+    "2025-09-14T15:44:35.008Z"
   ],
   "event.kind": [
     "event"
@@ -99,35 +99,54 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-14 15:08:04.122\nProcessGuid: {9602231E-DA54-68C6-D501-000000003D00}\nProcessId: 5996\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {Set-ExecutionPolicy Bypass -Scope Process -Force -ErrorAction Ignore\nRemove-Item -Path \\\"\"$env:PUBLIC\\Downloads\\T1001.002New.jpg\\\"\" -Force -ErrorAction Ignore}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-D071-68C6-D905-020000000000}\nLogonId: 0x205d9\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-D17A-68C6-C100-000000003D00}\nParentProcessId: 6436\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \nParentUser: WINDOWS10\\khaireddine"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-14 15:43:51.057\nProcessGuid: {9602231E-E2B7-68C6-5002-000000003D00}\nProcessId: 2492\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {$EventConsumerToCleanup = Get-WmiObject -Namespace root/subscription -Class CommandLineEventConsumer -Filter \\\"\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\\\"\"\n$EventFilterToCleanup = Get-WmiObject -Namespace root/subscription -Class __EventFilter -Filter \\\"\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\\\"\"\n$FilterConsumerBindingToCleanup = Get-WmiObject -Namespace root/subscription -Query \\\"\"REFERENCES OF {$($EventConsumerToCleanup.__RELPATH)} WHERE ResultClass = __FilterToConsumerBinding\\\"\" -ErrorAction SilentlyContinue\n$FilterConsumerBindingToCleanup | Remove-WmiObject\n$EventConsumerToCleanup | Remove-WmiObject\n$EventFilterToCleanup | Remove-WmiObject}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-D071-68C6-D905-020000000000}\nLogonId: 0x205d9\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-D17A-68C6-C100-000000003D00}\nParentProcessId: 6436\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \nParentUser: WINDOWS10\\khaireddine"
   ],
   "process.args": [
     "powershell.exe",
     "&",
-    "{Set-ExecutionPolicy",
-    "Bypass",
-    "-Scope",
-    "Process",
-    "-Force",
+    "{$EventConsumerToCleanup",
+    "=",
+    "Get-WmiObject",
+    "-Namespace",
+    "root/subscription",
+    "-Class",
+    "CommandLineEventConsumer",
+    "-Filter",
+    "\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\"\n$EventFilterToCleanup",
+    "=",
+    "Get-WmiObject",
+    "-Namespace",
+    "root/subscription",
+    "-Class",
+    "__EventFilter",
+    "-Filter",
+    "\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\"\n$FilterConsumerBindingToCleanup",
+    "=",
+    "Get-WmiObject",
+    "-Namespace",
+    "root/subscription",
+    "-Query",
+    "\"REFERENCES OF {$($EventConsumerToCleanup.__RELPATH)} WHERE ResultClass = __FilterToConsumerBinding\"",
     "-ErrorAction",
-    "Ignore\nRemove-Item",
-    "-Path",
-    "\"$env:PUBLIC\\Downloads\\T1001.002New.jpg\"",
-    "-Force",
-    "-ErrorAction",
-    "Ignore}"
+    "SilentlyContinue\n$FilterConsumerBindingToCleanup",
+    "|",
+    "Remove-WmiObject\n$EventConsumerToCleanup",
+    "|",
+    "Remove-WmiObject\n$EventFilterToCleanup",
+    "|",
+    "Remove-WmiObject}"
   ],
   "process.args_count": [
-    14
+    33
   ],
   "process.command_line": [
-    "\"powershell.exe\" & {Set-ExecutionPolicy Bypass -Scope Process -Force -ErrorAction Ignore\nRemove-Item -Path \\\"\"$env:PUBLIC\\Downloads\\T1001.002New.jpg\\\"\" -Force -ErrorAction Ignore}"
+    "\"powershell.exe\" & {$EventConsumerToCleanup = Get-WmiObject -Namespace root/subscription -Class CommandLineEventConsumer -Filter \\\"\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\\\"\"\n$EventFilterToCleanup = Get-WmiObject -Namespace root/subscription -Class __EventFilter -Filter \\\"\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\\\"\"\n$FilterConsumerBindingToCleanup = Get-WmiObject -Namespace root/subscription -Query \\\"\"REFERENCES OF {$($EventConsumerToCleanup.__RELPATH)} WHERE ResultClass = __FilterToConsumerBinding\\\"\" -ErrorAction SilentlyContinue\n$FilterConsumerBindingToCleanup | Remove-WmiObject\n$EventConsumerToCleanup | Remove-WmiObject\n$EventFilterToCleanup | Remove-WmiObject}"
   ],
   "process.command_line.text": [
-    "\"powershell.exe\" & {Set-ExecutionPolicy Bypass -Scope Process -Force -ErrorAction Ignore\nRemove-Item -Path \\\"\"$env:PUBLIC\\Downloads\\T1001.002New.jpg\\\"\" -Force -ErrorAction Ignore}"
+    "\"powershell.exe\" & {$EventConsumerToCleanup = Get-WmiObject -Namespace root/subscription -Class CommandLineEventConsumer -Filter \\\"\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\\\"\"\n$EventFilterToCleanup = Get-WmiObject -Namespace root/subscription -Class __EventFilter -Filter \\\"\"Name = 'AtomicRedTeam-WMIPersistence-CommandLineEventConsumer-Example'\\\"\"\n$FilterConsumerBindingToCleanup = Get-WmiObject -Namespace root/subscription -Query \\\"\"REFERENCES OF {$($EventConsumerToCleanup.__RELPATH)} WHERE ResultClass = __FilterToConsumerBinding\\\"\" -ErrorAction SilentlyContinue\n$FilterConsumerBindingToCleanup | Remove-WmiObject\n$EventConsumerToCleanup | Remove-WmiObject\n$EventFilterToCleanup | Remove-WmiObject}"
   ],
   "process.entity_id": [
-    "{9602231E-DA54-68C6-D501-000000003D00}"
+    "{9602231E-E2B7-68C6-5002-000000003D00}"
   ],
   "process.executable": [
     "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
@@ -193,7 +212,7 @@
     "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    5996
+    2492
   ],
   "process.working_directory": [
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
@@ -272,7 +291,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "630919"
+    "634862"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -292,7 +311,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "wOHFSJkBZL84WWeWVUID",
+  "_id": "X-HmSJkBZL84WWeWSFdh",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }
