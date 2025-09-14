@@ -1,0 +1,63 @@
+title: Suspicious SSH Remote Management Activity (vCenter/Plink)
+id: 1d2b9f4a-6e77-4c9b-9a12-3f6b8a2c5d44
+status: experimental
+description: Detects attempts to manage VMware ESXi/vCenter services or enable/disable SSH via PowerShell or cmd.exe wrappers (Connect-VIServer + Get-VMHostService + TSM-SSH + Start/Stop-VMHostService) and plink-based SSH calls that invoke vim-cmd enable/disable ssh. These behaviors can indicate use of SSH for lateral movement or remote service management (T1021.004).
+author: Khaireddine
+date: 2025/09/14
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection_vcenter_pwsh:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Connect-VIServer'
+      - 'Get-VMHostService'
+      - 'TSM-SSH'
+  selection_vcenter_pwsh_service_change:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Connect-VIServer'
+      - 'Get-VMHostService'
+      - 'TSM-SSH'
+      - 'Start-VMHostService'
+  selection_vcenter_pwsh_service_stop:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Connect-VIServer'
+      - 'Get-VMHostService'
+      - 'TSM-SSH'
+      - 'Stop-VMHostService'
+  selection_plink_cmd:
+    EventID: 1
+    Image|endswith: '\cmd.exe'
+    CommandLine|contains_all:
+      - 'plink.exe'
+      - '-ssh'
+      - 'vim-cmd'
+    CommandLine|contains_any:
+      - 'enable_ssh'
+      - 'disable_ssh'
+  condition: selection_vcenter_pwsh or selection_vcenter_pwsh_service_change or selection_vcenter_pwsh_service_stop or selection_plink_cmd
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+  - Hostname
+falsepositives:
+  - Legitimate VMware/ESXi administration or automation (PowerCLI scripts, orchestration tools)
+  - Authorized remote management or maintenance windows
+  - Automated configuration management or CI/CD jobs invoking vCenter/ESXi actions
+level: high
+tags:
+  - attack.lateral_movement
+  - attack.t1021
+  - attack.t1021.004
+  - attack.execution
