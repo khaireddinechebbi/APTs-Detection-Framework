@@ -44,3 +44,23 @@ and (
     ))
 )
 ```
+
+### T1546.003 - Event Triggered Execution: Windows Management Instrumentation Event Subscription
+#### Description:
+
+Adversaries may establish persistence and elevate privileges by executing malicious content triggered by a Windows Management Instrumentation (WMI) event subscription. WMI can be used to install event filters, providers, consumers, and bindings that execute code when a defined event occurs. Examples of events that may be subscribed to are the wall clock time, user login, or the computer's uptime.
+Adversaries may use the capabilities of WMI to subscribe to an event and execute arbitrary code when that event occurs, providing persistence on a system. Adversaries may also compile WMI scripts – using mofcomp.exe –into Windows Management Object (MOF) files (.mof extension) that can be used to create a malicious subscription.
+WMI subscription execution is proxied by the WMI Provider Host process (WmiPrvSe.exe) and thus may result in elevated SYSTEM privileges.
+
+#### Kibana Query Language Code (KQL):
+```
+winlog.channel:"Microsoft-Windows-Sysmon/Operational"
+and event.code: 1
+and process.name: "powershell.exe"
+and process.command_line: (
+    ((*New-CimInstance* or *Set-WmiInstance*) and *root/subscription* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*))
+    or (*mofcomp.exe* and *.mof*)
+    or (*root/subscription* and *Get-WmiObject* and *Remove-WmiObject* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*) and *-ErrorAction SilentlyContinue*)
+)
+
+```

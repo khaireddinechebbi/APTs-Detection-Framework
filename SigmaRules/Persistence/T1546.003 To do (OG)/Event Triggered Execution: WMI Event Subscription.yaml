@@ -1,0 +1,46 @@
+title: Suspicious PowerShell WMI Persistence
+id: 3e5c2f61-3b19-44b1-a8d0-4e43d2c5b911
+status: experimental
+description: Detects suspicious PowerShell commands related to WMI persistence via event subscription, mofcomp, or deletion of WMI objects in the root\subscription namespace.
+author: Khaireddine
+date: 2025/09/14
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_any:
+      # WMI Subscription creation
+      - 'New-CimInstance'
+      - 'Set-WmiInstance'
+      - 'root/subscription'
+      - '__EventFilter'
+      - 'CommandLineEventConsumer'
+      - 'ActiveScriptEventConsumer'
+      - '__FilterToConsumerBinding'
+      # MOF compilation
+      - 'mofcomp.exe'
+      - '.mof'
+      # WMI subscription deletion attempts
+      - 'Get-WmiObject'
+      - 'Remove-WmiObject'
+      - '-ErrorAction SilentlyContinue'
+  condition: selection
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate administrative WMI scripting
+  - Management frameworks relying on WMI subscriptions
+level: high
+tags:
+  - attack.persistence
+  - attack.t1546.003
+  - attack.execution
