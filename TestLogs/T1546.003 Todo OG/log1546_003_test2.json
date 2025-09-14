@@ -1,6 +1,6 @@
 {
   "@timestamp": [
-    "2025-09-14T16:23:38.568Z"
+    "2025-09-14T16:27:49.602Z"
   ],
   "agent.ephemeral_id": [
     "acab96ab-34fe-42dd-b103-09d3b097603b"
@@ -33,10 +33,10 @@
     "1"
   ],
   "event.created": [
-    "2025-09-14T16:23:44.070Z"
+    "2025-09-14T16:27:52.361Z"
   ],
   "event.ingested": [
-    "2025-09-14T16:36:26.551Z"
+    "2025-09-14T16:39:12.160Z"
   ],
   "event.kind": [
     "event"
@@ -99,7 +99,7 @@
     "information"
   ],
   "message": [
-    "Process Create:\nRuleName: -\nUtcTime: 2025-09-14 16:23:38.568\nProcessGuid: {9602231E-EC0A-68C6-8502-000000003D00}\nProcessId: 2044\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {$FilterArgs = @{name='AtomicRedTeam-WMIPersistence-ActiveScriptEventConsumer-Example';\n                EventNameSpace='root\\CimV2';\n                QueryLanguage=\\\"\"WQL\\\"\";\n                Query=\\\"\"SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System' AND TargetInstance.SystemUpTime >= 240 AND TargetInstance.SystemUpTime < 325\\\"\"};\n$Filter=Set-WmiInstance -Class __EventFilter -Namespace \\\"\"root\\subscription\\\"\" -Arguments $FilterArgs\n\n$ConsumerArgs = @{name='AtomicRedTeam-WMIPersistence-ActiveScriptEventConsumer-Example';\n                ScriptingEngine='VBScript';\n                ScriptText='\n                Set objws = CreateObject(\\\"\"Wscript.Shell\\\"\")\n                objws.Run \\\"\"notepad.exe\\\"\", 0, True\n                '}\n$Consumer=Set-WmiInstance -Namespace \\\"\"root\\subscription\\\"\" -Class ActiveScriptEventConsumer -Arguments $ConsumerArgs\n\n$FilterToConsumerArgs = @{\nFilter = $Filter;\nConsumer = $Consumer;\n}\n$FilterToConsumerBinding = Set-WmiInstance -Namespace 'root/subscription' -Class '__FilterToConsumerBinding' -Arguments $FilterToConsumerArgs}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-D071-68C6-D905-020000000000}\nLogonId: 0x205d9\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-D17A-68C6-C100-000000003D00}\nParentProcessId: 6436\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \nParentUser: WINDOWS10\\khaireddine"
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-14 16:27:49.602\nProcessGuid: {9602231E-ED05-68C6-9002-000000003D00}\nProcessId: 8080\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {$FilterArgs = @{name='AtomicRedTeam-WMIPersistence-ActiveScriptEventConsumer-Example';\n                EventNameSpace='root\\CimV2';\n                QueryLanguage=\\\"\"WQL\\\"\";\n                Query=\\\"\"SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System' AND TargetInstance.SystemUpTime >= 240 AND TargetInstance.SystemUpTime < 325\\\"\"};\n$Filter=Set-WmiInstance -Class __EventFilter -Namespace \\\"\"root\\subscription\\\"\" -Arguments $FilterArgs\n\n$ConsumerArgs = @{name='AtomicRedTeam-WMIPersistence-ActiveScriptEventConsumer-Example';\n                ScriptingEngine='VBScript';\n                ScriptText='\n                Set objws = CreateObject(\\\"\"Wscript.Shell\\\"\")\n                objws.Run \\\"\"notepad.exe\\\"\", 0, True\n                '}\n$Consumer=Set-WmiInstance -Namespace \\\"\"root\\subscription\\\"\" -Class ActiveScriptEventConsumer -Arguments $ConsumerArgs\n\n$FilterToConsumerArgs = @{\nFilter = $Filter;\nConsumer = $Consumer;\n}\n$FilterToConsumerBinding = Set-WmiInstance -Namespace 'root/subscription' -Class '__FilterToConsumerBinding' -Arguments $FilterToConsumerArgs}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-D071-68C6-D905-020000000000}\nLogonId: 0x205d9\nTerminalSessionId: 1\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-D17A-68C6-C100-000000003D00}\nParentProcessId: 6436\nParentImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nParentCommandLine: \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" \nParentUser: WINDOWS10\\khaireddine"
   ],
   "process.args": [
     "powershell.exe",
@@ -160,7 +160,7 @@
     "\"powershell.exe\" & {$FilterArgs = @{name='AtomicRedTeam-WMIPersistence-ActiveScriptEventConsumer-Example';\n                EventNameSpace='root\\CimV2';\n                QueryLanguage=\\\"\"WQL\\\"\";\n                Query=\\\"\"SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System' AND TargetInstance.SystemUpTime >= 240 AND TargetInstance.SystemUpTime < 325\\\"\"};\n$Filter=Set-WmiInstance -Class __EventFilter -Namespace \\\"\"root\\subscription\\\"\" -Arguments $FilterArgs\n\n$ConsumerArgs = @{name='AtomicRedTeam-WMIPersistence-ActiveScriptEventConsumer-Example';\n                ScriptingEngine='VBScript';\n                ScriptText='\n                Set objws = CreateObject(\\\"\"Wscript.Shell\\\"\")\n                objws.Run \\\"\"notepad.exe\\\"\", 0, True\n                '}\n$Consumer=Set-WmiInstance -Namespace \\\"\"root\\subscription\\\"\" -Class ActiveScriptEventConsumer -Arguments $ConsumerArgs\n\n$FilterToConsumerArgs = @{\nFilter = $Filter;\nConsumer = $Consumer;\n}\n$FilterToConsumerBinding = Set-WmiInstance -Namespace 'root/subscription' -Class '__FilterToConsumerBinding' -Arguments $FilterToConsumerArgs}"
   ],
   "process.entity_id": [
-    "{9602231E-EC0A-68C6-8502-000000003D00}"
+    "{9602231E-ED05-68C6-9002-000000003D00}"
   ],
   "process.executable": [
     "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
@@ -226,7 +226,7 @@
     "Microsoft® Windows® Operating System"
   ],
   "process.pid": [
-    2044
+    8080
   ],
   "process.working_directory": [
     "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
@@ -305,7 +305,7 @@
     "Microsoft-Windows-Sysmon"
   ],
   "winlog.record_id": [
-    "638672"
+    "639054"
   ],
   "winlog.task": [
     "Process Create (rule: ProcessCreate)"
@@ -325,7 +325,7 @@
   "winlog.version": [
     5
   ],
-  "_id": "C-EVSZkBZL84WWeWxGuB",
+  "_id": "A-EYSZkBZL84WWeWSG3D",
   "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
   "_score": null
 }
