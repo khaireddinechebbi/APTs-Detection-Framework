@@ -1,0 +1,70 @@
+title: Suspicious PowerShell Malicious Document Activity
+id: 6f8d7d83-6cb4-4b35-8f43-90e6e4a1a6a9
+status: experimental
+description: Detects PowerShell activity consistent with malicious document delivery and execution, such as downloading Excel macro-enabled files, invoking malicious expressions, and removing artifacts. This behavior is linked to spearphishing attachments (T1566.001).
+author: Khaireddine
+date: 2025/09/14
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection_download_xlsm:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Invoke-WebRequest'
+      - '-OutFile'
+      - '.xlsm'
+  selection_download_xlsm_short:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'iwr'
+      - '-OutFile'
+      - '.xlsm'
+  selection_invoke_expression:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Invoke-Expression'
+      - 'Invoke-MalDoc'
+    CommandLine|contains_any:
+      - '`*'
+      - '`$'
+      - '`n'
+  selection_invoke_expression_short:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'IEX'
+      - 'Invoke-MalDoc'
+    CommandLine|contains_any:
+      - '`*'
+      - '`$'
+      - '`n'
+  selection_remove_item:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains: 'Remove-Item'
+    CommandLine|contains_any:
+      - '$env:\TEMP'
+      - 'C:\Users\'
+    CommandLine|contains: '-ErrorAction Ignore'
+  condition: selection_download_xlsm or selection_download_xlsm_short or selection_invoke_expression or selection_invoke_expression_short or selection_remove_item
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate administrative scripts downloading or cleaning up files
+  - Developers/testers using PowerShell to fetch or remove files
+level: high
+tags:
+  - attack.initial_access
+  - attack.t1566
+  - attack.t1566.001
+  - attack.execution
