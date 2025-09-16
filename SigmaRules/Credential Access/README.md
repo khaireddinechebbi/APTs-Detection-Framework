@@ -1,14 +1,12 @@
 # Credential Access
 
 ## Description:
-
-Credential Access consists of techniques for stealing credentials like account names and passwords. Techniques used to get credentials include keylogging or credential dumping. Using legitimate credentials can give adversaries access to systems, make them harder to detect, and provide the opportunity to create more accounts to help achieve their goals.
+Credential Access techniques involve methods adversaries use to steal account credentials, such as passwords, hashes, kerberos tickets, and other authentication materials. This includes extracting credentials from the Security Account Manager (SAM) database, Local Security Authority (LSA) secrets, and other protected storage locations within the operating system.
 
 ## Techniques:
 ### T1003.002 - OS Credential Dumping: Security Account Manager
 #### Description:
-
-Adversaries may attempt to extract credential material from the Security Account Manager (SAM) database either through in-memory techniques or through the Windows Registry where the SAM database is stored. The SAM is a database file that contains local accounts for the host, typically those found with the net user command. Enumerating the SAM database requires SYSTEM level access.
+Adversaries attempt to extract credential information from the Security Account Manager (SAM) database, which contains local account passwords and hashes. This technique involves using native Windows utilities like reg.exe to export the SAM, SYSTEM, and SECURITY registry hives to disk for offline extraction of credentials, often followed by cleanup activities to remove evidence of the dumping process.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -36,8 +34,7 @@ and (
 
 ### T1003.004 - OS Credential Dumping: LSA Secrets
 #### Description:
-
-Adversaries with SYSTEM access to a host may attempt to access Local Security Authority (LSA) secrets, which can contain a variety of different credential materials, such as credentials for service accounts. LSA secrets are stored in the registry at HKEY_LOCAL_MACHINE\SECURITY\Policy\Secrets. LSA secrets can also be dumped from memory.
+Adversaries target the Local Security Authority (LSA) secrets, which store various sensitive credentials including service account passwords, cached domain credentials, and other authentication data. This technique involves exporting the SECURITY registry hive to access LSA secrets, often using tools like reg.exe and potentially involving remote download of specialized dumping tools, followed by cleanup operations to remove temporary files and cover tracks.
 
 #### Kibana Query Language Code (KQL):
 ```

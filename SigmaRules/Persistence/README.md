@@ -1,14 +1,12 @@
 # Persistence
 
 ## Description:
-
-Persistence consists of techniques that adversaries use to keep access to systems across restarts, changed credentials, and other interruptions that could cut off their access. Techniques used for persistence include any access, action, or configuration changes that let them maintain their foothold on systems, such as replacing or hijacking legitimate code or adding startup code.
+Persistence techniques consist of methods adversaries use to maintain access to systems across restarts, changed credentials, and other interruptions that could cut off their access. This includes creating scheduled tasks, WMI event subscriptions, and other mechanisms that allow attackers to automatically re-establish access and continue operations on compromised systems.
 
 ## Techniques:
 ### T1053.005 - Scheduled Task/Job: Scheduled Task
 #### Description:
-
-Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. There are multiple ways to access the Task Scheduler in Windows. The schtasks utility can be run directly on the command line, or the Task Scheduler can be opened through the GUI within the Administrator Tools section of the Control Panel. In some cases, adversaries have used a .NET wrapper for the Windows Task Scheduler, and alternatively, adversaries have used the Windows netapi32 library and Windows Management Instrumentation (WMI) to create a scheduled task. Adversaries may also utilize the Powershell Cmdlet Invoke-CimMethod, which leverages WMI class PS_ScheduledTask to create a scheduled task via an XML path.
+Adversaries create scheduled tasks to execute malicious code at system startup, user logon, or specific intervals to maintain persistence. This technique involves using schtasks.exe or PowerShell cmdlets to create, modify, or delete tasks that run commands, scripts, or binaries, often with elevated privileges and hidden execution to maintain long-term access to compromised systems.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -47,10 +45,7 @@ and (
 
 ### T1546.003 - Event Triggered Execution: Windows Management Instrumentation Event Subscription
 #### Description:
-
-Adversaries may establish persistence and elevate privileges by executing malicious content triggered by a Windows Management Instrumentation (WMI) event subscription. WMI can be used to install event filters, providers, consumers, and bindings that execute code when a defined event occurs. Examples of events that may be subscribed to are the wall clock time, user login, or the computer's uptime.
-Adversaries may use the capabilities of WMI to subscribe to an event and execute arbitrary code when that event occurs, providing persistence on a system. Adversaries may also compile WMI scripts – using mofcomp.exe –into Windows Management Object (MOF) files (.mof extension) that can be used to create a malicious subscription.
-WMI subscription execution is proxied by the WMI Provider Host process (WmiPrvSe.exe) and thus may result in elevated SYSTEM privileges.
+Adversaries abuse Windows Management Instrumentation (WMI) event subscriptions to execute malicious code in response to system events. This technique involves creating permanent WMI event filters, consumers, and bindings that trigger payload execution when specific events occur (such as system startup or process creation), providing a stealthy persistence mechanism that operates through a legitimate system management framework.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -62,5 +57,4 @@ and process.command_line: (
     or (*mofcomp.exe* and *.mof*)
     or (*root/subscription* and *Get-WmiObject* and *Remove-WmiObject* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*) and *-ErrorAction SilentlyContinue*)
 )
-
 ```

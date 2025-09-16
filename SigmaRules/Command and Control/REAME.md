@@ -1,14 +1,12 @@
 # Command and Control
 
 ## Description
-
-Command and Control consists of techniques that adversaries may use to communicate with systems under their control within a victim network. Adversaries commonly attempt to mimic normal, expected traffic to avoid detection. There are many ways an adversary can establish command and control with various levels of stealth depending on the victim’s network structure and defenses.
+Command and Control (C2) refers to techniques that adversaries use to communicate with compromised systems and control them remotely. This includes methods for transferring tools into the environment, maintaining persistence, and exfiltrating data while often using encryption to evade detection.
 
 ## Techniques:
 ### T1105 - Ingress Tool Transfer
 #### Description:
-
-Adversaries may transfer tools or other files from an external system into a compromised environment. Tools or files may be copied from an external adversary-controlled system to the victim network through the command and control channel or through alternate protocols such as ftp. Once present, adversaries may also transfer/spread tools between victim devices within a compromised environment (i.e. Lateral Tool Transfer).
+Adversaries transfer tools or other files from an external system into a compromised environment. This technique involves using native system tools or PowerShell to download, extract, and execute malicious payloads from remote servers, often followed by cleanup activities to remove evidence of the transfer.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -58,8 +56,7 @@ and (
 
 ### T1573 - Encrypted Channel
 #### Description:
-
-Adversaries may employ an encryption algorithm to conceal command and control traffic rather than relying on any inherent protections provided by a communication protocol. Despite the use of a secure algorithm, these implementations may be vulnerable to reverse engineering if secret keys are encoded and/or generated within malware samples/configuration files.
+Adversaries use encrypted communication channels to conceal their command and control traffic and evade network detection. This technique involves implementing custom encryption within PowerShell scripts using .NET classes like SslStream and TcpClient to establish secure, encrypted connections between compromised systems and attacker-controlled servers.
 
 #### Kibana Query Language Code (KQL):
 ```

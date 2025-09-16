@@ -1,14 +1,12 @@
 # Defense Evasion
 
 ## Description:
-
-Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. Techniques used for defense evasion include uninstalling/disabling security software or obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes to hide and masquerade their malware. Other tactics’ techniques are cross-listed here when those techniques include the added benefit of subverting defenses.
+Defense Evasion techniques consist of methods adversaries use to avoid detection throughout their compromise. This includes subverting security tools, manipulating system processes, and abusing trusted system utilities to execute malicious code while bypassing defensive measures and logging mechanisms.
 
 ## Techniques:
 ### T1055.001 - Process Injection: Dynamic-link Library Injection
 #### Description:
-
-Adversaries may inject dynamic-link libraries (DLLs) into processes in order to evade process-based defenses as well as possibly elevate privileges. DLL injection is a method of executing arbitrary code in the address space of a separate live process.
+Adversaries inject malicious code into running processes to conceal their activities and evade process-based defenses. This technique involves using PowerShell to inject DLLs into existing processes, often combining injection with code download from remote servers to execute payloads in memory without writing to disk.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -20,8 +18,7 @@ and process.args:((*/INJECTRUNNING* and *-PassThru* and *mypid*) or (*iex* and *
 
 ### T1218.005 - System Binary Proxy Execution: Mshta
 #### Description:
-
-Adversaries may abuse mshta.exe to proxy execution of malicious .hta files and Javascript or VBScript through a trusted Windows utility. There are several examples of different types of threats leveraging mshta.exe during initial compromise and for execution of code.
+Adversaries abuse the Microsoft HTML Application Host (mshta.exe) to execute malicious scripts and bypass application control solutions. This technique involves using mshta to run VBScript or JScript code that typically launches PowerShell commands, often targeting startup directories for persistence or executing scripts directly from command-line interfaces.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -34,8 +31,7 @@ and process.command_line: (((*vbscript* or *VBScript*) and *Execute* and *Wscrip
 
 ### T1218.010 - System Binary Proxy Execution: Regsvr32
 #### Description:
-
-Adversaries may abuse Regsvr32.exe to proxy execution of malicious code. Regsvr32.exe is a command-line program used to register and unregister object linking and embedding controls, including dynamic link libraries (DLLs), on Windows systems. The Regsvr32.exe binary may also be signed by Microsoft.
+Adversaries misuse the regsvr32.exe utility to execute malicious DLLs while evading defense mechanisms. This technique leverages regsvr32's legitimate functionality to register DLLs while using silent execution flags and temporary directory patterns to load and execute malicious code without user interaction or visible indicators.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -54,8 +50,7 @@ and (
 
 ### T1218.011 - System Binary Proxy Execution: Rundll32
 #### Description:
-
-Adversaries may abuse rundll32.exe to proxy execution of malicious code. Using rundll32.exe, vice executing directly (i.e. Shared Modules), may avoid triggering security tools that may not monitor execution of the rundll32.exe process because of allowlists or false positives from normal operations. Rundll32.exe is commonly associated with executing DLL payloads (ex: rundll32.exe {DLLname, DLLfunction}).
+Adversaries exploit the rundll32.exe Windows utility to execute malicious code disguised as legitimate DLL functions. This technique involves calling unusual export functions, using non-standard file extensions, or creating chain executions where rundll32 processes spawn additional rundll32 instances to obscure the malicious activity and bypass security controls.
 
 #### Kibana Query Language Code (KQL):
 ```

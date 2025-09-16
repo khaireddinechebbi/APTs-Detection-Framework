@@ -1,14 +1,12 @@
 # Lateral Movement
 
 ## Description:
-
-Lateral Movement consists of techniques that adversaries use to enter and control remote systems on a network. Following through on their primary objective often requires exploring the network to find their target and subsequently gaining access to it. Reaching their objective often involves pivoting through multiple systems and accounts to gain. Adversaries might install their own remote access tools to accomplish Lateral Movement or use legitimate credentials with native network and operating system tools, which may be stealthier.
+Lateral Movement techniques consist of methods adversaries use to enter and control remote systems on a network. This includes leveraging remote services and protocols to extend access from initially compromised systems to other systems within the environment, enabling further discovery, privilege escalation, and persistence.
 
 ## Techniques:
 ### T1021.004 - Remote Services: SSH
 #### Description:
-
-SSH is a protocol that allows authorized users to open remote shells on other computers. Many Linux and macOS versions come with SSH installed by default, although typically disabled until the user enables it. On ESXi, SSH can be enabled either directly on the host (e.g., via vim-cmd hostsvc/enable_ssh) or via vCenter.The SSH server can be configured to use standard password authentication or public-private keypairs in lieu of or in addition to a password. In this authentication scenario, the user’s public key must be in a special file on the computer running the server that lists which keypairs are allowed to login as that user (i.e., SSH Authorized Keys).
+Adversaries use Secure Shell (SSH) to move laterally between systems and execute commands on remote hosts. This technique involves enabling SSH services on compromised systems, using tools like plink.exe to establish encrypted connections, and executing commands remotely to extend control across the network while maintaining stealth through encrypted communications.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -24,8 +22,7 @@ and process.command_line: (
 
 ### T1021.006 - Remote Services: Windows Remote Management
 #### Description:
-
-WinRM is the name of both a Windows service and a protocol that allows a user to interact with a remote system (e.g., run an executable, modify the Registry, modify services). It may be called with the winrm command or by any number of programs such as PowerShell. WinRM can be used as a method of remotely interacting with Windows Management Instrumentation.
+Adversaries abuse Windows Remote Management (WinRM) to execute commands and move laterally between Windows systems. This technique involves enabling PSRemoting on target systems, using legitimate management tools or frameworks like Evil-WinRM to establish remote PowerShell sessions, and executing commands on remote hosts to expand control across the network.
 
 #### Kibana Query Language Code (KQL):
 ```

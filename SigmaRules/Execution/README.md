@@ -1,14 +1,12 @@
 # Execution
 
 ## Description:
-
-Execution consists of techniques that result in adversary-controlled code running on a local or remote system. Techniques that run malicious code are often paired with techniques from all other tactics to achieve broader goals, like exploring a network or stealing data. For example, an adversary might use a remote access tool to run a PowerShell script that does Remote System Discovery.
+Execution techniques involve methods adversaries use to run malicious code on local or remote systems. This includes leveraging built-in system utilities, scripting interpreters, and administrative tools to execute commands, deploy payloads, and maintain control over compromised environments while often blending with legitimate system activities.
 
 ## Techniques:
 ### T1047 - Windows Management Instrumentation
 #### Description:
-
-Adversaries may abuse Windows Management Instrumentation (WMI) to execute malicious commands and payloads. WMI is designed for programmers and is the infrastructure for management data and operations on Windows systems. WMI is an administration feature that provides a uniform environment to access Windows system components.
+Adversaries abuse Windows Management Instrumentation (WMI) to execute commands and perform various malicious activities on local or remote systems. This technique involves using WMIC.exe to create, manipulate, or delete processes, enabling attackers to run code, conduct reconnaissance, and maintain persistence while leveraging a legitimate administrative tool that may bypass security monitoring.
 
 #### Kibana Query Language Code (KQL):
 ```
@@ -24,8 +22,7 @@ and process.parent.name : ("cmd.exe" or "powershell.exe")
 
 ### T1059.001 - Command and Scripting Interpreter: PowerShell
 #### Description:
-
-Adversaries may abuse PowerShell commands and scripts for execution. PowerShell is a powerful interactive command-line interface and scripting environment included in the Windows operating system. Adversaries can use PowerShell to perform a number of actions, including discovery of information and execution of code. Examples include the Start-Process cmdlet which can be used to run an executable and the Invoke-Command cmdlet which runs a command locally or on a remote computer (though administrator permissions are required to use PowerShell to connect to remote systems).
+Adversaries leverage PowerShell's extensive capabilities to execute malicious scripts, download additional payloads, and perform various attack activities while evading detection. This technique involves using encoded commands, obfuscated scripts, and living-off-the-land binaries to conduct reconnaissance, lateral movement, credential access, and data exfiltration while minimizing forensic evidence on target systems.
 
 #### Kibana Query Language Code (KQL):
 ```
