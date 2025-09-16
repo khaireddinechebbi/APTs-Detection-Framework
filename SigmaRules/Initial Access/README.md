@@ -15,8 +15,8 @@ and event.code: 1
 and process.name: "powershell.exe"
 and process.command_line: (
     ((*Invoke-WebRequest* or *iwr*) and (*http* or *https*) and *-OutFile* and *.xlsm*)
-    or ((*IEX* or *Invoke-Expression*) and (*http* or *https*) and *Invoke-MalDoc* and (*`\* or *`$* or *`n*))
-    or (*Remove-Item* and (*$env\:TEMP* or *C\:\\Users*) and *-ErrorAction Ignore*)
+    or ((*IEX* or *Invoke-Expression*) and (*http* or *https*) and *Invoke-MalDoc* and (*`\* or *`$* or *`n*) and *.jse*)
+    or (*Remove-Item* and (*$env\:TEMP* or *C\:\\Users*) and *-ErrorAction Ignore* and (*.xlsm* or *.jse*))
 )
 ```
 

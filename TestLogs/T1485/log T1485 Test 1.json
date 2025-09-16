@@ -1,0 +1,297 @@
+{
+  "@timestamp": [
+    "2025-09-16T11:04:45.017Z"
+  ],
+  "agent.ephemeral_id": [
+    "5e3f59aa-7543-4e93-99bd-901ff6b9334d"
+  ],
+  "agent.hostname": [
+    "windows10"
+  ],
+  "agent.id": [
+    "2a749be6-7546-4730-bfff-3e53e1d899ad"
+  ],
+  "agent.name": [
+    "windows10"
+  ],
+  "agent.type": [
+    "winlogbeat"
+  ],
+  "agent.version": [
+    "9.1.2"
+  ],
+  "ecs.version": [
+    "8.17.0"
+  ],
+  "event.action": [
+    "Process creation"
+  ],
+  "event.category": [
+    "process"
+  ],
+  "event.code": [
+    "1"
+  ],
+  "event.created": [
+    "2025-09-16T11:04:46.286Z"
+  ],
+  "event.ingested": [
+    "2025-09-16T11:06:42.597Z"
+  ],
+  "event.kind": [
+    "event"
+  ],
+  "event.module": [
+    "sysmon"
+  ],
+  "event.provider": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "event.type": [
+    "start"
+  ],
+  "host.architecture": [
+    "x86_64"
+  ],
+  "host.hostname": [
+    "windows10"
+  ],
+  "host.id": [
+    "9602231e-bedc-4571-bb7f-bfa9fca7b1e1"
+  ],
+  "host.ip": [
+    "fe80::5588:11c4:b507:8fc7",
+    "30.30.30.48"
+  ],
+  "host.mac": [
+    "08-00-27-10-06-88"
+  ],
+  "host.name": [
+    "windows10"
+  ],
+  "host.os.build": [
+    "19045.6332"
+  ],
+  "host.os.family": [
+    "windows"
+  ],
+  "host.os.kernel": [
+    "10.0.19041.6328 (WinBuild.160101.0800)"
+  ],
+  "host.os.name": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.name.text": [
+    "Windows 10 Enterprise Evaluation"
+  ],
+  "host.os.platform": [
+    "windows"
+  ],
+  "host.os.type": [
+    "windows"
+  ],
+  "host.os.version": [
+    "10.0"
+  ],
+  "log.level": [
+    "information"
+  ],
+  "message": [
+    "Process Create:\nRuleName: -\nUtcTime: 2025-09-16 11:04:45.017\nProcessGuid: {9602231E-444D-68C9-8501-000000004300}\nProcessId: 8156\nImage: C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\nFileVersion: 10.0.19041.3996 (WinBuild.160101.0800)\nDescription: Windows PowerShell\nProduct: Microsoft® Windows® Operating System\nCompany: Microsoft Corporation\nOriginalFileName: PowerShell.EXE\nCommandLine: \"powershell.exe\" & {if (-not (Test-Path \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\")) { New-Item \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\" -Force }\n& \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\Sdelete\\sdelete.exe\\\"\" -accepteula \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\"}\nCurrentDirectory: C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\\nUser: WINDOWS10\\khaireddine\nLogonGuid: {9602231E-3B3C-68C9-69BB-3C0000000000}\nLogonId: 0x3cbb69\nTerminalSessionId: 0\nIntegrityLevel: High\nHashes: SHA256=9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3,IMPHASH=3D08F4848535206D772DE145804FF4B6\nParentProcessGuid: {9602231E-3B3D-68C9-5A01-000000004300}\nParentProcessId: 3704\nParentImage: C:\\Windows\\System32\\wsmprovhost.exe\nParentCommandLine: C:\\Windows\\system32\\wsmprovhost.exe -Embedding\nParentUser: WINDOWS10\\khaireddine"
+  ],
+  "process.args": [
+    "powershell.exe",
+    "&",
+    "{if",
+    "(-not",
+    "(Test-Path",
+    "\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\"))",
+    "{",
+    "New-Item",
+    "\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\"",
+    "-Force",
+    "}\n&",
+    "\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\Sdelete\\sdelete.exe\"",
+    "-accepteula",
+    "\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\"}"
+  ],
+  "process.args_count": [
+    14
+  ],
+  "process.command_line": [
+    "\"powershell.exe\" & {if (-not (Test-Path \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\")) { New-Item \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\" -Force }\n& \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\Sdelete\\sdelete.exe\\\"\" -accepteula \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\"}"
+  ],
+  "process.command_line.text": [
+    "\"powershell.exe\" & {if (-not (Test-Path \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\")) { New-Item \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\" -Force }\n& \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\Sdelete\\sdelete.exe\\\"\" -accepteula \\\"\"C:\\AtomicRedTeam\\atomics\\..\\ExternalPayloads\\T1485.txt\\\"\"}"
+  ],
+  "process.entity_id": [
+    "{9602231E-444D-68C9-8501-000000004300}"
+  ],
+  "process.executable": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.executable.text": [
+    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  ],
+  "process.hash.sha256": [
+    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3"
+  ],
+  "process.name": [
+    "powershell.exe"
+  ],
+  "process.name.text": [
+    "powershell.exe"
+  ],
+  "process.parent.args": [
+    "C:\\Windows\\system32\\wsmprovhost.exe",
+    "-Embedding"
+  ],
+  "process.parent.args_count": [
+    2
+  ],
+  "process.parent.command_line": [
+    "C:\\Windows\\system32\\wsmprovhost.exe -Embedding"
+  ],
+  "process.parent.command_line.text": [
+    "C:\\Windows\\system32\\wsmprovhost.exe -Embedding"
+  ],
+  "process.parent.entity_id": [
+    "{9602231E-3B3D-68C9-5A01-000000004300}"
+  ],
+  "process.parent.executable": [
+    "C:\\Windows\\System32\\wsmprovhost.exe"
+  ],
+  "process.parent.executable.text": [
+    "C:\\Windows\\System32\\wsmprovhost.exe"
+  ],
+  "process.parent.name": [
+    "wsmprovhost.exe"
+  ],
+  "process.parent.name.text": [
+    "wsmprovhost.exe"
+  ],
+  "process.parent.pid": [
+    3704
+  ],
+  "process.pe.company": [
+    "Microsoft Corporation"
+  ],
+  "process.pe.description": [
+    "Windows PowerShell"
+  ],
+  "process.pe.file_version": [
+    "10.0.19041.3996 (WinBuild.160101.0800)"
+  ],
+  "process.pe.imphash": [
+    "3d08f4848535206d772de145804ff4b6"
+  ],
+  "process.pe.original_file_name": [
+    "PowerShell.EXE"
+  ],
+  "process.pe.product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "process.pid": [
+    8156
+  ],
+  "process.working_directory": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "process.working_directory.text": [
+    "C:\\Users\\KHAIRE~1\\AppData\\Local\\Temp\\"
+  ],
+  "related.hash": [
+    "9785001b0dcf755eddb8af294a373c0b87b2498660f724e76c4d53f9c217c7a3",
+    "3d08f4848535206d772de145804ff4b6"
+  ],
+  "related.user": [
+    "khaireddine"
+  ],
+  "user.domain": [
+    "WINDOWS10"
+  ],
+  "user.id": [
+    "S-1-5-18"
+  ],
+  "user.name": [
+    "khaireddine"
+  ],
+  "user.name.text": [
+    "khaireddine"
+  ],
+  "winlog.channel": [
+    "Microsoft-Windows-Sysmon/Operational"
+  ],
+  "winlog.computer_name": [
+    "windows10"
+  ],
+  "winlog.event_data.Company": [
+    "Microsoft Corporation"
+  ],
+  "winlog.event_data.Description": [
+    "Windows PowerShell"
+  ],
+  "winlog.event_data.FileVersion": [
+    "10.0.19041.3996 (WinBuild.160101.0800)"
+  ],
+  "winlog.event_data.IntegrityLevel": [
+    "High"
+  ],
+  "winlog.event_data.LogonGuid": [
+    "{9602231E-3B3C-68C9-69BB-3C0000000000}"
+  ],
+  "winlog.event_data.LogonId": [
+    "0x3cbb69"
+  ],
+  "winlog.event_data.ParentUser": [
+    "WINDOWS10\\khaireddine"
+  ],
+  "winlog.event_data.Product": [
+    "Microsoft® Windows® Operating System"
+  ],
+  "winlog.event_data.TerminalSessionId": [
+    "0"
+  ],
+  "winlog.event_id": [
+    "1"
+  ],
+  "winlog.opcode": [
+    "Info"
+  ],
+  "winlog.process.pid": [
+    2600
+  ],
+  "winlog.process.thread.id": [
+    4296
+  ],
+  "winlog.provider_guid": [
+    "{5770385F-C22A-43E0-BF4C-06F5698FFBD9}"
+  ],
+  "winlog.provider_name": [
+    "Microsoft-Windows-Sysmon"
+  ],
+  "winlog.record_id": [
+    "723906"
+  ],
+  "winlog.task": [
+    "Process Create (rule: ProcessCreate)"
+  ],
+  "winlog.user.domain": [
+    "NT AUTHORITY"
+  ],
+  "winlog.user.identifier": [
+    "S-1-5-18"
+  ],
+  "winlog.user.name": [
+    "SYSTEM"
+  ],
+  "winlog.user.type": [
+    "User"
+  ],
+  "winlog.version": [
+    5
+  ],
+  "_id": "fKA0UpkBFGjYcBhfmZei",
+  "_index": ".ds-winlogbeat-9.1.2-2025.08.17-000001",
+  "_score": null
+}

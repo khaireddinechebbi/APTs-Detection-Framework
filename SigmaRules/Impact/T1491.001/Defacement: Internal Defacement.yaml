@@ -1,0 +1,59 @@
+title: System Banner / ESXi Defacement Activity
+id: 4b7e2c9d-2a1f-47c6-9f3b-8d2e5a7c1e4f
+status: experimental
+description: Detects attempts to modify system banners or legal notice text (e.g., using PowerShell Add-Type / Win32 techniques or editing HKLM\... LegalNoticeCaption/LegalNoticeText) and defacement actions against ESXi via plink invoked from WS-Man (wsmprovhost). These behaviors align with defacement/impact techniques (T1491.001).
+author: Khaireddine
+date: 2025/09/16
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection_banner_addtype:
+    EventID: 1
+    Image|endswith:
+      - '\powershell.exe'
+      - '\cmd.exe'
+    CommandLine|contains_all:
+      - "@'"
+      - "'@"
+      - 'Add-Type'
+      - 'Win32'
+  selection_registry_legalnotice:
+    EventID: 1
+    Image|endswith:
+      - '\powershell.exe'
+      - '\cmd.exe'
+    CommandLine|contains_all:
+      - 'HKLM:\'
+      - 'LegalNoticeCaption'
+      - 'LegalNoticeText'
+  selection_esx_defacement:
+    EventID: 1
+    ParentImage|endswith: '\wsmprovhost.exe'
+    Image|endswith:
+      - '\powershell.exe'
+      - '\cmd.exe'
+    CommandLine|contains_all:
+      - 'plink.exe'
+      - 'root'
+      - 'esxcli'
+  condition: selection_banner_addtype or selection_registry_legalnotice or selection_esx_defacement
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+  - Hostname
+falsepositives:
+  - Legitimate administrative changes to legal notice / system banners (policy updates)
+  - Authorized automation for enterprise imaging, onboarding, or configuration management
+  - Pentest / red-team activity during scheduled tests
+level: high
+tags:
+  - attack.impact
+  - attack.t1491
+  - attack.t1491.001
+  - attack.defacement

@@ -10,18 +10,14 @@ Adversaries destroy or corrupt data on target systems to disrupt operations, cau
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name: ("cmd.exe" or "powershell.exe" or "format.com" or "cipher.exe")
+winlog.channel:"Microsoft-Windows-Sysmon/Operational" 
+and event.code:1 
+and process.parent.name: "wsmprovhost.exe"
+and process.name: ("cmd.exe" or "powershell.exe")
 and process.command_line: (
-    (*del* and (*/f* or */s* or */q*) and (*C:\\* or *D:\\* or *system32* or *.db* or *.mdf*))
-    or (*format* and (*C:* or *D:* or *Q:* or */FS* or */Q*))
-    or (*cipher* and (*/w* and *C:*))
-    or (*Remove-Item* and (*-Recurse* and *-Force*) and (*C:\\Windows\\* or *C:\\ProgramData\\*))
-    or (*rmdir* and (*/s* and */q*) and (*C:\\* or *D:\\*))
-    or (*wevtutil* and (*cl* and *System* or *Security* or *Application*))
-    or (*fsutil* and (*file* and *setZeroData*))
-    or (*vssadmin* and (*Delete Shadows* and */All*))
+    (*plink.exe* and *.removeall*)
+    or (*sdelete.exe* and *-accepteula*)
+    or (*cipher* and */w\:*)
 )
 ```
 
@@ -33,14 +29,16 @@ Adversaries modify system or application content to display unauthorized message
 ```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1
-and process.name: ("cmd.exe" or "powershell.exe" or "notepad.exe" or "echo.exe")
-and process.command_line: (
-    (*echo* and (*hacked* or *compromised* or *defaced*) and (*>* or *>>*) and (*.html* or *.htm* or *.aspx*))
-    or (*copy* and (*con*) and (*index.html* or *default.aspx*))
-    or (*Set-Content* and (*-Value* and (*hack* or *owned*)) and (*-Path* and (*inetpub* or *wwwroot*)))
-    or (*ren* and (*index.html* or *default.aspx*) and (*.bak* or *.old*))
-    or (*attrib* and (*+h* or *+s*) and (*defaced* or *hacked*))
-    or (*icacls* and (*/grant* and *Everyone:F*) and (*C:\\inetpub\\wwwroot\\*))
-    or (*takeown* and (*/f* and *C:\\inetpub\\wwwroot\\*))
+and process.name: ("cmd.exe" or "powershell.exe")
+and (
+    process.command_line: (
+        (*@'* and *'@* and *add-type* and *Win32*)
+        or (*HKLM\:* and *LegalNoticeCaption* and *LegalNoticeText*)
+    )
+    or
+    (
+        process.parent.name: "wsmprovhost.exe"
+        and process.command_line: (*plink.exe* and *root* and *esxcli*)
+    )
 )
 ```

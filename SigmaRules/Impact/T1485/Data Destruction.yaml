@@ -1,0 +1,55 @@
+title: Suspicious Data Destruction via wsmprovhost Parent
+id: 9c3f2a7b-2d1e-4b6f-9a7e-5f1d2b8c4e66
+status: experimental
+description: Detects potential data destruction activity where cmd.exe or PowerShell is launched by `wsmprovhost.exe` and executes destructive utilities or commands such as plink with .removeall, sdelete with -accepteula, or cipher with /w:. This may indicate deliberate destructive actions or cleanup attempts initiated over remote management channels.
+author: Khaireddine
+date: 2025/09/16
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection_plink_removeall:
+    EventID: 1
+    ParentImage|endswith: '\wsmprovhost.exe'
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - 'plink.exe'
+      - '.removeall'
+  selection_sdelete:
+    EventID: 1
+    ParentImage|endswith: '\wsmprovhost.exe'
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - 'sdelete.exe'
+      - '-accepteula'
+  selection_cipher_wipe:
+    EventID: 1
+    ParentImage|endswith: '\wsmprovhost.exe'
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains_all:
+      - 'cipher'
+      - '/w:'
+  condition: selection_plink_removeall or selection_sdelete or selection_cipher_wipe
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+  - Hostname
+falsepositives:
+  - Legitimate administrative disk maintenance or secure-delete operations
+  - Automated provisioning/cleanup scripts run via remote management (WS-Man)
+  - Enterprise management tools that invoke cipher/sdelete as part of imaging or decommission workflows
+level: high
+tags:
+  - attack.impact
+  - attack.t1485

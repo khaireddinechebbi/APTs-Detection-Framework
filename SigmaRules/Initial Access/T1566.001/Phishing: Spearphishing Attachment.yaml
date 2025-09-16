@@ -1,9 +1,9 @@
 title: Suspicious PowerShell Malicious Document Activity
 id: 6f8d7d83-6cb4-4b35-8f43-90e6e4a1a6a9
 status: experimental
-description: Detects PowerShell activity consistent with malicious document delivery and execution, such as downloading Excel macro-enabled files, invoking malicious expressions, and removing artifacts. This behavior is linked to spearphishing attachments (T1566.001).
+description: Detects PowerShell activity consistent with malicious document delivery and execution, such as downloading Excel macro-enabled files, invoking malicious expressions that fetch/execute remote content (including .jse payloads), and removing artifacts from user/temp locations. This behavior is commonly observed with spearphishing attachments and post-exploitation downloader/loader activity (T1566.001).
 author: Khaireddine
-date: 2025/09/14
+date: 2025/09/16
 logsource:
   product: windows
   category: process_creation
@@ -23,35 +23,42 @@ detection:
       - 'iwr'
       - '-OutFile'
       - '.xlsm'
-  selection_invoke_expression:
+  selection_invoke_expression_jse:
     EventID: 1
     Image|endswith: '\powershell.exe'
     CommandLine|contains_all:
       - 'Invoke-Expression'
       - 'Invoke-MalDoc'
+      - 'http'
     CommandLine|contains_any:
+      - '.jse'
       - '`*'
       - '`$'
       - '`n'
-  selection_invoke_expression_short:
+  selection_invoke_expression_jse_short:
     EventID: 1
     Image|endswith: '\powershell.exe'
     CommandLine|contains_all:
       - 'IEX'
       - 'Invoke-MalDoc'
+      - 'http'
     CommandLine|contains_any:
+      - '.jse'
       - '`*'
       - '`$'
       - '`n'
-  selection_remove_item:
+  selection_remove_item_ext:
     EventID: 1
     Image|endswith: '\powershell.exe'
     CommandLine|contains: 'Remove-Item'
     CommandLine|contains_any:
       - '$env:\TEMP'
       - 'C:\Users\'
+    CommandLine|contains_any:
+      - '.xlsm'
+      - '.jse'
     CommandLine|contains: '-ErrorAction Ignore'
-  condition: selection_download_xlsm or selection_download_xlsm_short or selection_invoke_expression or selection_invoke_expression_short or selection_remove_item
+  condition: selection_download_xlsm or selection_download_xlsm_short or selection_invoke_expression_jse or selection_invoke_expression_jse_short or selection_remove_item_ext
 fields:
   - UtcTime
   - Image
@@ -61,7 +68,8 @@ fields:
   - User
 falsepositives:
   - Legitimate administrative scripts downloading or cleaning up files
-  - Developers/testers using PowerShell to fetch or remove files
+  - Developers/testers using PowerShell to fetch or remove files (including teams testing macros or script packaging)
+  - Automation that decodes/executes signed scripts in controlled environments
 level: high
 tags:
   - attack.initial_access
