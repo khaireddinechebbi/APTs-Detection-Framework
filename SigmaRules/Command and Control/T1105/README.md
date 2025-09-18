@@ -63,26 +63,23 @@ Uses certutil with -urlcache to download files. APT29 has extensively used certu
 
 ```mermaid
 flowchart TD
-    A[Adversary Server] --> B[Execute certutil command]
-    B --> C[File Download via HTTPS]
-    C --> D[Local File Storage]
-    D --> E[System Compromise]
-    
-    B --> F[Stealth Technique]
-    F --> G[Bypasses Security Controls]
-    
-    style A fill:#ff9999
-    style E fill:#ff9999
-    
-    subgraph CommandDetails
-        B1[certutil -urlcache -split -f #{url} #{output_file}]
-        F1[Uses legitimate Windows utility]
-        G1[Appears as normal admin activity]
+    A[User executes command in Command Prompt] --> B{"Is certutil.exe available?"};
+    B -- Yes --> C[certutil process begins];
+    B -- No --> D[Error: 'certutil' is not recognized];
+    D --> E[Process Aborts];
+
+    subgraph C [certutil Execution]
+        direction LR
+        C1[ -urlcache ] --> C2[ -split ] --> C3[ -f ] --> C4[ #{url} ] --> C5[ #{output_file} ];
     end
-    
-    B --> B1
-    F --> F1
-    G --> G1
+
+    C --> F{Is the URL reachable?};
+    F -- Yes --> G[File downloaded from Internet];
+    F -- No --> H[Error: The system cannot find the file specified];
+    H --> E[Process Aborts];
+
+    G --> I[File saved to current directory];
+    I --> J[Success: Command completes];
 ```
 
 **Supported Platforms:** Windows
