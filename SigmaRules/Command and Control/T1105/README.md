@@ -63,28 +63,39 @@ Uses certutil with -urlcache to download files. APT29 has extensively used certu
 
 ```mermaid
 flowchart TD
-  A[Attacker HTTP Server]
-  URL[Attacker file URL]
-  V[Victim Host]
-  Cert[certutil exe]
-  Opt1[urlcache option]
-  Opt2[split option]
-  Opt3[force option]
-  Out[Output file]
-  Disk[Write to disk]
-  Exec[Optional execute]
+    subgraph TestOrchestration [Test Setup & Prerequisite Check]
+        direction TB
+        Start[Atomic Test Started] --> CheckPrereq["Execute Prerequisite Check<br>(PowerShell):"]
+        CheckPrereq --> PrereqCmd["if Get-Command certutil<br>then exit 0 else exit 1"]
+        PrereqCmd --> CertUtilFound{"Is certutil.exe<br>available on the system?"}
+        
+        CertUtilFound -- Yes (exit 0) --> PrereqSuccess[Prerequisite Met]
+        CertUtilFound -- No (exit 1) --> PrereqFail[Prerequisite Failed<br>Test Aborted]
+        
+        PrereqSuccess --> ExecuteAttack
+    end
 
-  A -->|hosts file at URL| URL
-  V -->|runs certutil with options| Cert
-  Cert --> Opt1
-  Cert --> Opt2
-  Cert --> Opt3
-  Opt1 -->|requests URL over HTTP| URL
-  URL -->|HTTP GET response| V
-  V -->|download stream and write| Disk
-  Disk --> Out
-  Out -->|may be executed later| Exec
+    ExecuteAttack["Execute Attack Command<br>(Command Prompt):<br>certutil -urlcache -split -f #{url} #{output_file}"]
 
+    subgraph AttackBreakdown [Command Breakdown]
+        Cert[certutil.exe] -- -urlcache --> AccessURL[Access URL Cache]
+        Cert -- -split --> SaveFile[Split & Save to File]
+        Cert -- -f --> Force[Force Overwrite]
+        
+        ExecuteAttack --> Cert
+        Force --> Download[Download from URL]
+    end
+
+    subgraph ExternalSource [External Source]
+        SourceURL[#{url}<br>Default: Raw GitHub URL]
+    end
+
+    Download -->|HTTP GET Request| SourceURL
+    SourceURL -->|Stream File Content| AttackBreakdown
+
+    AttackBreakdown --> WriteFile[Write Content to Disk]
+    WriteFile --> LocalFile["#{output_file}<br>Default: 'Atomic-license.txt'"]
+    LocalFile --> Success[Download Successful]
 ```
 
 **Supported Platforms:** Windows
