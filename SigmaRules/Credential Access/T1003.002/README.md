@@ -237,16 +237,16 @@ flowchart TD
     HasSystem -- Yes --> CheckTool{"esentutl.exe available?"}
     HasSystem -- No --> Abort[Test Aborted - Requires elevated privileges]
     
-    CheckTool -- Yes --> ExecuteAttack["Execute: esentutl.exe /y /vss %SystemRoot%\system32\config\SAM /d %TEMP%\SAM"]
+    CheckTool -- Yes --> ExecuteAttack["Execute: esentutl.exe /y /vss %SystemRoot%\\system32\\config\\SAM /d %TEMP%\\SAM"]
     CheckTool -- No --> ToolAbort[Test Aborted - esentutl not found]
     
-    ExecuteAttack --> Breakdown[Command Breakdown]
+    ExecuteAttack --> Breakdown
     
     subgraph Breakdown [esentutl parameters]
-        E1[esentutl.exe] --> P1[/y: Copy file stream]
-        E1 --> P2[/vss: Use Volume Shadow Copy]
-        E1 --> P3[Source: System32\config\SAM]
-        E1 --> P4[/d: Destination file]
+        E1[esentutl.exe] --> P1["/y: Copy file stream"]
+        E1 --> P2["/vss: Use Volume Shadow Copy"]
+        E1 --> P3["Source: System32\\config\\SAM"]
+        E1 --> P4["/d: Destination file"]
     end
     
     Breakdown --> VSS[Creates volume shadow copy]
