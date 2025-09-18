@@ -21,7 +21,7 @@ flowchart TD
     C --> C1[Load & execute<br>local .sct file]
     C1 --> C2[Execute code<br>without registry changes]
     
-    B --> D[Remote COM Scriptlet<br>'Squiblydoo']
+    B --> D[Remote COM Scriptlet]
     D --> D1[Fetch script from<br>remote URL]
     D1 --> D2[Execute in memory<br>no disk artifacts]
     
