@@ -10,6 +10,43 @@ Regsvr32.exe can also be leveraged to register a COM Object used to establish pe
 
 </blockquote>
 
+### Attack Technique Overview
+Regsvr32 is a legitimate Windows command-line utility used to register and unregister DLLs and ActiveX controls. Attackers abuse this signed Microsoft binary to execute malicious code while evading defense mechanisms.
+
+```mermaid
+flowchart TD
+    A[Attacker] --> B{Choose Execution Method}
+    
+    B --> C[Local COM Scriptlet]
+    C --> C1[Load & execute<br>local .sct file]
+    C1 --> C2[Execute code<br>without registry changes]
+    
+    B --> D[Remote COM Scriptlet<br>'Squiblydoo']
+    D --> D1[Fetch script from<br>remote URL]
+    D1 --> D2[Execute in memory<br>no disk artifacts]
+    
+    B --> E[Local DLL Execution]
+    E --> E1[Load local DLL<br>via DllRegisterServer]
+    E1 --> E2[Code executes with<br>regsvr32 permissions]
+    
+    B --> F[Non-Standard File Type]
+    F --> F1[Rename DLL to<br>non-standard extension]
+    F1 --> F2[Bypass file type<br>restrictions]
+    
+    B --> G[Silent DLL Install]
+    G --> G1[Use /i switch for<br>DllRegisterServer call]
+    G1 --> G2[Stealthy execution<br>with system utility]
+    
+    C2 --> H[Malicious Code Execution]
+    D2 --> H
+    E2 --> H
+    F2 --> H
+    G2 --> H
+    
+    H --> I[Payload Delivery<br>& System Compromise]
+```
+
+
 ## Atomic Tests
 
 - [Atomic Test #1 - Regsvr32 local COM scriptlet execution](#atomic-test-1---regsvr32-local-com-scriptlet-execution)
