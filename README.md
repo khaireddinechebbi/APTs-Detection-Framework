@@ -53,6 +53,7 @@ graph TB
 ## 🛠️ Technologies Used
 
 ### Data Collection: Winlogbeat vs Filebeat
+#### When to Use Which Beats
 
 ```mermaid
 flowchart TD
@@ -77,7 +78,7 @@ flowchart TD
     H --> K[Elasticsearch];
 ```
 
-### Functional Comparison
+#### Functional Comparison
 
 | Feature | Winlogbeat | Filebeat |
 |---------|-----------|----------|
