@@ -9,7 +9,8 @@ Adversaries may transfer tools or other files from an external system into a com
 Files can also be transferred using various [Web Service](https://attack.mitre.org/techniques/T1102)s as well as native or otherwise pre-installed tools on the victim system.(Citation: Google Download Tool)(Citation: Microsoft MSDT LOLBins)(Citation: Cisco Use of Living Off The Land Binaries and Scripts in Attacks)(Citation: Mandiant APT41)
 </blockquote>
 
-## Overall T1105 Technique Diagram
+### Attack Technique Overview
+Ingress Tool Transfer involves adversaries bringing additional tools into a compromised environment. Both APT29 (Russian state-sponsored) and Lazarus Group (North Korean state-sponsored) extensively use this technique to deliver malware, post-exploitation tools, and maintain persistence. They leverage legitimate system utilities and living-off-the-land techniques to evade detection.
 
 ```mermaid
 flowchart TD
@@ -49,42 +50,6 @@ flowchart TD
     class A1,TM1,TM4 apt29
     class A2,TM3 lazarus
     class TM2 both
-```
-
-### Attack Technique Overview
-Ingress Tool Transfer involves adversaries bringing additional tools into a compromised environment. Both APT29 (Russian state-sponsored) and Lazarus Group (North Korean state-sponsored) extensively use this technique to deliver malware, post-exploitation tools, and maintain persistence. They leverage legitimate system utilities and living-off-the-land techniques to evade detection.
-
-```mermaid
-flowchart TD
-    A[Adversary] --> B{Ingress Tool Transfer Methods}
-    
-    B --> C[Living-off-the-Land Techniques]
-    C --> C1[certutil with -urlcache]
-    C1 --> C2[APT29: SolarWinds campaign]
-    
-    B --> D[BITSAdmin Transfers]
-    D --> D1[Background Intelligent Transfer Service]
-    D1 --> D2[APT29 & Lazarus: Stealthy downloads]
-    
-    B --> E[PowerShell Download Cradles]
-    E --> E1[WebClient.DownloadFile]
-    E1 --> E2[APT29 & Lazarus: Multiple variants]
-    
-    B --> F[Cross-Platform Tools]
-    F --> F1[curl on Windows & Linux]
-    F1 --> F2[Lazarus: Operation Dream Job]
-    
-    B --> G[Unexpected Utility Abuse]
-    G --> G1[sqlcmd for file transfers]
-    G1 --> G2[APT29: Sophisticated tradecraft]
-    
-    C2 --> H[Malicious Tool Delivery]
-    D2 --> H
-    E2 --> H
-    F2 --> H
-    G2 --> H
-    
-    H --> I[Payload Execution<br>& System Compromise]
 ```
 
 ## Atomic Tests
