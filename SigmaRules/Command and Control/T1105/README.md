@@ -63,23 +63,33 @@ Uses certutil with -urlcache to download files. APT29 has extensively used certu
 
 ```mermaid
 flowchart TD
-    A[User executes command in Command Prompt] --> B{"Is certutil.exe available?"};
-    B -- Yes --> C[certutil process begins];
-    B -- No --> D[Error: 'certutil' is not recognized];
-    D --> E[Process Aborts];
+  A[Attacker HTTP(S) Server]
+  URL["#{url}"]
+  V[Victim Host]
+  Cert[certutil.exe]
+  Opt1[-urlcache]
+  Opt2[-split]
+  Opt3[-f]
+  Out["#{output_file}"]
+  Disk["Write file to disk"]
+  Exec["(optional) Execute or load downloaded file"]
 
-    subgraph C [certutil Execution]
-        direction LR
-        C1[ -urlcache ] --> C2[ -split ] --> C3[ -f ] --> C4[ #{url} ] --> C5[ #{output_file} ];
-    end
+  A -->|hosts file at URL| URL
+  V -->|runs command| Cert
+  Cert --> Opt1
+  Cert --> Opt2
+  Cert --> Opt3
+  Opt1 -->|request URL (HTTP/HTTPS)| URL
+  URL -->|HTTP GET -> TLS handshake (if https)| V
+  V -->|download stream| Disk
+  Disk --> Out
+  Out --> Exec
 
-    C --> F{Is the URL reachable?};
-    F -- Yes --> G[File downloaded from Internet];
-    F -- No --> H[Error: The system cannot find the file specified];
-    H --> E[Process Aborts];
+  style A fill:#fde2e2,stroke:#d9534f
+  style Cert fill:#fff8dc,stroke:#d4a017
+  style Out fill:#e6ffed,stroke:#1f8d3b
+  style Exec fill:#ffe6e6,stroke:#b30000
 
-    G --> I[File saved to current directory];
-    I --> J[Success: Command completes];
 ```
 
 **Supported Platforms:** Windows
