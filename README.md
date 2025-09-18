@@ -30,7 +30,6 @@ graph TB
     subgraph Monitoring Stack
         E -->|Log Processing| K[Kibana<br/>Visualization]
         E -->|Data Storage| S[Elasticsearch<br/>Data Storage]
-        E -->|Log Collection| F[Filebeat<br/>Optional]
     end
 
     %% Analysis Components
@@ -47,7 +46,7 @@ graph TB
     
     class A attacker
     class W,L target
-    class E,K,S,F monitoring
+    class E,K,S monitoring
     class M,R analysis
 ```
 
