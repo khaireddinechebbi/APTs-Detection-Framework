@@ -99,18 +99,18 @@ flowchart TD
     Start[Test #1: LSA Secrets Dump] --> CheckPrereq["Prerequisite Check:<br>PsExec available<br>Requires administrative privileges"]
     CheckPrereq --> HasPsExec{"PsExec available?"}
     
-    HasPsExec -- Yes --> ExecuteAttack["Execute: PsExec.exe -accepteula -s reg save HKLM\SECURITY\Policy\Secrets %TEMP%\secrets /y"]
+    HasPsExec -- Yes --> ExecuteAttack["Execute: PsExec.exe -accepteula -s reg save HKLM\\SECURITY\\Policy\\Secrets %TEMP%\\secrets /y"]
     HasPsExec -- No --> Abort[Test Aborted - PsExec not found]
     
-    ExecuteAttack --> Breakdown[Command Breakdown]
+    ExecuteAttack --> Breakdown
     
     subgraph Breakdown [PsExec and reg save combination]
-        P1[PsExec.exe] --> F1[-accepteula: Accept EULA]
-        P1 --> F2[-s: Run as SYSTEM]
-        P1 --> C1[reg save: Registry export command]
-        C1 --> T1[HKLM\SECURITY\Policy\Secrets: LSA secrets location]
-        C1 --> O1[%TEMP%\secrets: Output file]
-        C1 --> F3[/y: Force overwrite]
+        P1[PsExec.exe] --> F1["-accepteula: Accept EULA"]
+        P1 --> F2["-s: Run as SYSTEM"]
+        P1 --> C1["reg save: Registry export command"]
+        C1 --> T1["HKLM\\SECURITY\\Policy\\Secrets: LSA secrets location"]
+        C1 --> O1["%TEMP%\\secrets: Output file"]
+        C1 --> F3["/y: Force overwrite"]
     end
     
     Breakdown --> SystemContext[Runs in SYSTEM context]
