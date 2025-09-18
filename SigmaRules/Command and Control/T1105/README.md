@@ -1,3 +1,5 @@
+I'll correct the Mermaid diagram syntax issues. The problem is with the HTML line breaks (`<br>`) and special characters that need to be properly handled in Mermaid syntax.
+
 # T1105 - Ingress Tool Transfer
 
 ## [Description from ATT&CK](https://attack.mitre.org/techniques/T1105)
@@ -40,7 +42,7 @@ flowchart TD
     F2 --> H
     G2 --> H
     
-    H --> I[Payload Execution<br>& System Compromise]
+    H --> I[Payload Execution & System Compromise]
 ```
 
 ## Atomic Tests
@@ -61,17 +63,16 @@ Uses certutil with -urlcache to download files. APT29 has extensively used certu
 
 ```mermaid
 flowchart TD
-  Attacker[Adversary HTTP/S Server]
-  Victim[Windows Host]
-  HTTP[https://.../tool.bin]
-  Certutil[certutil.exe]
-  File[tool.bin]
-  Execute[cmd / powershell - run tool.bin]
-
-  Attacker -->|host file| HTTP
-  Victim -->|certutil -urlcache -split -f https://... tool.bin| Certutil
-  Certutil -->|writes to disk| File
-  File -->|execute| Execute
+    A[Adversary Server] --> B[certutil -urlcache command]
+    B --> C[File Download via HTTPS]
+    C --> D[Local File Storage]
+    D --> E[System Compromise - Malware Execution]
+    
+    B --> F[Stealth Technique - Uses legitimate Windows utility]
+    F --> G[Bypasses Security Controls - Appears as normal admin activity]
+    
+    style A fill:#ff9999
+    style E fill:#ff9999
 ```
 
 **Supported Platforms:** Windows
@@ -105,11 +106,11 @@ Uses BITSAdmin to schedule file downloads. Both APT29 and Lazarus use BITSAdmin 
 flowchart TD
     A[Adversary Server] --> B[BITSAdmin Transfer Job]
     B --> C[Background Intelligent Transfer Service]
-    C --> D[Low-Priority Network Traffic<br>Blends with legitimate updates]
-    D --> E[File Download Completion<br>#{output_file}]
-    E --> F[Persistence Mechanism<br>Job completion triggers execution]
+    C --> D[Low-Priority Network Traffic - Blends with legitimate updates]
+    D --> E[File Download Completion]
+    E --> F[Persistence Mechanism - Job completion triggers execution]
     
-    C --> G[Stealth Advantages<br>Operates at system level<br>Bypasses many firewalls]
+    C --> G[Stealth Advantages - Operates at system level - Bypasses many firewalls]
     
     style A fill:#ff9999
     style F fill:#ff9999
@@ -146,11 +147,11 @@ Uses .NET WebClient to download files. Common technique used by both APT29 and L
 flowchart TD
     A[Adversary Server] --> B[PowerShell WebClient Object]
     B --> C[.NET Framework DownloadFile Method]
-    C --> D[Direct File Transfer<br>No intermediate storage]
-    D --> E[Local File Storage<br>#{output_file}]
-    E --> F[Immediate Execution<br>Often combined with other commands]
+    C --> D[Direct File Transfer - No intermediate storage]
+    D --> E[Local File Storage]
+    E --> F[Immediate Execution - Often combined with other commands]
     
-    B --> G[Evasion Techniques<br>Memory-only execution possible<br>Bypasses file scanning]
+    B --> G[Evasion Techniques - Memory-only execution possible - Bypasses file scanning]
     
     style A fill:#ff9999
     style F fill:#ff9999
@@ -181,10 +182,10 @@ flowchart TD
     A[Adversary Server] --> B[PowerShell DownloadString]
     B --> C[Content Retrieval as Text]
     C --> D[Out-File Command]
-    D --> E[File Reconstruction<br>#{output_file}]
-    E --> F[Script Execution<br>Often PowerShell scripts or batch files]
+    D --> E[File Reconstruction]
+    E --> F[Script Execution - Often PowerShell scripts or batch files]
     
-    B --> G[Text-Based Evasion<br>Can bypass content filters<br>Base64 encoding common]
+    B --> G[Text-Based Evasion - Can bypass content filters - Base64 encoding common]
     
     style A fill:#ff9999
     style F fill:#ff9999
@@ -214,11 +215,11 @@ Uses curl.exe to download files on Windows. Lazarus Group frequently uses curl f
 flowchart TD
     A[Adversary Server] --> B[Curl.exe Command]
     B --> C[HTTP/HTTPS Request]
-    C --> D[Certificate Validation Bypass<br>-k flag]
-    D --> E[File Download<br>#{output_file}]
+    C --> D[Certificate Validation Bypass - -k flag]
+    D --> E[File Download]
     E --> F[Execution on Target System]
     
-    B --> G[Legitimate Tool Abuse<br>Often pre-installed on systems<br>Common in Lazarus attacks]
+    B --> G[Legitimate Tool Abuse - Often pre-installed on systems - Common in Lazarus attacks]
     
     style A fill:#ff9999
     style F fill:#ff9999
@@ -254,12 +255,12 @@ Uses curl to download and execute on Linux. Lazarus targets Linux environments u
 ```mermaid
 flowchart TD
     A[Adversary Server] --> B[Curl Command]
-    B --> C[Silent Download<br>-s flag]
-    C --> D[File Save & Execute Permissions<br>chmod +x]
-    D --> E[Immediate Execution<br>bash/pipeline execution]
+    B --> C[Silent Download - -s flag]
+    C --> D[File Save & Execute Permissions - chmod +x]
+    D --> E[Immediate Execution - bash/pipeline execution]
     E --> F[Linux System Compromise]
     
-    B --> G[Linux Targeting<br>Lazarus expansion to Linux<br>Cloud infrastructure attacks]
+    B --> G[Linux Targeting - Lazarus expansion to Linux - Cloud infrastructure attacks]
     
     style A fill:#ff9999
     style F fill:#ff9999
@@ -295,11 +296,11 @@ Uses Invoke-WebRequest (iwr) as an alternative download method. APT29 uses this 
 flowchart TD
     A[Adversary Server] --> B[Invoke-WebRequest Cmdlet]
     B --> C[PowerShell HTTP Handling]
-    C --> D[Comprehensive Web Request<br>Headers, cookies, authentication]
-    D --> E[File Output<br>-OutFile parameter]
+    C --> D[Comprehensive Web Request - Headers, cookies, authentication]
+    D --> E[File Output - -OutFile parameter]
     E --> F[System Compromise]
     
-    B --> G[Advanced Evasion<br>User-agent spoofing<br>Referrer manipulation<br>Proxy support]
+    B --> G[Advanced Evasion - User-agent spoofing - Referrer manipulation - Proxy support]
     
     style A fill:#ff9999
     style F fill:#ff9999
@@ -328,13 +329,13 @@ Uses sqlcmd for file downloads. APT29 has abused SQLCMD for file transfers.
 ```mermaid
 flowchart TD
     A[Adversary Server] --> B[sqlcmd Utility]
-    B --> C[Input File Parameter<br>-i flag]
+    B --> C[Input File Parameter - -i flag]
     C --> D[SQL Server Protocol Abuse]
     D --> E[File Content Retrieval]
-    E --> F[Output Redirection<br>-o parameter to #{output_file}]
+    E --> F[Output Redirection - -o parameter]
     F --> G[System Compromise]
     
-    B --> H[Database Tool Misuse<br>Blends with legitimate DB traffic<br>Often allowed through firewalls]
+    B --> H[Database Tool Misuse - Blends with legitimate DB traffic - Often allowed through firewalls]
     
     style A fill:#ff9999
     style G fill:#ff9999
