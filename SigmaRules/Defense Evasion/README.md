@@ -40,13 +40,12 @@ and event.code:1
 and process.name:"regsvr32.exe"
 and process.parent.name: ("cmd.exe" or "powershell.exe")
 and (
-    process.command_line: */s*
-    and (
-        process.command_line: (*/i* and *.dll*)
-        or process.parent.command_line: ((* IF * and * ELSE *) or *%temp%*)
-    )
+    process.command_line: (*/s* and */i* and *.dll*)
+    or process.parent.command_line: (*/s* and * IF * and * ELSE *)
+    or process.parent.command_line: (*/s* and *%temp%*)
 )
 ```
+winlog.channel:Microsoft\-Windows\-Sysmon\/Operational AND ((process.executable:*\\regsvr32.exe AND (process.parent.executable:(*\\cmd.exe OR *\\powershell.exe))) AND ((process.command_line:*\/s* AND process.command_line:*\/i* AND process.command_line:*.dll*) OR (process.parent.command_line:*\/s* AND process.parent.command_line:*IF* AND process.parent.command_line:*ELSE*) OR (process.parent.command_line:*\/s* AND process.parent.command_line:*%temp%*)))
 
 ### T1218.011 - System Binary Proxy Execution: Rundll32
 #### Description:

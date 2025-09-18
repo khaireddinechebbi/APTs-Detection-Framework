@@ -14,11 +14,11 @@ detection:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - '-urlcache'
       - '-split'
       - '-f'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'http://'
       - 'https://'
     CurrentDirectory|contains: '\Temp\'
@@ -28,11 +28,11 @@ detection:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - '/transfer'
       - '/priority'
       - 'high'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'http://'
       - 'https://'
     CurrentDirectory|contains: '\Temp\'
@@ -42,14 +42,14 @@ detection:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'DownloadFile'
       - 'DownloadString'
       - 'WebClient'
       - 'Out-File'
       - 'Invoke-Item'
       - 'Invoke-Expression'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'http://'
       - 'https://'
     CurrentDirectory|contains: '\Temp\'
@@ -59,10 +59,10 @@ detection:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'curl.exe'
       - '-k'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'http://'
       - 'https://'
       - '\users\'
@@ -75,10 +75,10 @@ detection:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'iwr'
       - 'Invoke-WebRequest'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'http://'
       - 'https://'
     CurrentDirectory|contains: '\Temp\'
@@ -88,10 +88,10 @@ detection:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - '&'
       - '{sqlcmd'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'http://'
       - 'https://'
       - '.zip'

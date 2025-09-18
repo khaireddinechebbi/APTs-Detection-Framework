@@ -12,12 +12,12 @@ detection:
   remote_thread_inject:
     Image|endswith: '\mavinject.exe'
     EventCode: 8
-    StartFunction|in:
+    StartFunction:
       - LoadLibraryA
       - LoadLibraryW
     EventAction: CreateRemoteThread
   dll_inject:
-    Image|endswith_any:
+    Image|endswith:
       - '\mavinject.exe'
       - '\UsoClient.exe'
     EventCode: 7

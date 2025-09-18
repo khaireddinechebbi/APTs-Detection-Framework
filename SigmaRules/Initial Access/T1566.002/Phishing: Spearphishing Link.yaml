@@ -1,0 +1,44 @@
+title: Suspicious PowerShell Malicious Document Activity (SendKeys / Add-Type)
+id: a2b9d6f4-4c7e-4b9e-9f2d-1e8b4a6c9f12
+status: experimental
+description: Detects PowerShell command lines that create .NET GUI types and use SendKeys/ToBase64String which are commonly used by malicious documents to simulate user input, steal clipboard/credentials, or decode embedded payloads. This behavior is associated with spearphishing link/attachment techniques (T1566.002).
+author: Khaireddine
+date: 2025/09/15
+logsource:
+  product: windows
+  category: process_creation
+  service: sysmon
+detection:
+  selection_addtype_sendkeys:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains_all:
+      - 'Add-Type'
+      - 'System.Windows.Forms'
+      - 'SendKeys'
+      - 'ToBase64String'
+  selection_addtype_sendkeys_short:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains:
+      - 'AddType'
+      - 'System.Windows.Forms'
+      - 'SendKeys'
+      - 'ToBase64String'
+  condition: selection_addtype_sendkeys or selection_addtype_sendkeys_short
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+falsepositives:
+  - Legitimate automation or UI-testing scripts using System.Windows.Forms and SendKeys
+  - Internal tooling that encodes/decodes data to/from Base64 for transport or storage
+level: high
+tags:
+  - attack.initial_access
+  - attack.t1566
+  - attack.t1566.002
+  - attack.execution

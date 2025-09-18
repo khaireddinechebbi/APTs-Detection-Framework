@@ -1,4 +1,4 @@
-# APT Detection Framework Project
+# APTs & Detection Framework Project
 
 ## 📖 Overview
 

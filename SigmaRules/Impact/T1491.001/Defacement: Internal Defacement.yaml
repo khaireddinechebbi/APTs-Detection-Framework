@@ -14,7 +14,7 @@ detection:
     Image|endswith:
       - '\powershell.exe'
       - '\cmd.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - "@'"
       - "'@"
       - 'Add-Type'
@@ -24,7 +24,7 @@ detection:
     Image|endswith:
       - '\powershell.exe'
       - '\cmd.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'HKLM:\'
       - 'LegalNoticeCaption'
       - 'LegalNoticeText'
@@ -34,7 +34,7 @@ detection:
     Image|endswith:
       - '\powershell.exe'
       - '\cmd.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'plink.exe'
       - 'root'
       - 'esxcli'

@@ -1,42 +1,50 @@
-title: regsvr32 Suspicious Execution with /s and /i Options (Sysmon)
-id: c1d7e8f2-6b4a-4f9c-a2d1-5e7f8c3a2b4d
+title: Suspicious Regsvr32 Execution with Scriptlet/COM Abuse
+id: 7d3c8a2b-4f5e-4d8c-9a1b-6c2d9e8f1a34
 status: experimental
-description: Detects regsvr32.exe execution using /s and /i options with suspicious DLL or scriptlet loading, including suspicious parent execution from cmd.exe or powershell.exe that contain IF/ELSE logic or temp path usage. This is often associated with T1218.010 regsvr32 LOLBAS abuse.
+description: Detects suspicious regsvr32.exe execution with automation flags (/s /i) from command interpreters, potentially indicating scriptlet/COM abuse for defense evasion (T1218.010).
 author: Khaireddine
-date: 2025/08/18
+date: 2025/09/16
 logsource:
-  product: windows
-  category: process_creation
-  service: sysmon
+    category: process_creation
+    product: windows
+    service: sysmon
 detection:
-  sel_regsvr32_susp:
-    Image|endswith: '\regsvr32.exe'
-    CommandLine|contains:
-      - '/s'
-    CommandLine|contains_any:
-      - '/i'
-      - '.dll'
-  sel_parent_susp:
-    ParentImage|endswith:
-      - '\cmd.exe'
-      - '\powershell.exe'
-    ParentCommandLine|contains_any:
-      - 'IF'
-      - 'ELSE'
-      - '%temp%'
-  condition: sel_regsvr32_susp or (sel_regsvr32_susp and sel_parent_susp)
+    selection_event:
+        EventID: 1
+    selection_target:
+        Image|endswith: '\regsvr32.exe'
+    selection_parent:
+        ParentImage|endswith:
+            - '\cmd.exe'
+            - '\powershell.exe'
+    selection_cmdline_flags:
+        CommandLine|contains|all:
+            - '/s'
+            - '/i'
+            - '.dll'
+    selection_parent_conditional:
+        ParentCommandLine|contains|all:
+          - '/s'
+          - ' IF '
+          - ' ELSE '
+    selection_parent_temp:
+        ParentCommandLine|contains|all:
+          - '/s'
+          - '%temp%'
+    
+    condition: selection_event and selection_target and selection_parent and 
+              (selection_cmdline_flags or selection_parent_conditional or selection_parent_temp)
 fields:
-  - UtcTime
-  - Image
-  - CommandLine
-  - ParentImage
-  - ParentCommandLine
-  - User
+    - CommandLine
+    - ParentCommandLine
+    - User
+    - ProcessId
+    - ParentProcessId
 falsepositives:
-  - Legitimate software installers or uninstallers using regsvr32 with DLLs
-  - Rare automation scripts invoking regsvr32 with IF/ELSE or %temp% logic
+    - Legitimate system administration scripts using regsvr32 for COM registration
+    - Software installation/update scripts
 level: high
 tags:
-  - attack.execution
-  - attack.t1218
-  - attack.t1218.010
+    - attack.defense_evasion
+    - attack.t1218
+    - attack.t1218.010

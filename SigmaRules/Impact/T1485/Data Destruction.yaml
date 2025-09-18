@@ -15,7 +15,7 @@ detection:
     Image|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'plink.exe'
       - '.removeall'
   selection_sdelete:
@@ -24,7 +24,7 @@ detection:
     Image|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all: 
       - 'sdelete.exe'
       - '-accepteula'
   selection_cipher_wipe:
@@ -33,7 +33,7 @@ detection:
     Image|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all: 
       - 'cipher'
       - '/w:'
   condition: selection_plink_removeall or selection_sdelete or selection_cipher_wipe
