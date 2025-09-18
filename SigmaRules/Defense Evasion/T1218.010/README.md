@@ -15,7 +15,7 @@ Regsvr32 is a legitimate Windows command-line utility used to register and unreg
 
 ```mermaid
 flowchart TD
-    A[Attacker] --> B{Choose Execution Method}
+    A[Attacker] --> B{Regsvr32}
     
     B --> C[Local COM Scriptlet]
     C --> C1[Load & execute<br>local .sct file]
@@ -29,11 +29,11 @@ flowchart TD
     E --> E1[Load local DLL<br>via DllRegisterServer]
     E1 --> E2[Code executes with<br>regsvr32 permissions]
     
-    B --> F[Non-Standard File Type]
+    B --> F[Registering Non DLL]
     F --> F1[Rename DLL to<br>non-standard extension]
     F1 --> F2[Bypass file type<br>restrictions]
     
-    B --> G[Silent DLL Install]
+    B --> G[Silent DLL Install Call DllRegisterServer]
     G --> G1[Use /i switch for<br>DllRegisterServer call]
     G1 --> G2[Stealthy execution<br>with system utility]
     
