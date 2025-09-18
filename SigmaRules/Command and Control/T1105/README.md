@@ -63,32 +63,27 @@ Uses certutil with -urlcache to download files. APT29 has extensively used certu
 
 ```mermaid
 flowchart TD
-  A[Attacker HTTP S Server]
+  A[Attacker HTTP Server]
   URL[Attacker file URL]
   V[Victim Host]
-  Cert[certutil.exe]
-  Opt1[-urlcache]
-  Opt2[-split]
-  Opt3[-f]
-  Out[Output file (outfile)]
-  Disk[Write file to disk]
-  Exec[Optional: Execute downloaded file]
+  Cert[certutil exe]
+  Opt1[urlcache option]
+  Opt2[split option]
+  Opt3[force option]
+  Out[Output file]
+  Disk[Write to disk]
+  Exec[Optional execute]
 
   A -->|hosts file at URL| URL
-  V -->|runs: certutil with options| Cert
+  V -->|runs certutil with options| Cert
   Cert --> Opt1
   Cert --> Opt2
   Cert --> Opt3
-  Opt1 -->|requests URL over HTTP/HTTPS| URL
+  Opt1 -->|requests URL over HTTP| URL
   URL -->|HTTP GET response| V
-  V -->|download stream -> write| Disk
+  V -->|download stream and write| Disk
   Disk --> Out
-  Out -->|may be executed| Exec
-
-  style A fill:#fde2e2,stroke:#d9534f
-  style Cert fill:#fff8dc,stroke:#d4a017
-  style Out fill:#e6ffed,stroke:#1f8d3b
-  style Exec fill:#ffe6e6,stroke:#b30000
+  Out -->|may be executed later| Exec
 
 ```
 
