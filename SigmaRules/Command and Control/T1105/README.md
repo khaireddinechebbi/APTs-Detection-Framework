@@ -182,16 +182,16 @@ bitsadmin /transfer AtomicDownload /Priority HIGH #{url} #{output_file}
 
 ```mermaid
 flowchart TD
-    Start[Test #9: BITSAdmin Download] --> Execute["Execute: bitsadmin /transfer qcxjb7 /Priority HIGH<br>https://raw.githubusercontent.com/.../LICENSE.txt<br>%temp%\Atomic-license.txt"]
-    
+    Start[Test #9: BITSAdmin Download] --> Execute["Execute: bitsadmin /transfer qcxjb7 /Priority HIGH URL to temp file"]
+
     Execute --> Breakdown[Command Breakdown]
     
     subgraph Breakdown [BITSAdmin parameters]
-        B1[bitsadmin] --> P1[/transfer: Create transfer job]
-        B1 --> P2[qcxjb7: Arbitrary job name]
-        B1 --> P3[/Priority HIGH: Set priority level]
-        B1 --> P4[URL: Download source]
-        B1 --> P5[Path: Download destination]
+        B1[bitsadmin] --> P1["/transfer: Create transfer job"]
+        B1 --> P2["qcxjb7: Arbitrary job name"]
+        B1 --> P3["/Priority HIGH: Set priority level"]
+        B1 --> P4["URL: Download source"]
+        B1 --> P5["Path: Download destination"]
     end
     
     Breakdown --> CreateJob[Creates BITS transfer job]
@@ -292,15 +292,15 @@ Uses DownloadString with Out-File for downloads. Both groups use this method for
 
 ```mermaid
 flowchart TD
-    Start[Test #15: PowerShell DownloadString] --> Execute["Execute: New-Object Net.WebClient<br>.DownloadString'https://raw.githubusercontent.com/.../LICENSE.txt'<br>| Out-File LICENSE.txt"]
-    
+    Start[Test #15: PowerShell DownloadString] --> Execute["Execute: New-Object Net.WebClient DownloadString with URL piped to Out-File"]
+
     Execute --> Breakdown[Command Breakdown]
     
     subgraph Breakdown [DownloadString method]
         P1[New-Object] --> C1[Net.WebClient]
-        C1 --> M1[.DownloadString method]
-        M1 --> U1[Source URL parameter]
-        M1 --> P2[| Out-File: Pipe to file]
+        C1 --> M1[".DownloadString method"]
+        M1 --> U1["Source URL parameter"]
+        M1 --> P2["Pipe to Out-File"]
     end
     
     Breakdown --> CreateObject[Creates WebClient object]
@@ -399,16 +399,16 @@ curl -sO #{url}; chmod +x atomic.sh | bash atomic.sh
 
 ```mermaid
 flowchart TD
-    Start[Test #27: Linux curl Download & Execute] --> Execute["Execute: curl -sO https://raw.githubusercontent.com/.../atomic.sh<br>chmod +x atomic.sh | bash atomic.sh"]
-    
+    Start[Test #27: Linux curl Download & Execute] --> Execute["Execute: curl -sO URL; chmod +x atomic.sh | bash atomic.sh"]
+
     Execute --> Breakdown[Command Breakdown]
     
     subgraph Breakdown [curl and execution]
-        C1[curl] --> P1[-s: Silent mode]
-        C1 --> P2[-O: Save with remote name]
-        C1 --> P3[URL: Download source]
-        C1 --> S1[chmod +x: Make executable]
-        C1 --> S2[| bash: Execute with bash]
+        C1[curl] --> P1["-s: Silent mode"]
+        C1 --> P2["-O: Save with remote name"]
+        C1 --> P3["URL: Download source"]
+        C1 --> S1["chmod +x: Make executable"]
+        C1 --> S2["Pipe to bash: Execute with bash"]
     end
     
     Breakdown --> SilentDownload[Downloads file silently]
