@@ -93,7 +93,7 @@ while(($i = $sslStream.Read($bytes, 0, $bytes.Length)) -ne 0)
 
 ```mermaid
 flowchart TD
-    Start[Atomic Test #1: OpenSSL C2] --> EstablishTCP[Establish TCP Connection to #{server_ip}:#{server_port}]
+    Start[Atomic Test #1: OpenSSL C2] --> EstablishTCP[Establish TCP Connection to Server]
     EstablishTCP --> CreateStream[Create Network Stream]
     CreateStream --> CreateSSL[Create SSL Stream with Certificate Bypass]
     CreateSSL --> Authenticate[Authenticate as Client with TLS 1.2]
