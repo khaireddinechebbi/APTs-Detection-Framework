@@ -13,7 +13,7 @@ Adversaries inject malicious code into running processes to conceal their activi
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:"1"
 and process.name:"powershell.exe"
-and process.args:((*/INJECTRUNNING* and *-PassThru* and *mypid*) or (*iex* and *new-object* and *webclient* and *downloadstring*))
+and process.command_line:((*mavinject* and */INJECTRUNNING* and *-PassThru* and *mypid*) or (*iex* and *new-object* and *webclient* and *downloadstring* and *.ps1*))
 ```
 
 ### T1218.005 - System Binary Proxy Execution: Mshta

@@ -13,11 +13,11 @@ Adversaries abuse Windows Management Instrumentation (WMI) to execute commands a
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
 and event.code:1
 and process.name:"WMIC.exe"
+and process.parent.name : ("cmd.exe" or "powershell.exe")
 and (
     process.command_line:(* process * and * call * and * create *)
     or process.command_line:(* process * and * where * and  * delete *)
 )
-and process.parent.name : ("cmd.exe" or "powershell.exe")
 ```
 
 ### T1059.001 - Command and Scripting Interpreter: PowerShell
@@ -50,6 +50,6 @@ winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and (
     and process.command_line: (*-NoProfile* and (*-E* or *-EA* or *-EncodedArguments*)))
     or
     (process.name: "powershell.exe"
-    and process.command_line: (*Remove-Item* *-Force* and *-ErrorAction Ignore* and (*\\Windows\\Temp\\* or *HKCU\:*)))
+    and process.command_line: (*Remove-Item* and *-Force* and *-ErrorAction Ignore* and (*\\Windows\\Temp\\* or *HKCU\:*)))
 )
 ```
