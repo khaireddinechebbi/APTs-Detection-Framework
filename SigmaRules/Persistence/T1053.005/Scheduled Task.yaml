@@ -10,42 +10,72 @@ logsource:
   service: sysmon
 detection:
   selection_schtasks:
+    EventID: 1
     Image|endswith: '\schtasks.exe'
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-    CommandLine|contains_any:
-      - '/create'
-      - '/Create'
-      - '/delete'
-      - '/Delete'
-      - '/tn'
-      - '/TN'
+  selection_taskrun:
+    CommandLine|contains:
       - '/tr'
       - '/TR'
-      - '/f'
+  selection_scheduletype:
+    CommandLine|contains:
+      - '/sc'
+      - '/SC'
+  selection_create:
+    CommandLine|contains:
+      - 'create'
+      - 'Create'
+  slection_others:
+    CommandLine|contains:
+      - 'onlogon'
+      - 'onstart'
+      - '/ru system'
+      - 'ONCE'
+      - '/ST'
+      - '/RU'
+      - '/U'
+      - '/S'
       - '/F'
+      - '/f'
+      - '/tn'
+      - '/TN'
   selection_powershell:
+    EventID: 1
     Image|endswith: '\powershell.exe'
-    CommandLine|contains_any:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains|all:
+      - 'New-ScheduledTask'
       - 'Register-ScheduledTask'
       - 'Set-ScheduledTask'
-      - 'New-ScheduledTaskAction'
-      - 'New-ScheduledTaskTrigger'
-      - 'New-ScheduledTaskPrincipal'
+  selection_del:
+    CommandLine|contains:
+      - '/delete'
+      - '/Delete'
+  selection_remove:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains|all:
       - 'Unregister-ScheduledTask'
-    CommandLine|contains_any:
-      - '-AtLogon'
-      - '-AtStartup'
-      - '-RunLevel Highest'
-      - '-GroupId'
-      - 'Administrators'
-      - '-Execute'
       - '-TaskName'
       - '-confirm:$false'
-      - '>$null'
-      - '2>&1'
-  condition: selection_schtasks or selection_powershell
+  condition: >
+    (selection_schtasks
+    and selection_taskrun
+    and selection_scheduletype
+    and selection_create
+    and slection_others)
+    or selection_powershell
+    or (selection_schtasks
+    and selection_del
+    and slection_others)
+    or selection_remove
 fields:
   - UtcTime
   - Image

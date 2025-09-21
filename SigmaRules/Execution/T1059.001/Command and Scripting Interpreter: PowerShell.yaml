@@ -1,7 +1,7 @@
 title: PowerShell EncodedCommand and Suspicious Patterns (Sysmon)
 id: 4ed9a2e1-5bc5-40fc-abed-4d40de186991
 status: experimental
-description: Detects PowerShell/pwsh with encoded commands and various suspicious execution patterns, excluding common management parent processes.
+description: Detects PowerShell/pwsh with encoded commands and various suspicious execution patterns.
 author: Khaireddine
 date: 2025/08/18
 references:
@@ -11,98 +11,121 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  suspicious_patterns:
-    - Image|endswith: '\powershell.exe'
-      ParentImage|endswith: 
-        - '\cmd.exe'
-        - '\powershell.exe'
-      CommandLine|contains:
-        - ' -noprofile'
-        - ' -nop'
-        - '$comMsXml=New-Object'
-        - 'MsXml2.ServerXmlHttp'
-        - '$comMsXml.Open'
-        - '$comMsXml.Send()'
-        - '$comMsXml.ResponseText'
-    - Image|endswith: '\powershell.exe'
-      ParentImage|endswith: 
-        - '\cmd.exe'
-        - '\powershell.exe'
-      CommandLine|contains:
-        - '{New-PSSession'
-        - '-ComputerName'
-        - '$env:COMPUTERNAME'
-        - 'Test-Connection'
-        - 'Set-Content'
-        - '$env:TEMP'
-        - 'Get-Content'
-        - 'Remove-Item -Force'
-    - Image|endswith: '\powershell.exe'
-      ParentImage|endswith: 
-        - '\cmd.exe'
-        - '\powershell.exe'
-      CommandLine|contains:
-        - '{$malcmdlets'
-        - '$cmdlets}}'
-        - 'Add-Persistence'
-        - 'Find-AVSignature'
-        - 'Get-GPPAutologon'
-        - 'Get-GPPPassword'
-        - 'Get-HttpStatus'
-        - 'Get-Keystrokes'
-        - 'Get-SecurityPackages'
-        - 'Get-TimedScreenshot'
-        - 'Get-VaultCredential'
-        - 'Get-VolumeShadowCopy'
-        - 'Install-SSP'
-        - 'Invoke-CredentialInjection'
-        - 'Invoke-DllInjection'
-        - 'Invoke-Mimikatz'
-        - 'Invoke-NinjaCopy'
-        - 'Invoke-Portscan'
-        - 'Invoke-ReflectivePEInjection'
-        - 'Invoke-ReverseDnsLookup'
-        - 'Invoke-Shellcode'
-        - 'Invoke-TokenManipulation'
-        - 'Invoke-WmiCommand'
-        - 'Mount-VolumeShadowCopy'
-        - 'New-ElevatedPersistenceOption'
-        - 'New-UserPersistenceOption'
-        - 'New-VolumeShadowCopy'
-        - 'Out-CompressedDll'
-        - 'Out-EncodedCommand'
-        - 'Out-EncryptedScript'
-        - 'Out-Minidump'
-        - 'PowerUp'
-        - 'PowerView'
-        - 'Remove-Comments'
-        - 'Remove-VolumeShadowCopy'
-        - 'Set-CriticalProcess'
-        - 'Set-MasterBootRecord'
-    - Image|endswith: '\reg.exe'
-      ParentImage|endswith: 
-        - '\cmd.exe'
-        - '\powershell.exe'
-      CommandLine|contains:
-        - ' add '
-        - ' /d '
-        - 'reg.exe add'
-        - 'Set-Content'
-        - 'HKCU:\\Software\\Classes'
-    - Image|endswith: '\powershell.exe'
-      ParentImage|endswith: '\WmiPrvSE.exe'
-      ParentCommandLine|contains: ' -Embedding'
-      CommandLine|contains:
-        - ' -NoProfile'
-        - ' -E '
-        - ' -EA '
-        - ' -EncodedArguments'
-    - Image|endswith: '\powershell.exe'
-      CommandLine|contains:
-        - 'Remove-Item'
-        - '-Force'
-        - '-ErrorAction Ignore'
-  condition: (selection or 1 of suspicious_patterns) and not exclude_parents
+  suspicious_patterns|1:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains:
+      - '-noprofile'
+      - '-nop'
+    CommandLine|contains|all:
+      - 'New-Object'
+      - '.ServerXmlHttp'
+      - '.Open'
+      - '.Send'
+      - '.ResponseText'
+  suspicious_patterns|2:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains:
+      - '-e'
+      - '-enc'
+      - '-encodedcommand'
+      - '/enc'
+      - '/encodedcommand'
+  suspicious_patterns|3:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains|all:
+      - 'New-PSSession'
+      - '-ComputerName'
+      - 'COMPUTERNAME'
+      - 'Test-Connection'
+      - 'Set-Content'
+      - 'TEMP'
+      - 'Get-Content'
+      - 'Remove-Item -Force'
+  suspicious_patterns|4:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+    CommandLine|contains:
+      - 'Add-Persistence'
+      - 'Find-AVSignature'
+      - 'Get-GPPAutologon'
+      - 'Get-GPPPassword'
+      - 'Get-HttpStatus'
+      - 'Get-Keystrokes'
+      - 'Get-SecurityPackages'
+      - 'Get-TimedScreenshot'
+      - 'Get-VaultCredential'
+      - 'Get-VolumeShadowCopy'
+      - 'Install-SSP'
+      - 'Invoke-CredentialInjection'
+      - 'Invoke-DllInjection'
+      - 'Invoke-Mimikatz'
+      - 'Invoke-NinjaCopy' 
+      - 'Invoke-Portscan' 
+      - 'Invoke-ReflectivePEInjection'
+      - 'Invoke-ReverseDnsLookup'
+      - 'Invoke-Shellcode' 
+      - 'Invoke-TokenManipulation' 
+      - 'Invoke-WmiCommand' 
+      - 'Mount-VolumeShadowCopy' 
+      - 'New-ElevatedPersistenceOption' 
+      - 'New-UserPersistenceOption' 
+      - 'New-VolumeShadowCopy' 
+      - 'Out-CompressedDll' 
+      - 'Out-EncodedCommand' 
+      - 'Out-EncryptedScript' 
+      - 'Out-Minidump' 
+      - 'PowerUp' 
+      - 'PowerView' 
+      - 'Remove-Comments' 
+      - 'Remove-VolumeShadowCopy' 
+      - 'Set-CriticalProcess' 
+      - 'Set-MasterBootRecord'
+  suspicious_patterns|5:
+    EventID: 1
+    Image|endswith: 'reg.exe'
+    ParentImage|endswith:
+      - 'powershell.exe'
+      - 'cmd.exe'
+    CommandLine|contains|all:
+      - 'add'
+      - '/d'
+    ParentCommandLine|contains: 'Set-Content'
+  suspicious_patterns|6:
+    EventID: 1
+    Image|endswith: 'powershell.exe'
+    ParentImage|endswith: 'WmiPrvSE.exe'
+    CommandLine|contains|all: '-NoProfile'
+    CommandLine|contains:
+      - '-E'
+      - '-EA'
+      - '-EncodedArguments'
+    ParentCommandLine|contains: '-Embedding'
+  suspicious_patterns|7:
+    EventID: 1
+    Image|endswith: 'powershell.exe'
+    CommandLine|contains|all:
+      - 'Remove-Item'
+      - '-Force'
+      - '-ErrorAction Ignore'
+    CommandLine|contains:
+      - '\\Windows\\Temp\\'
+      - 'HKCU:'
+  condition: (1 of suspicious_patterns)
 fields: [UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User]
 falsepositives: 
   - Admin scripts using EncodedCommand

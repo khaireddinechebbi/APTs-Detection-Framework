@@ -10,18 +10,30 @@ logsource:
   service: sysmon
 detection:
   suspicious_powershell_ssl:
+    EventID: 1
     Image|endswith: '\powershell.exe'
     CommandLine|contains|all:
-      - 'Net.Sockets.TcpClient'
-      - 'System.Net.Security.SslStream'
-      - '$sslStream.AuthenticateAsClient'
-      - '$sslStream.Write'
-      - '$sslStream.Read'
+      - 'TcpClient'
+      - 'SslStream'
+      - '{$True}'
+      - 'AuthenticateAsClient'
+      - 'Tls12'
     CommandLine|contains:
       - 'iex'
       - 'Invoke-Expression'
   condition: suspicious_powershell_ssl
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User, Hostname ]
-falsepositives: [ Legitimate scripts establishing SSL/TCP connections, internal pen-testing tools ]
+fields: 
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+  - Hostname
+falsepositives:
+  - Legitimate scripts establishing SSL/TCP connections
+  - internal pen-testing tools
 level: high
-tags: [ attack.command_and_control, attack.t1573, attack.t1218 ]
+tags:
+  - attack.command_and_control
+  - attack.t1573

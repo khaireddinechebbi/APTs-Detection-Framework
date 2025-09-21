@@ -12,20 +12,17 @@ detection:
   selection_addtype_sendkeys:
     EventID: 1
     Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'Add-Type'
-      - 'System.Windows.Forms'
+      - 'user32.dll'
+      - 'keybd_event'
       - 'SendKeys'
       - 'ToBase64String'
-  selection_addtype_sendkeys_short:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
     CommandLine|contains:
-      - 'AddType'
       - 'System.Windows.Forms'
-      - 'SendKeys'
-      - 'ToBase64String'
-  condition: selection_addtype_sendkeys or selection_addtype_sendkeys_short
+      - 'SendWait'
+
+  condition: selection_addtype_sendkeys
 fields:
   - UtcTime
   - Image

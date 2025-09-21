@@ -10,24 +10,26 @@ logsource:
   service: sysmon
 detection:
   sel_img:
+    EventID: 1
     Image|endswith: '\mshta.exe'
-  sel_parent:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
   sel_vbscript:
-    CommandLine|contains|all:
+    CommandLine|contains:
       - 'vbscript'
       - 'VBScript'
+  sel_execute:
+    CommandLine|contains|all:
       - 'Execute'
       - 'Wscript.Shell'
       - 'powershell'
   sel_startup:
     CommandLine|contains|all:
       - '\Microsoft\Windows\Start'
-      - 'Menu\Programs\Startup'
+      - '\Programs\Startup'
       - '.hta'
-  condition: sel_img and sel_parent and (sel_vbscript or sel_startup)
+  condition: sel_img and ((sel_vbscript and sel_execute) or sel_startup)
 fields:
   - UtcTime
   - Image

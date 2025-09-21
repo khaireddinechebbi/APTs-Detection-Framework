@@ -9,56 +9,47 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  selection_download_xlsm:
+  select_image:
     EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
+    Image|endswith: '\powershell.exe' 
+  selection_web:
+    CommandLine|contains:
       - 'Invoke-WebRequest'
-      - '-OutFile'
-      - '.xlsm'
-  selection_download_xlsm_short:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
       - 'iwr'
+      - 'curl'
+  selection_protocol:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+  selection_filedownload:
+    CommandLine|contains|all:
+      - '-Uri'
       - '-OutFile'
-      - '.xlsm'
-  selection_invoke_expression_jse:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
+
+  selection_vba_staging:
+    CommandLine|contains:
       - 'Invoke-Expression'
-      - 'Invoke-MalDoc'
-      - 'http'
-    CommandLine|contains_any:
-      - '.jse'
-      - '`*'
-      - '`$'
-      - '`n'
-  selection_invoke_expression_jse_short:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
       - 'IEX'
-      - 'Invoke-MalDoc'
-      - 'http'
-    CommandLine|contains_any:
-      - '.jse'
-      - '`*'
-      - '`$'
-      - '`n'
-  selection_remove_item_ext:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains: 'Remove-Item'
-    CommandLine|contains_any:
-      - '$env:\TEMP'
-      - 'C:\Users\'
-    CommandLine|contains_any:
-      - '.xlsm'
-      - '.jse'
-    CommandLine|contains: '-ErrorAction Ignore'
-  condition: selection_download_xlsm or selection_download_xlsm_short or selection_invoke_expression_jse or selection_invoke_expression_jse_short or selection_remove_item_ext
+    CommandLine|contains|all:
+      - ' Open '
+      - ' For Output As '
+      - ' Write '
+      - '-officeProduct'
+      - 'Word'
+    
+  selection_remove:
+    CommandLine|contains|all:
+      - 'Remove-Item'
+      - '-ErrorAction Ignore'
+    CommandLine|contains:
+      - '\Users\Public\'
+      - '$env:TEMP'
+    ParentImage|endswith: '\powershell.exe'
+  condition: 
+    select_image and (
+    (selection_web and selection_filedownload and selection_protocol)
+    or (selection_vba_staging and selection_web and selection_protocol)
+    or selection_remove)
 fields:
   - UtcTime
   - Image

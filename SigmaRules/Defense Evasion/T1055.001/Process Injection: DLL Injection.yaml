@@ -9,20 +9,21 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
+  event_id:
+    EventID: 1
   remote_thread_inject:
-    Image|endswith: '\mavinject.exe'
-    EventCode: 8
-    StartFunction:
-      - LoadLibraryA
-      - LoadLibraryW
-    EventAction: CreateRemoteThread
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains|all:
+      - 'mavinject'
+      - '/INJECTRUNNING'
   dll_inject:
-    Image|endswith:
-      - '\mavinject.exe'
-      - '\UsoClient.exe'
-    EventCode: 7
-    TargetFileExtension: 'dll'
-  condition: remote_thread_inject or dll_inject
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains|all:
+      - 'iex'
+      - 'webclient'
+      - 'downloadstring'
+      - '.ps1'
+  condition: event_id and (remote_thread_inject or dll_inject)
 fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User, TargetImage, TargetFileName ]
 falsepositives: [ Legitimate DLL injection/testing tools ]
 level: high

@@ -9,34 +9,25 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  selection_plink_removeall:
+  selection_image:
     EventID: 1
     ParentImage|endswith: '\wsmprovhost.exe'
     Image|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
+  selections|1:
     CommandLine|contains|all:
       - 'plink.exe'
       - '.removeall'
-  selection_sdelete:
-    EventID: 1
-    ParentImage|endswith: '\wsmprovhost.exe'
-    Image|endswith:
-      - '\cmd.exe'
-      - '\powershell.exe'
+  selections|2:
     CommandLine|contains|all: 
       - 'sdelete.exe'
       - '-accepteula'
-  selection_cipher_wipe:
-    EventID: 1
-    ParentImage|endswith: '\wsmprovhost.exe'
-    Image|endswith:
-      - '\cmd.exe'
-      - '\powershell.exe'
+  selections|3:
     CommandLine|contains|all: 
       - 'cipher'
       - '/w:'
-  condition: selection_plink_removeall or selection_sdelete or selection_cipher_wipe
+  condition: selection_image and (1 of selections)
 fields:
   - UtcTime
   - Image

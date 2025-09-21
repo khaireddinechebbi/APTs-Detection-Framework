@@ -15,17 +15,19 @@ detection:
       - '\powershell.exe'
       - '\cmd.exe'
     CommandLine|contains|all:
-      - "@'"
-      - "'@"
-      - 'Add-Type'
-      - 'Win32'
+      - 'Get-ItemProperty'
+      - 'DllImport'
+      - 'SystemParametersInfo'
+      - 'System.Net.WebClient'
+      - 'add-type'
   selection_registry_legalnotice:
     EventID: 1
     Image|endswith:
       - '\powershell.exe'
       - '\cmd.exe'
     CommandLine|contains|all:
-      - 'HKLM:\'
+      - 'Set-ItemProperty'
+      - 'HKLM:*\\Policies\\System'
       - 'LegalNoticeCaption'
       - 'LegalNoticeText'
   selection_esx_defacement:
@@ -36,8 +38,10 @@ detection:
       - '\cmd.exe'
     CommandLine|contains|all:
       - 'plink.exe'
-      - 'root'
+      - '-ssh'
       - 'esxcli'
+      - 'system'
+      - 'set'
   condition: selection_banner_addtype or selection_registry_legalnotice or selection_esx_defacement
 fields:
   - UtcTime

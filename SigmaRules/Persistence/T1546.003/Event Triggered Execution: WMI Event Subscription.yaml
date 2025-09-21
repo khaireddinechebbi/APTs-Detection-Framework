@@ -9,26 +9,29 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  selection:
+  selection|wmi:
     EventID: 1
     Image|endswith: '\powershell.exe'
-    CommandLine|contains_any:
-      # WMI Subscription creation
-      - 'New-CimInstance'
-      - 'Set-WmiInstance'
-      - 'root/subscription'
+    CommandLine|contains|all:
       - '__EventFilter'
+      - '__FilterToConsumerBinding'
+    CommandLine|contains:
       - 'CommandLineEventConsumer'
       - 'ActiveScriptEventConsumer'
-      - '__FilterToConsumerBinding'
-      # MOF compilation
+  selection|mof:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains|all:
       - 'mofcomp.exe'
       - '.mof'
-      # WMI subscription deletion attempts
+  selection|cleanup:
+    EventID: 1
+    Image|endswith: '\powershell.exe'
+    ommandLine|contains|all:
       - 'Get-WmiObject'
       - 'Remove-WmiObject'
       - '-ErrorAction SilentlyContinue'
-  condition: selection
+  condition: 1 of selection
 fields:
   - UtcTime
   - Image

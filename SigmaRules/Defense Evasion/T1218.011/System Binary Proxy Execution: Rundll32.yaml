@@ -1,25 +1,58 @@
-title: Suspicious rundll32.exe Execution Patterns (Sysmon)
-id: d4f6b2c1-7e8a-4d9f-b3c1-9a2e5f7c6b4d
+title: Suspicious Rundll32 Execution Patterns (Sysmon)
+id: 4f94cfc1-7b3b-41e2-9d9a-3c5f52a6f31a
 status: experimental
-description: Detects suspicious rundll32.exe usage, including DLL execution outside normal CPLs or misuse of shell32.dll, and rundll32.exe spawned by cmd/powershell or other rundll32.exe instances.
+description: Detects suspicious rundll32.exe executions that may indicate DLL execution abuse (MITRE ATT&CK T1218.011).
 author: Khaireddine
-date: 2025/09/11
+date: 2025/09/19
+references:
+  - https://attack.mitre.org/techniques/T1218/011/
 logsource:
   product: windows
   category: process_creation
   service: sysmon
 detection:
-  suspicious_rundll32:
+  selection_image:
+    EventID: 1
     Image|endswith: '\rundll32.exe'
-    ParentImage|endswith: '\cmd.exe' 
-    or ParentImage|endswith: '\powershell.exe'
-    or ParentImage|endswith: '\rundll32.exe'
-    CommandLine|matches:
-      - '.*\.dll.*,.*'           # DLL with export function
-      - '.*shell32\.dll,Control_RunDLL.*' 
-      - '^(?!.*\.dll|.*\.cpl).*' # no DLL or CPL, suspicious
-  condition: suspicious_rundll32
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User ]
-falsepositives: [ Legitimate system utility usage ]
+
+  parent_cmd_ps:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+
+  cmdline_dll_comma:
+    CommandLine|contains|all:
+      - '.dll'
+      - ',#'
+
+  cmdline_has_dll_or_cpl:
+    CommandLine|contains:
+      - '.dll'
+      - '.cpl'
+
+  cmdline_shell32_abuse:
+    CommandLine|contains|all:
+      - 'shell32.dll,Control_RunDLL'
+
+  cmdline_cpl:
+    CommandLine|contains: '.cpl'
+
+  parent_rundll32:
+    ParentImage|endswith: '\rundll32.exe'
+
+  condition: selection_image and (
+      (parent_cmd_ps and (cmdline_dll_comma or (not cmdline_has_dll_or_cpl) or (cmdline_shell32_abuse and not cmdline_cpl)))
+      or parent_rundll32)
+
+fields:
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - User
+falsepositives:
+  - Rare legitimate rundll32 calls with custom arguments
 level: high
-tags: [ attack.execution, attack.t1218, attack.t1218.011 ]
+tags:
+  - attack.defense_evasion
+  - attack.t1218.011
