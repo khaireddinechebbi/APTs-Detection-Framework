@@ -27,7 +27,7 @@ detection:
   selection|cleanup:
     EventID: 1
     Image|endswith: '\powershell.exe'
-    ommandLine|contains|all:
+    CommandLine|contains|all:
       - 'Get-WmiObject'
       - 'Remove-WmiObject'
       - '-ErrorAction SilentlyContinue'

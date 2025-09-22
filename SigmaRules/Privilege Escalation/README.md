@@ -11,9 +11,12 @@ Adversaries inject malicious code into running processes to execute payloads wit
 #### Kibana Query Language Code (KQL):
 ```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:"1"
-and process.name:"powershell.exe"
-and process.args:((*/INJECTRUNNING* and *-PassThru* and *mypid*) or (*iex* and *new-object* and *webclient* and *downloadstring*))
+AND event.code:1
+AND process.name:powershell.exe
+AND (
+    process.command_line:(*mavinject* AND */INJECTRUNNING*)
+    OR process.command_line:(*iex* AND *new-object* AND *webclient* AND *downloadstring* AND *.ps1*)
+)
 ```
 
 ### T1546.003 - Event Triggered Execution: Windows Management Instrumentation Event Subscription
@@ -22,12 +25,21 @@ Adversaries abuse Windows Management Instrumentation (WMI) event subscriptions t
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code: 1
-and process.name: "powershell.exe"
-and process.command_line: (
-    ((*New-CimInstance* or *Set-WmiInstance*) and *root/subscription* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*))
-    or (*mofcomp.exe* and *.mof*)
-    or (*root/subscription* and *Get-WmiObject* and *Remove-WmiObject* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*) and *-ErrorAction SilentlyContinue*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational 
+AND (
+    (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.command_line:(*__EventFilter* AND *__FilterToConsumerBinding*) 
+        AND process.command_line:(*CommandLineEventConsumer* OR *ActiveScriptEventConsumer*)
+    ) OR (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.command_line:(*mofcomp.exe* AND *.mof*)
+    ) OR (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.command_line:(*Get-WmiObject* AND *Remove-WmiObject* AND *-ErrorAction SilentlyContinue*)
+    )
 )
 ```

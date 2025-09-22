@@ -10,36 +10,33 @@ Adversaries create scheduled tasks to execute malicious code at system startup, 
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and (
-    (process.name:"schtasks.exe"
-    and process.parent.name:("cmd.exe" or "powershell.exe")
-    and process.command_line: (
-    ((* /create * or * /Create *) and (* /sc * or * /SC *) and (* /tr * or * /TR *) and (*cmd.exe* or *powershell.exe*))
-    or ((* /delete * or * /Delete *) and (* /tn * or * /TN *) and (* /f * or * /F *))
-    ))
-    or 
-    (process.command_line:(
-        (
-            (
-                *Register-ScheduledTask* or
-                *Set-ScheduledTask* or
-                *New-ScheduledTaskAction* or
-                *New-ScheduledTaskTrigger* or
-                *New-ScheduledTaskPrincipal*
-            )
-            and 
-            (
-                (*-AtLogon* or *-AtStartup* or *-RunLevel Highest*)
-                or (*-GroupId* and *Administrators*)
-                or (*-Execute* and (*cmd.exe* or *powershell.exe* or *notepad.exe*))
-            )
-        ) or (
-            (*Unregister-ScheduledTask* and *-TaskName*)
-            and (*-confirm\:$false* or *\>$null* or *2\>&1*)
-        )
-    ))
+winlog.channel:Microsoft-Windows-Sysmon/Operational 
+AND (
+    (
+        event.code:1 
+        AND process.name:schtasks.exe 
+        AND process.parent.name:(cmd.exe OR powershell.exe) 
+        AND process.command_line:(*/tr* OR */TR*) 
+        AND process.command_line:(*/sc* OR */SC*) 
+        AND process.command_line:(*create* OR *Create*) 
+        AND process.command_line:(*onlogon* OR *onstart* OR */ru system* OR *ONCE* OR */ST* OR */RU* OR */U* OR */S* OR */F* OR */f* OR */tn* OR */TN*)
+    ) OR (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*New-ScheduledTask* AND *Register-ScheduledTask* AND *Set-ScheduledTask*)
+    ) OR (
+        event.code:1 
+        AND process.name:schtasks.exe 
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*/delete* OR */Delete*) 
+        AND process.command_line:(*onlogon* OR *onstart* OR */ru system* OR *ONCE* OR */ST* OR */RU* OR */U* OR */S* OR */F* OR */f* OR */tn* OR */TN*)
+    ) OR (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:*Unregister-ScheduledTask* AND process.command_line:*-TaskName* AND process.command_line:*-confirm\:$false*
+    )
 )
 ```
 
@@ -49,12 +46,21 @@ Adversaries abuse Windows Management Instrumentation (WMI) event subscriptions t
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code: 1
-and process.name: "powershell.exe"
-and process.command_line: (
-    ((*New-CimInstance* or *Set-WmiInstance*) and *root/subscription* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*))
-    or (*mofcomp.exe* and *.mof*)
-    or (*root/subscription* and *Get-WmiObject* and *Remove-WmiObject* and (*__EventFilter* or *CommandLineEventConsumer* or *ActiveScriptEventConsumer* or *__FilterToConsumerBinding*) and *-ErrorAction SilentlyContinue*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational 
+AND (
+    (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.command_line:(*__EventFilter* AND *__FilterToConsumerBinding*) 
+        AND process.command_line:(*CommandLineEventConsumer* OR *ActiveScriptEventConsumer*)
+    ) OR (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.command_line:(*mofcomp.exe* AND *.mof*)
+    ) OR (
+        event.code:1 
+        AND process.name:powershell.exe 
+        AND process.command_line:(*Get-WmiObject* AND *Remove-WmiObject* AND *-ErrorAction SilentlyContinue*)
+    )
 )
 ```

@@ -9,21 +9,20 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  event_id:
+  selec_image:
     EventID: 1
-  remote_thread_inject:
     Image|endswith: '\powershell.exe'
+  remote_thread_inject:
     CommandLine|contains|all:
       - 'mavinject'
       - '/INJECTRUNNING'
   dll_inject:
-    Image|endswith: '\powershell.exe'
     CommandLine|contains|all:
       - 'iex'
       - 'webclient'
       - 'downloadstring'
       - '.ps1'
-  condition: event_id and (remote_thread_inject or dll_inject)
+  condition: selec_image and (remote_thread_inject or dll_inject)
 fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User, TargetImage, TargetFileName ]
 falsepositives: [ Legitimate DLL injection/testing tools ]
 level: high
