@@ -20,6 +20,7 @@ detection:
       - 'Tls12'
     CommandLine|contains:
       - 'iex'
+      - 'IEX'
       - 'Invoke-Expression'
   condition: suspicious_powershell_ssl
 fields: 

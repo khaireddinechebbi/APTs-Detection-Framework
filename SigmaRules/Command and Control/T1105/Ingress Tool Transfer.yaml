@@ -8,11 +8,9 @@ logsource:
   product: windows
   category: process_creation
   service: sysmon
-
 detection:
   select_id:
     EventID: 1
-
   certutil:
     Image|endswith: '\certutil.exe'
     ParentImage|endswith:
@@ -25,7 +23,6 @@ detection:
     CommandLine|contains:
       - 'http'
       - 'https'
-
   bitsadmin:
     Image|endswith: '\bitsadmin.exe'
     ParentImage|endswith:
@@ -36,8 +33,6 @@ detection:
     CommandLine|contains:
       - 'http'
       - 'https'
-
-  # PowerShell: require one token from each of these groups (A AND B AND C)
   powershell_web_A:
     Image|endswith: '\powershell.exe'
     ParentImage|endswith:
@@ -48,7 +43,6 @@ detection:
       - 'Out-File'
       - 'Invoke-Item'
       - 'Invoke-Expression'
-
   powershell_web_B:
     Image|endswith: '\powershell.exe'
     ParentImage|endswith:
@@ -58,7 +52,6 @@ detection:
       - 'DownloadFile'
       - 'DownloadString'
       - 'WebClient'
-
   powershell_web_C:
     Image|endswith: '\powershell.exe'
     ParentImage|endswith:
@@ -67,8 +60,6 @@ detection:
     CommandLine|contains:
       - 'http'
       - 'https'
-
-  # cmd + curl
   cmd_curl:
     Image|endswith: '\cmd.exe'
     CommandLine|contains|all:
@@ -82,14 +73,11 @@ detection:
     CommandLine|contains:
       - 'http'
       - 'https'
-
-  # PowerShell iwr
   powershell_iwr:
     Image|endswith: '\powershell.exe'
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-
   powershell_iwr_1:
     CommandLine|contains:
       - 'iwr'
@@ -98,8 +86,6 @@ detection:
     CommandLine|contains:
       - 'http'
       - 'https'
-
-  # PowerShell running sqlcmd and downloading a zip
   powershell_sqlcmd_zip:
     Image|endswith: '\powershell.exe'
     CommandLine|contains|all:
@@ -108,30 +94,24 @@ detection:
     CommandLine|contains:
       - 'http'
       - 'https'
-
-  # Cleanup patterns (process must be cmd.exe or powershell.exe AND one of these patterns)
   cleanup_proc:
     Image|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-
   cleanup_del:
     CommandLine|contains|all:
       - ' del '
       - '>nul 2>&1'
-
   cleanup_removeitem:
     CommandLine|contains|all:
       - 'Remove-Item'
       - '$env:TEMP'
       - '-Force'
       - '-ErrorAction Ignore'
-
   cleanup_rm:
     CommandLine|contains|all:
       - 'rm'
       - '2>$null'
-
   condition: >
     select_id and (
       certutil
@@ -142,7 +122,6 @@ detection:
       or powershell_sqlcmd_zip
       or (cleanup_proc and (cleanup_del or cleanup_removeitem or cleanup_rm))
     )
-
 fields:
   - UtcTime
   - Image
@@ -150,12 +129,10 @@ fields:
   - ParentImage
   - ParentCommandLine
   - User
-
 falsepositives:
   - Legitimate admin usage of certutil
   - Legitimate automation using bitsadmin or curl
   - Legitimate PowerShell web requests for updates
-
 level: high
 tags:
   - attack.command_and_control
