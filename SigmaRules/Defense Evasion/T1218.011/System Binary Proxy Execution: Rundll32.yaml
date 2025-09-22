@@ -14,36 +14,31 @@ detection:
   selection_image:
     EventID: 1
     Image|endswith: '\rundll32.exe'
-
   parent_cmd_ps:
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
-
   cmdline_dll_comma:
     CommandLine|contains|all:
       - '.dll'
       - ',#'
-
   cmdline_has_dll_or_cpl:
     CommandLine|contains:
       - '.dll'
       - '.cpl'
-
   cmdline_shell32_abuse:
     CommandLine|contains|all:
       - 'shell32.dll,Control_RunDLL'
-
   cmdline_cpl:
     CommandLine|contains: '.cpl'
-
   parent_rundll32:
     ParentImage|endswith: '\rundll32.exe'
-
-  condition: selection_image and (
-      (parent_cmd_ps and (cmdline_dll_comma or (not cmdline_has_dll_or_cpl) or (cmdline_shell32_abuse and not cmdline_cpl)))
-      or parent_rundll32)
-
+  condition: >
+    selection_image 
+    and (
+      (parent_cmd_ps and (cmdline_dll_comma or not cmdline_has_dll_or_cpl or (cmdline_shell32_abuse and not cmdline_cpl)))
+      or parent_rundll32
+    )
 fields:
   - UtcTime
   - Image

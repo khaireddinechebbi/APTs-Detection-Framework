@@ -11,9 +11,12 @@ Adversaries inject malicious code into running processes to conceal their activi
 #### Kibana Query Language Code (KQL):
 ```
 winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:"1"
-and process.name:"powershell.exe"
-and process.command_line:((*mavinject* and */INJECTRUNNING* and *-PassThru* and *mypid*) or (*iex* and *new-object* and *webclient* and *downloadstring* and *.ps1*))
+AND event.code:1
+AND process.name:powershell.exe
+AND (
+    process.command_line:(*mavinject* AND */INJECTRUNNING*)
+    OR process.command_line:(*iex* AND *new-object* AND *webclient* AND *downloadstring* AND *.ps1*)
+)
 ```
 
 ### T1218.005 - System Binary Proxy Execution: Mshta
@@ -22,11 +25,14 @@ Adversaries abuse the Microsoft HTML Application Host (mshta.exe) to execute mal
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name:"mshta.exe"
-and process.parent.name: ("powershell.exe" or "cmd.exe")
-and process.command_line: (((*vbscript* or *VBScript*) and *Execute* and *Wscript.Shell* and *powershell*) or (*\\Microsoft\\Windows\\Start* and *Menu\\Programs\\Startup* and *.hta*))
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:mshta.exe
+AND process.parent.name:(powershell.exe OR cmd.exe)
+AND (
+    process.command_line:((*vbscript* OR *VBScript*) AND *Execute* AND *Wscript.Shell* AND *powershell*)
+    OR process.command_line:(*\\Microsoft\\Windows\\Start* AND *\\Programs\\Startup* AND *.hta)
+)
 ```
 
 ### T1218.010 - System Binary Proxy Execution: Regsvr32
@@ -35,14 +41,14 @@ Adversaries misuse the regsvr32.exe utility to execute malicious DLLs while evad
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name:"regsvr32.exe"
-and process.parent.name: ("cmd.exe" or "powershell.exe")
-and (
-    process.command_line: (*/s* and */i* and *.dll*)
-    or process.parent.command_line: (*/s* and * IF * and * ELSE *)
-    or process.parent.command_line: (*/s* and *%temp%*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:regsvr32.exe
+AND process.parent.name: (cmd.exe OR powershell.exe)
+AND (
+    process.command_line: (*/s* AND */i* AND *.dll*)
+    OR process.parent.command_line: (*/s* AND * IF * AND * ELSE *)
+    OR process.parent.command_line: (*/s* AND *%temp%*)
 )
 ```
 
@@ -52,16 +58,16 @@ Adversaries exploit the rundll32.exe Windows utility to execute malicious code d
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name: "rundll32.exe"
-and (
-    process.parent.name: ("cmd.exe" or "powershell.exe")
-    and process.command_line: (
-        (*.dll* and *,#*)
-        or not (*.dll* or *.cpl*)
-        or (*shell32.dll,Control_RunDLL* and not *.cpl*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:rundll32.exe
+AND (
+    process.parent.name:(cmd.exe OR powershell.exe)
+    AND (
+        process.command_line:(*.dll* AND *,#*)
+        OR not process.command_line:(*.dll* OR *.cpl*)
+        OR process.command_line:(*shell32.dll,Control_RunDLL* AND not *.cpl*)
     )
-    or process.parent.name: "rundll32.exe"
+    or process.parent.name:rundll32.exe
 )
 ```

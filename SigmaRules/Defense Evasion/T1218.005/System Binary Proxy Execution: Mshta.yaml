@@ -19,7 +19,6 @@ detection:
     CommandLine|contains:
       - 'vbscript'
       - 'VBScript'
-  sel_execute:
     CommandLine|contains|all:
       - 'Execute'
       - 'Wscript.Shell'
@@ -29,7 +28,7 @@ detection:
       - '\Microsoft\Windows\Start'
       - '\Programs\Startup'
       - '.hta'
-  condition: sel_img and ((sel_vbscript and sel_execute) or sel_startup)
+  condition: sel_img and (sel_vbscript or sel_startup)
 fields:
   - UtcTime
   - Image

@@ -11,9 +11,7 @@ logsource:
 detection:
     selection_event:
         EventID: 1
-    selection_target:
         Image|endswith: '\regsvr32.exe'
-    selection_parent:
         ParentImage|endswith:
             - '\cmd.exe'
             - '\powershell.exe'
@@ -32,7 +30,7 @@ detection:
           - '/s'
           - '%temp%'
     
-    condition: selection_event and selection_target and selection_parent and 
+    condition: selection_event and 
               (selection_cmdline_flags or selection_parent_conditional or selection_parent_temp)
 fields:
     - CommandLine
