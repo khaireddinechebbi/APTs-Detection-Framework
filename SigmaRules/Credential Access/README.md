@@ -10,24 +10,23 @@ Adversaries attempt to extract credential information from the Security Account 
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and (
+winlog.channel:Microsoft-Windows-Sysmon/Operational 
+AND event.code:1 
+AND (
     (
-        process.name:"reg.exe"
-        and process.parent.name: ("cmd.exe" or "powershell.exe")
-        and process.command_line: (*reg* and (* save * or * export *))
-        and process.command_line: (*\\sam* or *\\system* or *\\security*)
-    )
-    or
-    (
-        process.name:("cmd.exe" or "powershell.exe")
-        and process.command_line: (*del* and *\>nul* and *2\>* and *%%temp%%* and (*\\sam* or *\\SAM* or *\\system* or *\\security*))
-    )
-    or
-    (
-        process.name: "cmd.exe"
-        and process.command_line: (* esentutl.exe * and *%%SystemRoot%%/system32/config/SAM* and *%%temp%%/SAM*)
+        process.name:reg.exe 
+        AND process.parent.name:(cmd.exe OR powershell.exe) 
+        AND process.command_line:*reg* 
+        AND process.command_line:(* save * OR * export *)
+        AND process.command_line:(*\\sam* OR *\\system* OR *\\security*)
+    ) OR (
+        process.name:(cmd.exe OR powershell.exe) 
+        AND process.command_line:(*del* AND *%temp%*) 
+        AND process.command_line:(*\\sam* OR *\\SAM* OR *\\system* OR *\\security*)
+    ) OR (
+        process.name: cmd.exe 
+        AND process.command_line:*esentutl.exe* 
+        AND process.command_line:(* /y * AND * /vss * AND */config/SAM*)
     )
 )
 ```
@@ -38,23 +37,21 @@ Adversaries target the Local Security Authority (LSA) secrets, which store vario
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and (
+winlog.channel:Microsoft-Windows-Sysmon/Operational 
+AND event.code:1 
+AND (
     (
-        process.name:"reg.exe"
-        and process.parent.name: "PSEXESVC.exe"
-        and process.command_line: (*reg* and * save * and *\\security\\policy\\secrets* and *\\Temp\\secrets*) 
-    )
-    or
-    (
-        process.name: "powershell.exe"
-        and process.command_line: (*Invoke-Expression* and *.WebClient* and *.DownloadString* and (*http* or *https*) and *.ps1*)
-    )
-    or
-    (
-        process.name:("cmd.exe" or "powershell.exe")
-        and process.command_line: (*del* and *\>nul* and *2\>* and *%%temp%%* and *\\secrets*)
+        process.name:reg.exe 
+        AND process.command_line:(*reg* AND * save * AND *\\security\\policy\\secrets* AND */y*)
+        AND process.command_line:(*%temp%* OR *\\Temp\\*)
+    ) OR (
+        process.name:powershell.exe 
+        AND process.command_line:(*Invoke-Expression* AND *WebClient* AND *DownloadString* AND *.ps1*) 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
+        process.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*del* AND *\\secrets*) 
+        AND process.command_line:(*%temp%* OR *\\Temp\\*)
     )
 )
 ```
