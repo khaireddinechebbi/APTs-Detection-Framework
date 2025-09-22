@@ -16,7 +16,6 @@ detection:
     CommandLine|contains:
       - 'Invoke-WebRequest'
       - 'iwr'
-      - 'curl'
   selection_protocol:
     CommandLine|contains:
       - 'http://'
@@ -25,31 +24,26 @@ detection:
     CommandLine|contains|all:
       - '-Uri'
       - '-OutFile'
+      - 'Net.SecurityProtocolType'
 
   selection_vba_staging:
     CommandLine|contains:
       - 'Invoke-Expression'
       - 'IEX'
+      - 'iex'
     CommandLine|contains|all:
       - ' Open '
       - ' For Output As '
       - ' Write '
       - '-officeProduct'
       - 'Word'
-    
-  selection_remove:
-    CommandLine|contains|all:
-      - 'Remove-Item'
-      - '-ErrorAction Ignore'
-    CommandLine|contains:
-      - '\Users\Public\'
-      - '$env:TEMP'
+
     ParentImage|endswith: '\powershell.exe'
   condition: 
     select_image and (
     (selection_web and selection_filedownload and selection_protocol)
     or (selection_vba_staging and selection_web and selection_protocol)
-    or selection_remove)
+    )
 fields:
   - UtcTime
   - Image
