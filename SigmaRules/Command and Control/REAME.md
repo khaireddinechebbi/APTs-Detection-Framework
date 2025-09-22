@@ -11,44 +11,44 @@ Adversaries transfer tools or other files from an external system into a comprom
 #### Kibana Query Language Code (KQL):
 ```
 winlog.channel:Microsoft-Windows-Sysmon/Operational
-and event.code:1
-and (
+AND event.code:1
+AND (
     (
         process.name: certutil.exe 
-        and process.parent.name:(cmd.exe or powershell.exe) 
-        and process.command_line:(*-urlcache* and *-split* and *-f*) 
-        and process.command_line:(*http* or *https*)
-    ) or (
+        AND process.parent.name:(cmd.exe OR powershell.exe) 
+        AND process.command_line:(*-urlcache* AND *-split* AND *-f*) 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
         process.name:bitsadmin.exe
-        and process.parent.name:(cmd.exe or powershell.exe) 
-        and process.command_line:*/transfer* 
-        and process.command_line:(*http* or *https*)
-    ) or (
+        AND process.parent.name:(cmd.exe OR powershell.exe) 
+        AND process.command_line:*/transfer* 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
         process.name:powershell.exe 
-        and process.parent.name:(cmd.exe or powershell.exe)
-        and process.command_line:(*New-Object* or *Out-File* or *Invoke-Item* or *Invoke-Expression*)
-        and process.command_line:(*DownloadFile* or *DownloadString* or *WebClient*) 
-        and process.command_line:(*http* or *https*)
-    ) or (
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*New-Object* OR *Out-File* OR *Invoke-Item* OR *Invoke-Expression*)
+        AND process.command_line:(*DownloadFile* OR *DownloadString* OR *WebClient*) 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
         process.name:cmd.exe 
-        and process.command_line:*Curl.exe* 
-        and process.command_line:(*-k* or *--insecure* or *-o* or *--output*) 
-        and process.command_line:(*http* or *https*)
-    ) or (
+        AND process.command_line:*Curl.exe* 
+        AND process.command_line:(*-k* OR *--insecure* OR *-o* OR *--output*) 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
         process.name:powershell.exe 
-        and process.parent.name:(cmd.exe or powershell.exe) 
-        and process.command_line:(*iwr* or *Invoke-WebRequest*) 
-        and process.command_line:(*http* or *https*)
-    ) or (
+        AND process.parent.name:(cmd.exe OR powershell.exe) 
+        AND process.command_line:(*iwr* OR *Invoke-WebRequest*) 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
         process.name:powershell.exe 
-        and process.command_line:(*sqlcmd* and *-i*) 
-        and process.command_line:(*http* or *https*)
-    ) or (
-        process.name:(cmd.exe or powershell.exe) 
-        and (
-            process.command_line:(* del * and *\>nul 2\>&1*) 
-            or process.command_line:(*Remove-Item* and *$env\:TEMP* and *-Force* and *-ErrorAction Ignore*) 
-            or process.command_line:(*rm* and *2\>$null*)
+        AND process.command_line:(*sqlcmd* AND *-i*) 
+        AND process.command_line:(*http* OR *https*)
+    ) OR (
+        process.name:(cmd.exe OR powershell.exe) 
+        AND (
+            process.command_line:(* del * AND *\>nul 2\>&1*) 
+            OR process.command_line:(*Remove-Item* AND *$env\:TEMP* AND *-Force* AND *-ErrorAction Ignore*) 
+            OR process.command_line:(*rm* AND *2\>$null*)
         )
     )
 )
@@ -60,9 +60,9 @@ Adversaries use encrypted communication channels to conceal their command and co
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code: 1
-and process.name: powershell.exe
-and process.command_line: (*TcpClient* and *SslStream* and *AuthenticateAsClient* and *Tls12*) 
-and process.command_line: (*iex* or *IEX* or *Invoke-Expression*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:powershell.exe
+AND process.command_line:(*TcpClient* AND *SslStream* AND *AuthenticateAsClient* AND *Tls12*) 
+AND process.command_line:(*iex* OR *IEX* OR *Invoke-Expression*)
 ```
