@@ -11,9 +11,7 @@ logsource:
 detection:
   sel_event:
     EventID: 1
-  sel_img:
-    Image|endswith: '\wmic.exe'
-  sel_parent:
+    Image|endswith: '\WMIC.exe'
     ParentImage|endswith:
       - '\cmd.exe'
       - '\powershell.exe'
@@ -27,7 +25,7 @@ detection:
       - ' process '
       - ' where '
       - ' delete '
-  condition: sel_event and sel_img and sel_parent and (sel_create or sel_delete)
+  condition: sel_event and (sel_create or sel_delete)
 fields:
   - UtcTime
   - Image

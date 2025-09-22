@@ -10,13 +10,13 @@ Adversaries abuse Windows Management Instrumentation (WMI) to execute commands a
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name:"WMIC.exe"
-and process.parent.name : ("cmd.exe" or "powershell.exe")
-and (
-    process.command_line:(* process * and * call * and * create *)
-    or process.command_line:(* process * and * where * and  * delete *)
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:WMIC.exe
+AND process.parent.name :(cmd.exe OR powershell.exe)
+AND (
+    process.command_line:(* process * AND * call * AND * create *)
+    OR process.command_line:(* process * AND * where * AND  * delete *)
 )
 ```
 
@@ -26,30 +26,47 @@ Adversaries leverage PowerShell's extensive capabilities to execute malicious sc
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel: "Microsoft-Windows-Sysmon/Operational" and event.code: 1 and (
-    (process.name: "powershell.exe"
-    and process.parent.name: ("cmd.exe" or "powershell.exe")
-    and (
-        process.command_line: ((*-noprofile* or *-nop*) and (*New-Object* and *.ServerXmlHttp* and *.Open* and *.Send* and *.ResponseText*))
-        or
-        process.command_line: (*-e* or *-enc* or *-encodedcommand* or */enc* or */encodedcommand*)
-        or
-        process.command_line: (*New-PSSession* and *-ComputerName* and *COMPUTERNAME* and *Test-Connection* and *Set-Content* and *TEMP* and *Get-Content* and *Remove-Item -Force*)
-        or
-        process.command_line: (*$malcmdlets* and *$cmdlets* and (*Add-Persistence* or *Find-AVSignature* or *Get-GPPAutologon* or *Get-GPPPassword* or *Get-HttpStatus* or *Get-Keystrokes* or *Get-SecurityPackages* or *Get-TimedScreenshot* or *Get-VaultCredential* or *Get-VolumeShadowCopy* or *Install-SSP* or *Invoke-CredentialInjection* or *Invoke-DllInjection* or *Invoke-Mimikatz* or *Invoke-NinjaCopy* or *Invoke-Portscan* or *Invoke-ReflectivePEInjection* or *Invoke-ReverseDnsLookup* or *Invoke-Shellcode* or *Invoke-TokenManipulation* or *Invoke-WmiCommand* or *Mount-VolumeShadowCopy* or *New-ElevatedPersistenceOption* or *New-UserPersistenceOption* or *New-VolumeShadowCopy* or *Out-CompressedDll* or *Out-EncodedCommand* or *Out-EncryptedScript* or *Out-Minidump* or *PowerUp* or *PowerView* or *Remove-Comments* or *Remove-VolumeShadowCopy* or *Set-CriticalProcess* or *Set-MasterBootRecord*))
-    ))
-    or
-    (process.name:"reg.exe"
-    and process.parent.name: ("cmd.exe" or "powershell.exe")
-    and process.command_line:(*add* and */d*)
-    and process.parent.command_line:(*Set-Content*))
-    or
-    (process.name: "powershell.exe"
-    and process.parent.name: "WmiPrvSE.exe"
-    and process.parent.command_line: *-Embedding* 
-    and process.command_line: (*-NoProfile* and (*-E* or *-EA* or *-EncodedArguments*)))
-    or
-    (process.name: "powershell.exe"
-    and process.command_line: (*Remove-Item* and *-Force* and *-ErrorAction Ignore* and (*\\Windows\\Temp\\* or *HKCU\:*)))
-)
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND (
+    (
+        event.code:1
+        AND process.name:powershell.exe
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*-noprofile* OR *-nop*)
+        AND process.command_line:(*New-Object* AND *.ServerXmlHttp* AND *.Open* AND *.Send* AND *.ResponseText*)
+    ) OR (
+        event.code:1
+        AND process.name:powershell.exe
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*-e* OR *-enc* OR *-encodedcommand* OR */enc* OR */encodedcommand*)
+    ) OR (
+        event.code:1
+        AND process.name:powershell.exe
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*New-PSSession* AND *-ComputerName* AND *COMPUTERNAME* AND *Test-Connection* AND *Set-Content* AND *TEMP* AND *Get-Content* AND *Remove-Item -Force*)
+    ) OR (
+        event.code:1
+        AND process.name:powershell.exe
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*Add-Persistence* OR *Find-AVSignature* OR *Get-GPPAutologon* OR *Get-GPPPassword* OR *Get-HttpStatus* OR *Get-Keystrokes* OR *Get-SecurityPackages* OR *Get-TimedScreenshot* OR *Get-VaultCredential* OR *Get-VolumeShadowCopy* OR *Install-SSP* OR *Invoke-CredentialInjection* OR *Invoke-DllInjection* OR *Invoke-Mimikatz* OR *Invoke-NinjaCopy* OR *Invoke-Portscan* OR *Invoke-ReflectivePEInjection* OR *Invoke-ReverseDnsLookup* OR *Invoke-Shellcode* OR *Invoke-TokenManipulation* OR *Invoke-WmiCommand* OR *Mount-VolumeShadowCopy* OR *New-ElevatedPersistenceOption* OR *New-UserPersistenceOption* OR *New-VolumeShadowCopy* OR *Out-CompressedDll* OR *Out-EncodedCommand* OR *Out-EncryptedScript* OR *Out-Minidump* OR *PowerUp* OR *PowerView* OR *Remove-Comments* OR *Remove-VolumeShadowCopy* OR *Set-CriticalProcess* OR *Set-MasterBootRecord*)
+    ) OR (
+        event.code:1
+        AND process.name:reg.exe
+        AND process.parent.name:(cmd.exe OR powershell.exe)
+        AND process.command_line:(*add* AND */d*)
+        AND process.parent.command_line:*Set-Content*
+    ) OR (
+        event.code:1
+        AND process.name:powershell.exe
+        AND process.parent.name:WmiPrvSE.exe
+        AND process.parent.command_line: *-Embedding* 
+        AND process.command_line:*-NoProfile*
+        AND process.command_line:(*-E* OR *-EA* OR *-EncodedArguments*)
+    ) OR (
+        event.code:1
+        AND process.name:powershell.exe
+        AND process.command_line:(*Remove-Item* AND *-Force* AND *-ErrorAction Ignore*) 
+        AND process.command_line:(*\\Windows\\Temp\\* OR *HKCU\:*)
+    )
+) 
 ```
