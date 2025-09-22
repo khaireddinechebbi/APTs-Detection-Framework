@@ -9,40 +9,39 @@ logsource:
   category: process_creation
   service: sysmon
 detection:
-  selection_banner_addtype:
+  selection_image:
     EventID: 1
     Image|endswith:
       - '\powershell.exe'
       - '\cmd.exe'
+  selection_banner_addtype:
     CommandLine|contains|all:
-      - 'Get-ItemProperty'
       - 'DllImport'
       - 'SystemParametersInfo'
-      - 'System.Net.WebClient'
       - 'add-type'
+    CommandLine|contains:
+      - 'Get-ItemProperty'
+      - 'Get-Content'
   selection_registry_legalnotice:
-    EventID: 1
-    Image|endswith:
-      - '\powershell.exe'
-      - '\cmd.exe'
     CommandLine|contains|all:
       - 'Set-ItemProperty'
-      - 'HKLM:*\\Policies\\System'
+      - '\\Policies\\System'
       - 'LegalNoticeCaption'
       - 'LegalNoticeText'
   selection_esx_defacement:
-    EventID: 1
     ParentImage|endswith: '\wsmprovhost.exe'
-    Image|endswith:
-      - '\powershell.exe'
-      - '\cmd.exe'
     CommandLine|contains|all:
       - 'plink.exe'
       - '-ssh'
       - 'esxcli'
       - 'system'
       - 'set'
-  condition: selection_banner_addtype or selection_registry_legalnotice or selection_esx_defacement
+  condition: >
+    selection_image and (
+      selection_banner_addtype
+      or selection_registry_legalnotice
+      or selection_esx_defacement
+    )
 fields:
   - UtcTime
   - Image

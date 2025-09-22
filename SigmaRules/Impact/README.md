@@ -10,14 +10,14 @@ Adversaries destroy or corrupt data on target systems to disrupt operations, cau
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational" 
-and event.code:1 
-and process.parent.name: "wsmprovhost.exe"
-and process.name: ("cmd.exe" or "powershell.exe")
-and process.command_line: (
-    (*plink.exe* and *.removeall*)
-    or (*sdelete.exe* and *-accepteula*)
-    or (*cipher* and */w\:*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational 
+AND event.code:1 
+AND process.parent.name:wsmprovhost.exe
+AND process.name:(cmd.exe or powershell.exe)
+AND (
+    process.command_line:(*plink.exe* AND *.removeall*)
+    OR process.command_line:(*sdelete.exe* AND *-accepteula*)
+    OR process.command_line:(*cipher* AND */w\:*)
 )
 ```
 
@@ -27,18 +27,18 @@ Adversaries modify system or application content to display unauthorized message
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name: ("cmd.exe" or "powershell.exe")
-and (
-    process.command_line: (
-        (*@'* and *'@* and *add-type* and *Win32*)
-        or (*HKLM\:* and *LegalNoticeCaption* and *LegalNoticeText*)
-    )
-    or
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:(cmd.exe OR powershell.exe)
+AND (
     (
-        process.parent.name: "wsmprovhost.exe"
-        and process.command_line: (*plink.exe* and *root* and *esxcli*)
+        process.command_line:(*DllImport* AND *SystemParametersInfo* AND *add-type*)
+        AND process.command_line:(*Get-ItemProperty* OR *Get-Content*)
+    )
+    OR process.command_line:(*Set-ItemProperty* AND *\\Policies\\System* AND *LegalNoticeCaption* AND *LegalNoticeText*)
+    OR (
+        process.parent.name:wsmprovhost.exe
+        AND process.command_line:(*plink.exe* AND *-ssh* AND *esxcli* AND *system* AND *set*)
     )
 )
 ```
