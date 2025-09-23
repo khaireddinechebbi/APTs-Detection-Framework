@@ -12,37 +12,25 @@ detection:
   selection_vcenter_pwsh:
     EventID: 1
     Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'Connect-VIServer'
       - 'Get-VMHostService'
       - 'TSM-SSH'
-  selection_vcenter_pwsh_service_change:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
-      - 'Connect-VIServer'
-      - 'Get-VMHostService'
-      - 'TSM-SSH'
+  selection_service:
+    CommandLine|contains:
       - 'Start-VMHostService'
-  selection_vcenter_pwsh_service_stop:
-    EventID: 1
-    Image|endswith: '\powershell.exe'
-    CommandLine|contains_all:
-      - 'Connect-VIServer'
-      - 'Get-VMHostService'
-      - 'TSM-SSH'
       - 'Stop-VMHostService'
   selection_plink_cmd:
     EventID: 1
     Image|endswith: '\cmd.exe'
-    CommandLine|contains_all:
+    CommandLine|contains|all:
       - 'plink.exe'
       - '-ssh'
       - 'vim-cmd'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'enable_ssh'
       - 'disable_ssh'
-  condition: selection_vcenter_pwsh or selection_vcenter_pwsh_service_change or selection_vcenter_pwsh_service_stop or selection_plink_cmd
+  condition: (selection_vcenter_pwsh and selection_service) or selection_plink_cmd
 fields:
   - UtcTime
   - Image

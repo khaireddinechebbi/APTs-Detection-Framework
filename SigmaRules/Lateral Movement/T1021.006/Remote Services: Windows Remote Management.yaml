@@ -12,7 +12,7 @@ detection:
   selection:
     EventID: 1
     Image|endswith: '\powerShell.exe'
-    CommandLine|contains_any:
+    CommandLine|contains:
       - 'Enable-PSRemoting'
       - 'Disable-PSRemoting'
       - 'evil-winrm'

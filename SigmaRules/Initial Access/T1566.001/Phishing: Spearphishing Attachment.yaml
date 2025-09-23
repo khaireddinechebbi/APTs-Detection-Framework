@@ -37,12 +37,26 @@ detection:
       - ' Write '
       - '-officeProduct'
       - 'Word'
-
+  selection_remove:
+    CommandLine|contains|all:
+      - 'Remove-Item'
+      - '-ErrorAction Ignore'
+    CommandLine|contains:
+      - '.docm'
+      - '.xlsm'
+      - '.pptm'
+      - '.xlam'
+      - '.js'
+  selection_path:
+    CommandLine|contains:
+      - 'TEMP'
+      - 'C:\\Users'
     ParentImage|endswith: '\powershell.exe'
   condition: 
     select_image and (
     (selection_web and selection_filedownload and selection_protocol)
     or (selection_vba_staging and selection_web and selection_protocol)
+    or (selection_remove and selection_path)
     )
 fields:
   - UtcTime

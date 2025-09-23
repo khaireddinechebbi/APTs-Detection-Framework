@@ -23,7 +23,19 @@ detection:
       - 'downloadstring'
       - '.ps1'
   condition: selec_image and (remote_thread_inject or dll_inject)
-fields: [ UtcTime, Image, CommandLine, ParentImage, ParentCommandLine, User, TargetImage, TargetFileName ]
-falsepositives: [ Legitimate DLL injection/testing tools ]
+fields: 
+  - UtcTime
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine
+  - User
+  - TargetImage
+  - TargetFileName
+falsepositives: Legitimate DLL injection/testing tools
 level: high
-tags: [ attack.defense_evasion, attack.t1055, attack.t1055.001 ]
+tags:
+  - attack.defense_evasion
+  - attack.privilege_escalation
+  - attack.t1055
+  - attack.t1055.001

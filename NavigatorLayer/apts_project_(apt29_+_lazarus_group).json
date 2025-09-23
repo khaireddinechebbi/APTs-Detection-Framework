@@ -676,7 +676,7 @@
 			"techniqueID": "T1546.003",
 			"tactic": "persistence",
 			"score": 1,
-			"color": "",
+			"color": "#31a354",
 			"comment": "",
 			"enabled": true,
 			"metadata": [],

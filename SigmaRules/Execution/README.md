@@ -38,7 +38,7 @@ AND (
         event.code:1
         AND process.name:powershell.exe
         AND process.parent.name:(cmd.exe OR powershell.exe)
-        AND process.command_line:(*-e* OR *-enc* OR *-encodedcommand* OR */enc* OR */encodedcommand*)
+        AND process.command_line:(* -e * OR *-enc* OR *-encodedcommand*)
     ) OR (
         event.code:1
         AND process.name:powershell.exe

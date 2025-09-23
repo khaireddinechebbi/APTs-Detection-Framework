@@ -31,7 +31,7 @@ AND process.name:mshta.exe
 AND process.parent.name:(powershell.exe OR cmd.exe)
 AND (
     process.command_line:((*vbscript* OR *VBScript*) AND *Execute* AND *Wscript.Shell* AND *powershell*)
-    OR process.command_line:(*\\Microsoft\\Windows\\Start* AND *\\Programs\\Startup* AND *.hta)
+    OR process.command_line:(*\\Microsoft\\Windows\\Start* AND *\\Programs\\Startup* AND *.hta*)
 )
 ```
 

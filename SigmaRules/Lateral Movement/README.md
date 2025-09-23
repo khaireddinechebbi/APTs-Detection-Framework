@@ -10,13 +10,19 @@ Adversaries use Secure Shell (SSH) to move laterally between systems and execute
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name: ("powershell.exe" or "cmd.exe")
-and process.command_line: (
-    (*Connect-VIServer* and *Get-VMHostService* and *TSM-SSH* and (*Start-VMHostService* or *Stop-VMHostService*))
-    or
-    (*plink.exe* and *-ssh* and *vim-cmd* and (*enable_ssh* or *disable_ssh*))
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND (
+    (
+        event.code:1
+        AND process.name:(powershell.exe OR cmd.exe)
+        AND process.command_line:(*Connect-VIServer* AND *Get-VMHostService* AND *TSM-SSH*)
+        AND process.command_line:(*Start-VMHostService* OR *Stop-VMHostService*)
+    ) OR (
+        event.code:1
+        AND process.name:(powershell.exe OR cmd.exe)
+        AND process.command_line:(*plink.exe* AND *-ssh* AND *vim-cmd*)
+        AND process.command_line:(*enable_ssh* OR *disable_ssh*)
+    )
 )
 ```
 
@@ -26,8 +32,8 @@ Adversaries abuse Windows Remote Management (WinRM) to execute commands and move
 
 #### Kibana Query Language Code (KQL):
 ```
-winlog.channel:"Microsoft-Windows-Sysmon/Operational"
-and event.code:1
-and process.name: "powershell.exe"
-and process.command_line: (*Enable-PSRemoting* or *Disable-PSRemoting* or *evil-winrm*)
+winlog.channel:Microsoft-Windows-Sysmon/Operational
+AND event.code:1
+AND process.name:powershell.exe
+AND process.command_line:(*Enable-PSRemoting* OR *Disable-PSRemoting* OR *evil-winrm*)
 ```

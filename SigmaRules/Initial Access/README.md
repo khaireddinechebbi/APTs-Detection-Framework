@@ -16,12 +16,16 @@ and process.name:powershell.exe
 and (
     (
         process.command_line:(*Invoke-WebRequest* OR *iwr*)
-        AND process.command_line:(*-Uri* OR *-OutFile* OR *Net.SecurityProtocolType*)
+        AND process.command_line:(*-Uri* AND *-OutFile* AND *Net.SecurityProtocolType*)
         AND process.command_line:(*http\://* OR *https\://*)
     ) OR (
         process.command_line:(*Invoke-Expression* OR *IEX* OR *iex*)
         AND process.command_line:(*Invoke-WebRequest* OR *iwr*)
         AND process.command_line:(*Open* AND *For Output As* AND *Write* AND *-officeProduct* AND *Word*)
+    ) OR (
+        process.command_line:(*Remove-Item* AND *-ErrorAction Ignore*)
+        AND process.command_line:(*.docm* OR *.xlsm* OR *.pptm* OR *.xlam* OR *.js* OR *.jse*)
+        AND process.command_line:((*TEMP* or *C\:\\Users*))
     )
 )
 ```

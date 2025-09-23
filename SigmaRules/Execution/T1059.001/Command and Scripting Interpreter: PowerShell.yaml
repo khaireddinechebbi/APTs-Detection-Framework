@@ -33,11 +33,9 @@ detection:
       - '\cmd.exe'
       - '\powershell.exe'
     CommandLine|contains:
-      - '-e'
-      - '-enc'
+      - ' -e '
+      - '-enc' 
       - '-encodedcommand'
-      - '/enc'
-      - '/encodedcommand'
   suspicious_patterns|3:
     EventID: 1
     Image|endswith: '\powershell.exe'
