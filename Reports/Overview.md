@@ -146,5 +146,3 @@ Test-NetConnection 30.30.30.47 -Port 9200
 # From Kali test WinRM connection
 nc -zv 30.30.30.48 5985
 ```
-
-This updated diagram reflects the actual network configuration with multiple IP addresses and ensures all components can communicate properly through the correct network interfaces.

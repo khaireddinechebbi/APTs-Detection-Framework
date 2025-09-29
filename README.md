@@ -2,7 +2,7 @@
 
 ## 📖 Overview
 
-This project implements a comprehensive detection framework for identifying Advanced Persistent Threat (APT) activities using the MITRE ATT&CK framework. The system leverages Sigma rules, Elastic Stack (ELK), and simulated attack environments to detect sophisticated adversary behaviors.
+This project implements a comprehensive detection framework for identifying Advanced Persistent Threats (APTs) activities using the MITRE ATT&CK framework. The system leverages Sigma rules, Elastic Stack (ELK), and simulated attack environments to detect sophisticated adversary behaviors.
 
 ## 🎯 Objective
 
